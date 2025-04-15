@@ -1,10 +1,11 @@
 import { DataTable } from "@/components/admin/DataTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, Settings, Database, Users, BookText, Tag, FolderTree, Newspaper, FileText, FileVideo, FileAudio, FileIcon, MessageSquare, Mail } from "lucide-react";
+import { ChevronLeft, Settings, Database, Users, BookText, Tag, FolderTree, Newspaper, FileText, FileVideo, FileAudio, FileIcon, MessageSquare, Mail, Info as InfoIcon } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 
