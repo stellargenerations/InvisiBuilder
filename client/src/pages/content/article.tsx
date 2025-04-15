@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
-import { Article } from "@shared/schema";
 import MediaPlayer from "@/components/content/media-player";
 import AudioPlayer from "@/components/content/audio-player";
 import Breadcrumbs from "@/components/ui/breadcrumb";
@@ -16,10 +15,47 @@ const ArticlePage = () => {
     return null;
   }
 
-  const { data: article, isLoading, error } = useQuery<Article>({
+  // Using any for Sanity data structure
+  const { data: article, isLoading, error } = useQuery<any>({
     queryKey: [`/api/articles/slug/${slug}`],
     enabled: !!slug,
   });
+  
+  // Helper function to get category name from Sanity structure
+  const getCategoryName = () => {
+    if (!article?.category) return null;
+    
+    // Handle both string and object types for backward compatibility
+    if (typeof article.category === 'string') {
+      return article.category;
+    }
+    
+    // Handle Sanity object structure
+    if (article.category.name) {
+      return article.category.name;
+    }
+    
+    return null;
+  };
+  
+  // Helper function to get category slug for links
+  const getCategorySlug = () => {
+    if (!article?.category) return '';
+    
+    if (typeof article.category === 'string') {
+      return article.category.toLowerCase().replace(/\s+/g, '-');
+    }
+    
+    if (article.category.slug && article.category.slug.current) {
+      return article.category.slug.current;
+    }
+    
+    if (article.category.name) {
+      return article.category.name.toLowerCase().replace(/\s+/g, '-');
+    }
+    
+    return '';
+  };
 
   useEffect(() => {
     if (article) {
@@ -114,9 +150,9 @@ const ArticlePage = () => {
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
             <div className="max-w-5xl mx-auto">
               {article.category && (
-                <Link href={`/articles?category=${article.category.toLowerCase().replace(/\s+/g, '-')}`}>
+                <Link href={`/articles?category=${getCategorySlug()}`}>
                   <a className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-dark text-white mb-4">
-                    {article.category}
+                    {getCategoryName()}
                   </a>
                 </Link>
               )}
@@ -280,7 +316,7 @@ const ArticlePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {article.relatedArticles.map((relatedArticle, index) => (
                   <div key={index} className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
-                    <Link href={`/${relatedArticle.slug}`}>
+                    <Link href={`/${relatedArticle.slug?.current || relatedArticle.slug}`}>
                       <a>
                         <img 
                           src={relatedArticle.featuredImage} 
