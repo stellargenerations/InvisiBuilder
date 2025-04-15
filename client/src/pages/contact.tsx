@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 import { Helmet } from "react-helmet";
 
 const contactSchema = z.object({
@@ -57,6 +58,18 @@ const Contact = () => {
         <title>Contact Us | Invisibuilder</title>
         <meta name="description" content="Get in touch with the team at Invisibuilder. We're here to help solopreneurs who prefer to work behind the scenes." />
       </Helmet>
+      
+      {/* Breadcrumb navigation */}
+      <div className="bg-neutral-100 py-4 border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumbs 
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Contact' }
+            ]} 
+          />
+        </div>
+      </div>
       
       <div className="py-12 bg-gradient-to-b from-neutral-200 to-neutral-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

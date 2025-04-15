@@ -4,6 +4,7 @@ import { useRoute, Link } from "wouter";
 import { Article } from "@shared/schema";
 import MediaPlayer from "@/components/content/media-player";
 import AudioPlayer from "@/components/content/audio-player";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 import { Helmet } from "react-helmet";
 
 const ArticlePage = () => {
@@ -53,7 +54,7 @@ const ArticlePage = () => {
         <div className="text-center py-12 bg-neutral-100 rounded-lg">
           <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
           <p className="mb-6">The article you're looking for doesn't exist or has been removed.</p>
-          <Link href="/content">
+          <Link href="/articles">
             <a className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-dark hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
               Browse All Content
             </a>
@@ -87,6 +88,19 @@ const ArticlePage = () => {
         <meta name="twitter:description" content={article.excerpt} />
         <meta name="twitter:image" content={article.featuredImage} />
       </Helmet>
+
+      {/* Breadcrumb navigation */}
+      <div className="bg-neutral-100 py-4 border-b border-neutral-200">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumbs 
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Articles', href: '/articles' },
+              { label: article.title }
+            ]} 
+          />
+        </div>
+      </div>
 
       <article className="bg-white">
         {/* Hero section with featured image */}

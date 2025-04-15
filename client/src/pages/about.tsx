@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet";
 import { Link } from "wouter";
+import Breadcrumbs from "@/components/ui/breadcrumb";
 
 const About = () => {
   return (
@@ -8,6 +9,18 @@ const About = () => {
         <title>About Us | Invisibuilder</title>
         <meta name="description" content="Learn about Invisibuilder, the platform for solopreneurs who prefer to work behind the scenes. Our mission is to empower anonymous online success." />
       </Helmet>
+      
+      {/* Breadcrumb navigation */}
+      <div className="bg-neutral-100 py-4 border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumbs 
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'About' }
+            ]} 
+          />
+        </div>
+      </div>
       
       <div className="py-12 bg-gradient-to-b from-neutral-200 to-neutral-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
