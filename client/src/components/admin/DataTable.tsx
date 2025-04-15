@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, Plus, Save, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { format } from "date-fns";
+import { Edit, Save, Trash, Plus } from "lucide-react";
+import { useState } from "react";
+import { z } from "zod";
 
 interface DataTableProps<T> {
   data: T[];
@@ -36,405 +39,329 @@ export function DataTable<T extends Record<string, any>>({
   endpoint,
   onRefresh,
   idField = 'id',
-  addNewEnabled = true,
-  deletionEnabled = true,
+  addNewEnabled = false,
+  deletionEnabled = false
 }: DataTableProps<T>) {
-  const [editingRows, setEditingRows] = useState<Record<string | number, T>>({});
-  const [isSaving, setIsSaving] = useState<Record<string | number, boolean>>({});
-  const [isDeleting, setIsDeleting] = useState<Record<string | number, boolean>>({});
-  const [newRow, setNewRow] = useState<Partial<T> | null>(null);
-  const [isAddingNew, setIsAddingNew] = useState(false);
-  
   const { toast } = useToast();
-  
-  // Initialize new row template when columns change
-  useEffect(() => {
-    if (columns) {
-      const template: Partial<T> = {} as Partial<T>;
-      columns.forEach(column => {
-        if (column.type === 'boolean') {
-          template[column.key as keyof T] = false as any;
-        } else if (column.type === 'number') {
-          template[column.key as keyof T] = 0 as any;
-        } else {
-          template[column.key as keyof T] = '' as any;
-        }
-      });
-      setNewRow(template);
-    }
-  }, [columns]);
+  const [editRowId, setEditRowId] = useState<number | null>(null);
+  const [editData, setEditData] = useState<Record<string, any>>({});
+  const [isAdding, setIsAdding] = useState(false);
+  const [newRowData, setNewRowData] = useState<Record<string, any>>({});
 
   const handleEditRow = (row: T) => {
-    setEditingRows(prev => ({
-      ...prev,
-      [row[idField]]: { ...row }
-    }));
+    setEditRowId(row[idField]);
+    setEditData(row);
   };
 
-  const handleCancelEdit = (id: string | number) => {
-    setEditingRows(prev => {
-      const newState = { ...prev };
-      delete newState[id];
-      return newState;
+  const handleSaveRow = async () => {
+    try {
+      if (!editRowId) return;
+
+      await apiRequest(`${endpoint}/${editRowId}`, {
+        method: 'PUT',
+        body: JSON.stringify(editData)
+      });
+
+      toast({
+        title: "Success",
+        description: "Row updated successfully.",
+      });
+
+      setEditRowId(null);
+      setEditData({});
+      onRefresh();
+    } catch (error) {
+      console.error('Error updating row:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update row. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteRow = async (id: number) => {
+    try {
+      if (!deletionEnabled) return;
+
+      if (!confirm("Are you sure you want to delete this item? This action cannot be undone.")) {
+        return;
+      }
+
+      await apiRequest(`${endpoint}/${id}`, {
+        method: 'DELETE'
+      });
+
+      toast({
+        title: "Success",
+        description: "Item deleted successfully.",
+      });
+
+      onRefresh();
+    } catch (error) {
+      console.error('Error deleting row:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete item. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAddNew = () => {
+    // Initialize with empty values for all columns
+    const initialData: Record<string, any> = {};
+    columns.forEach(column => {
+      if (column.type === 'boolean') {
+        initialData[column.key] = false;
+      } else if (column.type === 'number') {
+        initialData[column.key] = 0;
+      } else if (column.type === 'date') {
+        initialData[column.key] = new Date().toISOString().split('T')[0];
+      } else {
+        initialData[column.key] = '';
+      }
     });
-  };
-
-  const handleSaveRow = async (id: string | number) => {
-    try {
-      setIsSaving(prev => ({ ...prev, [id]: true }));
-      const rowToSave = editingRows[id];
-
-      // Use PATCH for updates to existing records
-      await apiRequest(
-        `${endpoint}/${id}`,
-        'PATCH',
-        rowToSave
-      );
-
-      // Success handling
-      toast({
-        title: "Saved successfully",
-        description: "Your changes have been saved.",
-      });
-      
-      // Update the UI
-      handleCancelEdit(id);
-      onRefresh();
-    } catch (error) {
-      console.error("Error saving row:", error);
-      toast({
-        title: "Error saving changes",
-        description: "There was a problem saving your changes. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(prev => ({ ...prev, [id]: false }));
-    }
-  };
-
-  const handleDeleteRow = async (id: string | number) => {
-    if (!window.confirm("Are you sure you want to delete this item? This action cannot be undone.")) {
-      return;
-    }
     
+    setNewRowData(initialData);
+    setIsAdding(true);
+  };
+
+  const handleSaveNewRow = async () => {
     try {
-      setIsDeleting(prev => ({ ...prev, [id]: true }));
-
-      // DELETE request to remove the record
-      await apiRequest(
-        `${endpoint}/${id}`,
-        'DELETE'
-      );
-
-      // Success handling
-      toast({
-        title: "Deleted successfully",
-        description: "The item has been removed.",
+      await apiRequest(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(newRowData)
       });
-      
-      // Update the UI
+
+      toast({
+        title: "Success",
+        description: "New item added successfully.",
+      });
+
+      setIsAdding(false);
+      setNewRowData({});
       onRefresh();
     } catch (error) {
-      console.error("Error deleting row:", error);
+      console.error('Error adding new row:', error);
       toast({
-        title: "Error deleting item",
-        description: "There was a problem deleting this item. Please try again.",
+        title: "Error",
+        description: "Failed to add new item. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsDeleting(prev => ({ ...prev, [id]: false }));
     }
   };
 
-  const handleAddNew = async () => {
-    if (!newRow) return;
-    
-    try {
-      setIsAddingNew(true);
-      
-      // POST request to create a new record
-      await apiRequest(
-        endpoint,
-        'POST',
-        newRow
-      );
-
-      // Success handling
-      toast({
-        title: "Added successfully",
-        description: "New item has been added.",
-      });
-      
-      // Reset the new row form and refresh data
-      const template: Partial<T> = {} as Partial<T>;
-      columns.forEach(column => {
-        if (column.type === 'boolean') {
-          template[column.key as keyof T] = false as any;
-        } else if (column.type === 'number') {
-          template[column.key as keyof T] = 0 as any;
-        } else {
-          template[column.key as keyof T] = '' as any;
-        }
-      });
-      setNewRow(template);
-      onRefresh();
-    } catch (error) {
-      console.error("Error adding new row:", error);
-      toast({
-        title: "Error adding item",
-        description: "There was a problem adding this item. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAddingNew(false);
-    }
+  const handleCancelAdd = () => {
+    setIsAdding(false);
+    setNewRowData({});
   };
 
   const handleInputChange = (
-    id: string | number, 
     key: string, 
-    value: any, 
-    type: string = 'text'
+    value: string | number | boolean | null | undefined, 
+    isNewRow: boolean = false
   ) => {
-    setEditingRows(prev => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        [key]: type === 'number' ? Number(value) : value
-      }
-    }));
-  };
-
-  const handleNewRowChange = (
-    key: string, 
-    value: any, 
-    type: string = 'text'
-  ) => {
-    if (!newRow) return;
-    
-    setNewRow(prev => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        [key]: type === 'number' ? Number(value) : value
-      };
-    });
+    if (isNewRow) {
+      setNewRowData(prev => ({ ...prev, [key]: value }));
+    } else {
+      setEditData(prev => ({ ...prev, [key]: value }));
+    }
   };
 
   const renderCellContent = (row: T, column: typeof columns[0]) => {
-    const isEditing = editingRows[row[idField]];
-    const editingRow = editingRows[row[idField]];
+    const isEditing = editRowId === row[idField];
+    const value = row[column.key];
+    const editable = column.editable !== false;
     
-    if (isEditing && column.editable !== false) {
-      switch (column.type) {
-        case 'boolean':
-          return (
-            <Checkbox 
-              checked={editingRow[column.key]} 
-              onCheckedChange={(checked) => handleInputChange(row[idField], column.key, checked)} 
-            />
-          );
-        case 'textarea':
-          return (
-            <textarea
-              className="w-full p-2 border rounded"
-              value={editingRow[column.key] || ''} 
-              onChange={(e) => handleInputChange(row[idField], column.key, e.target.value)}
-            />
-          );
-        case 'number':
-          return (
-            <Input 
-              type="number" 
-              value={editingRow[column.key] || ''} 
-              onChange={(e) => handleInputChange(row[idField], column.key, e.target.value, 'number')} 
-            />
-          );
-        case 'date':
-          return (
-            <Input 
-              type="date" 
-              value={editingRow[column.key] ? new Date(editingRow[column.key]).toISOString().split('T')[0] : ''} 
-              onChange={(e) => handleInputChange(row[idField], column.key, e.target.value)} 
-            />
-          );
-        default:
-          return (
-            <Input 
-              type="text" 
-              value={editingRow[column.key] || ''} 
-              onChange={(e) => handleInputChange(row[idField], column.key, e.target.value)} 
-            />
-          );
-      }
-    } else {
-      // Display mode
-      if (column.type === 'boolean') {
-        return <Checkbox checked={row[column.key]} disabled />;
-      } else if (column.type === 'date' && row[column.key]) {
-        return new Date(row[column.key]).toLocaleDateString();
-      } else {
-        return String(row[column.key] ?? '');
-      }
-    }
-  };
-  
-  const renderNewRowCell = (column: typeof columns[0]) => {
-    if (!newRow) return null;
-    
-    switch (column.type) {
-      case 'boolean':
+    if (isEditing && editable) {
+      if (column.type === 'text') {
+        return (
+          <Input 
+            value={editData[column.key] || ''}
+            onChange={(e) => handleInputChange(column.key, e.target.value)}
+            className="w-full"
+          />
+        );
+      } else if (column.type === 'textarea') {
+        return (
+          <Textarea 
+            value={editData[column.key] || ''}
+            onChange={(e) => handleInputChange(column.key, e.target.value)}
+            className="w-full min-h-[100px]"
+          />
+        );
+      } else if (column.type === 'number') {
+        return (
+          <Input 
+            type="number"
+            value={editData[column.key] || 0}
+            onChange={(e) => handleInputChange(column.key, Number(e.target.value))}
+            className="w-full"
+          />
+        );
+      } else if (column.type === 'boolean') {
         return (
           <Checkbox 
-            checked={newRow[column.key as keyof T] as boolean} 
-            onCheckedChange={(checked) => handleNewRowChange(column.key, checked)} 
+            checked={!!editData[column.key]}
+            onCheckedChange={(checked) => handleInputChange(column.key, !!checked)}
           />
         );
-      case 'textarea':
-        return (
-          <textarea
-            className="w-full p-2 border rounded"
-            value={newRow[column.key as keyof T] as string || ''} 
-            onChange={(e) => handleNewRowChange(column.key, e.target.value)}
-            placeholder={`Enter ${column.title.toLowerCase()}`}
-          />
-        );
-      case 'number':
+      } else if (column.type === 'date') {
         return (
           <Input 
-            type="number" 
-            value={newRow[column.key as keyof T] as number || ''} 
-            onChange={(e) => handleNewRowChange(column.key, e.target.value, 'number')} 
-            placeholder={`Enter ${column.title.toLowerCase()}`}
+            type="date"
+            value={editData[column.key] ? new Date(editData[column.key]).toISOString().split('T')[0] : ''}
+            onChange={(e) => handleInputChange(column.key, e.target.value)}
+            className="w-full"
           />
         );
-      case 'date':
-        return (
-          <Input 
-            type="date" 
-            value={newRow[column.key as keyof T] as string || ''} 
-            onChange={(e) => handleNewRowChange(column.key, e.target.value)} 
-          />
-        );
-      default:
-        return (
-          <Input 
-            type="text" 
-            value={newRow[column.key as keyof T] as string || ''} 
-            onChange={(e) => handleNewRowChange(column.key, e.target.value)} 
-            placeholder={`Enter ${column.title.toLowerCase()}`}
-          />
-        );
+      }
+    }
+    
+    // Display mode
+    if (column.type === 'boolean') {
+      return <Checkbox checked={!!value} disabled />;
+    } else if (column.type === 'date' && value) {
+      return value ? format(new Date(value), 'MMM dd, yyyy') : '';
+    } else if (column.type === 'textarea') {
+      return (
+        <div className="max-h-[100px] overflow-auto text-sm">
+          {value || ''}
+        </div>
+      );
+    } else {
+      return value || '';
     }
   };
 
+  const renderNewRowInputs = () => {
+    return (
+      <TableRow className="bg-gray-50">
+        {columns.map((column, colIndex) => (
+          <TableCell key={colIndex}>
+            {column.type === 'text' && (
+              <Input 
+                value={newRowData[column.key] || ''}
+                onChange={(e) => handleInputChange(column.key, e.target.value, true)}
+                className="w-full"
+                placeholder={column.title}
+              />
+            )}
+            {column.type === 'textarea' && (
+              <Textarea 
+                value={newRowData[column.key] || ''}
+                onChange={(e) => handleInputChange(column.key, e.target.value, true)}
+                className="w-full min-h-[100px]"
+                placeholder={column.title}
+              />
+            )}
+            {column.type === 'number' && (
+              <Input 
+                type="number"
+                value={newRowData[column.key] || 0}
+                onChange={(e) => handleInputChange(column.key, Number(e.target.value), true)}
+                className="w-full"
+                placeholder={column.title}
+              />
+            )}
+            {column.type === 'boolean' && (
+              <Checkbox 
+                checked={!!newRowData[column.key]}
+                onCheckedChange={(checked) => handleInputChange(column.key, !!checked, true)}
+              />
+            )}
+            {column.type === 'date' && (
+              <Input 
+                type="date"
+                value={newRowData[column.key] || ''}
+                onChange={(e) => handleInputChange(column.key, e.target.value, true)}
+                className="w-full"
+              />
+            )}
+          </TableCell>
+        ))}
+        <TableCell>
+          <div className="flex space-x-2">
+            <Button size="sm" onClick={handleSaveNewRow}>
+              <Save className="h-4 w-4 mr-1" />
+              Save
+            </Button>
+            <Button size="sm" variant="outline" onClick={handleCancelAdd}>
+              Cancel
+            </Button>
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  };
+
   return (
-    <div className="w-full overflow-auto border rounded-md">
+    <div className="rounded-md border">
+      <div className="p-2">
+        {addNewEnabled && !isAdding && (
+          <Button size="sm" onClick={handleAddNew}>
+            <Plus className="h-4 w-4 mr-1" />
+            Add New
+          </Button>
+        )}
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((column) => (
-              <TableHead key={column.key} style={{ width: column.width }}>
+            {columns.map((column, index) => (
+              <TableHead key={index} style={column.width ? { width: column.width } : undefined}>
                 {column.title}
               </TableHead>
             ))}
-            <TableHead style={{ width: '150px' }}>Actions</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {addNewEnabled && (
-            <TableRow className="bg-slate-50">
-              {columns.map((column) => (
-                <TableCell key={column.key}>
-                  {renderNewRowCell(column)}
-                </TableCell>
-              ))}
-              <TableCell>
-                <Button 
-                  onClick={handleAddNew} 
-                  disabled={isAddingNew}
-                  size="sm"
-                >
-                  {isAddingNew ? (
-                    <>
-                      <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Adding
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="mr-1 h-4 w-4" /> Add
-                    </>
-                  )}
-                </Button>
+          {isAdding && renderNewRowInputs()}
+          
+          {data.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length + 1} className="text-center py-6 text-gray-500">
+                No items found
               </TableCell>
             </TableRow>
-          )}
-          {data.map((row) => (
-            <TableRow key={row[idField]}>
-              {columns.map((column) => (
-                <TableCell key={`${row[idField]}-${column.key}`}>
-                  {renderCellContent(row, column)}
-                </TableCell>
-              ))}
-              <TableCell>
-                {editingRows[row[idField]] ? (
-                  <div className="flex space-x-2">
-                    <Button 
-                      onClick={() => handleSaveRow(row[idField])} 
-                      size="sm"
-                      disabled={isSaving[row[idField]]}
-                    >
-                      {isSaving[row[idField]] ? (
-                        <>
-                          <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Saving
-                        </>
-                      ) : (
-                        <>
-                          <Save className="mr-1 h-4 w-4" /> Save
-                        </>
-                      )}
-                    </Button>
-                    <Button 
-                      onClick={() => handleCancelEdit(row[idField])} 
-                      variant="outline"
-                      size="sm"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex space-x-2">
-                    <Button 
-                      onClick={() => handleEditRow(row)} 
-                      variant="outline"
-                      size="sm"
-                    >
-                      Edit
-                    </Button>
+          ) : (
+            data.map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {columns.map((column, colIndex) => (
+                  <TableCell key={colIndex}>
+                    {renderCellContent(row, column)}
+                  </TableCell>
+                ))}
+                <TableCell className="text-right">
+                  <div className="flex justify-end space-x-2">
+                    {editRowId === row[idField] ? (
+                      <Button size="sm" onClick={handleSaveRow}>
+                        <Save className="h-4 w-4 mr-1" />
+                        Save
+                      </Button>
+                    ) : (
+                      <Button size="sm" variant="outline" onClick={() => handleEditRow(row)}>
+                        <Edit className="h-4 w-4 mr-1" />
+                        Edit
+                      </Button>
+                    )}
+                    
                     {deletionEnabled && (
                       <Button 
-                        onClick={() => handleDeleteRow(row[idField])} 
-                        variant="outline"
-                        size="sm"
-                        disabled={isDeleting[row[idField]]}
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={() => handleDeleteRow(row[idField])}
                       >
-                        {isDeleting[row[idField]] ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        )}
+                        <Trash className="h-4 w-4 mr-1" />
+                        Delete
                       </Button>
                     )}
                   </div>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-          {data.length === 0 && !addNewEnabled && (
-            <TableRow>
-              <TableCell colSpan={columns.length + 1} className="text-center py-4">
-                No data available
-              </TableCell>
-            </TableRow>
+                </TableCell>
+              </TableRow>
+            ))
           )}
         </TableBody>
       </Table>
