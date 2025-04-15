@@ -9,15 +9,21 @@
  * - SANITY_API_TOKEN: A token with write permissions
  */
 
-const { createClient } = require('@sanity/client');
-const { Pool } = require('@neondatabase/serverless');
-const { drizzle } = require('drizzle-orm/neon-serverless');
-const fs = require('fs');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+import { createClient } from '@sanity/client';
+import { Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { v4 as uuidv4 } from 'uuid';
+import dotenv from 'dotenv';
+
+// Get the directory name in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
-require('dotenv').config();
+dotenv.config();
 
 // Initialize Sanity client
 const sanityClient = createClient({
@@ -33,14 +39,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool);
 
 // Load schemas dynamically
-let schema;
-try {
-  // Assuming schema is in ../shared/schema.js or ../shared/schema.ts
-  schema = require('../shared/schema');
-} catch (error) {
-  console.error('Failed to load schema:', error);
-  process.exit(1);
-}
+import * as schema from '../shared/schema.js' assert { type: 'json' };
 
 // Map of PostgreSQL IDs to Sanity document IDs
 const idMap = {
