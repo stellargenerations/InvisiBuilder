@@ -65,7 +65,7 @@ export async function initializeDatabase() {
         id SERIAL PRIMARY KEY,
         title TEXT,
         content TEXT NOT NULL,
-        order INTEGER NOT NULL,
+        "order" INTEGER NOT NULL,
         article_id INTEGER NOT NULL
       );
 
@@ -125,8 +125,8 @@ export async function initializeDatabase() {
       
       for (const category of sampleCategories) {
         await db.execute(
-          'INSERT INTO categories (name, description, slug, icon) VALUES ($1, $2, $3, $4)',
-          [category.name, category.description, category.slug, category.icon]
+          `INSERT INTO categories (name, description, slug, icon) 
+           VALUES ('${category.name}', '${category.description}', '${category.slug}', '${category.icon}')`
         );
       }
       

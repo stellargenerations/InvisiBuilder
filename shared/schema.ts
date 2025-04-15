@@ -137,7 +137,8 @@ export const subscribers = pgTable("subscribers", {
 export const insertSubscriberSchema = createInsertSchema(subscribers).omit({
   id: true,
   createdAt: true,
-  status: true,
+}).extend({
+  status: z.enum(['active', 'unsubscribed']).optional().default('active'),
 });
 
 export type InsertSubscriber = z.infer<typeof insertSubscriberSchema>;

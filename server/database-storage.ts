@@ -11,7 +11,7 @@ import {
   Contact, InsertContact,
   users, categories, articles, mediaFiles, resources, contentSections, subscribers, contacts
 } from '@shared/schema';
-import { eq, like, or, and, inArray, desc } from 'drizzle-orm';
+import { eq, like, or, and, inArray, desc, SQL } from 'drizzle-orm';
 
 export class DatabaseStorage implements IStorage {
   // Users
@@ -32,7 +32,12 @@ export class DatabaseStorage implements IStorage {
 
   // Categories
   async getCategories(): Promise<Category[]> {
-    return await db.select().from(categories);
+    try {
+      return await db.select().from(categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return [];
+    }
   }
 
   async getCategoryBySlug(slug: string): Promise<Category | undefined> {
@@ -72,51 +77,57 @@ export class DatabaseStorage implements IStorage {
     search?: string;
     limit?: number;
   } = {}): Promise<Article[]> {
-    let query = db.select().from(articles);
+    try {
+      let query = db.select().from(articles);
 
-    // Apply filters
-    const conditions = [];
-    
-    if (options.featured !== undefined) {
-      conditions.push(eq(articles.featured, options.featured));
-    }
-    
-    if (options.category) {
-      conditions.push(eq(articles.category, options.category));
-    }
-    
-    if (options.tag) {
-      // Handle tags as a JSON array field
-      conditions.push(like(articles.tags.toString(), `%${options.tag}%`));
-    }
-    
-    if (options.search) {
-      conditions.push(
-        or(
-          like(articles.title, `%${options.search}%`),
-          like(articles.excerpt, `%${options.search}%`)
-        )
+      // Apply filters
+      const conditions = [];
+      
+      if (options.featured !== undefined) {
+        conditions.push(eq(articles.featured, options.featured));
+      }
+      
+      if (options.category) {
+        conditions.push(eq(articles.category, options.category));
+      }
+      
+      if (options.tag && articles.tags) {
+        // Safe handling for tags as array
+        const tagCondition = SQL`${articles.tags}::text LIKE ${'%' + options.tag + '%'}`;
+        conditions.push(tagCondition);
+      }
+      
+      if (options.search) {
+        conditions.push(
+          or(
+            like(articles.title, `%${options.search}%`),
+            like(articles.excerpt, `%${options.search}%`)
+          )
+        );
+      }
+      
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions));
+      }
+      
+      // Apply limits
+      if (options.limit) {
+        query = query.limit(options.limit);
+      }
+      
+      // Execute query
+      const articlesData = await query.orderBy(desc(articles.publishedDate));
+      
+      // Enhance with related data
+      const enhancedArticles = await Promise.all(
+        articlesData.map(article => this.enhanceArticle(article))
       );
+      
+      return enhancedArticles;
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      return [];
     }
-    
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    // Apply limits
-    if (options.limit) {
-      query = query.limit(options.limit);
-    }
-    
-    // Execute query
-    const articlesData = await query.orderBy(desc(articles.publishedDate));
-    
-    // Enhance with related data
-    const enhancedArticles = await Promise.all(
-      articlesData.map(article => this.enhanceArticle(article))
-    );
-    
-    return enhancedArticles;
   }
 
   async getArticleById(id: number): Promise<Article | undefined> {

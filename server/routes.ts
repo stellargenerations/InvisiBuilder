@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { z } from "zod";
 import { insertContactSchema, newsletterSubscriptionSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
+import { initializeDatabase } from "./db-init";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API Routes - prefix all routes with /api
