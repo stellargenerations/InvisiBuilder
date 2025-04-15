@@ -59,6 +59,20 @@ export async function setupSanityStudioProxy(app: Express): Promise<void> {
 }
 
 function setupProxy(app: Express) {
+  // Add middleware to handle CORS and content-type issues
+  app.use('/studio', (req, res, next) => {
+    // Set proper CORS headers
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+    }
+    next();
+  });
+
   // Create a proxy for the Sanity Studio
   const sanityProxy = createProxyMiddleware({
     target: 'http://localhost:3333',
@@ -67,9 +81,19 @@ function setupProxy(app: Express) {
       '^/studio': '/' // Remove /studio prefix when forwarding to Sanity
     },
     ws: true, // Enable WebSockets
-    onProxyRes: (proxyRes: any, req: any, res: any) => {
+    onProxyRes: function(proxyRes, req, res) {
       // Handle issues with Sanity Studio responses
       proxyRes.headers['x-frame-options'] = '';
+      
+      // Ensure proper content types for JS modules
+      if (req.url.endsWith('.js') || req.url.includes('.js?')) {
+        proxyRes.headers['content-type'] = 'application/javascript';
+      }
+      
+      // Ensure proper content type for CSS
+      if (req.url.endsWith('.css') || req.url.includes('.css?')) {
+        proxyRes.headers['content-type'] = 'text/css';
+      }
     }
   });
 

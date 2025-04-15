@@ -13,7 +13,8 @@ export default defineConfig({
   
   // CORS Origins allow Sanity Studio to be accessible from different domains
   cors: {
-    allowOrigins: ['https://o5jvy5xl.sanity.studio'],
+    allowOrigins: ['https://o5jvy5xl.sanity.studio', 'http://localhost:3000', '*'],
+    allowCredentials: true,
   },
 
   plugins: [
