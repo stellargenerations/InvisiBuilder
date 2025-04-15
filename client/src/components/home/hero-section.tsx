@@ -1,0 +1,42 @@
+import { Link } from "wouter";
+
+const HeroSection = () => {
+  return (
+    <section className="bg-gradient-to-br from-neutral-200 to-neutral-100 py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row items-center">
+          <div className="w-full md:w-1/2 space-y-6 mb-8 md:mb-0">
+            <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-neutral-900">
+              Success Doesn't Require<br/><span className="text-primary-dark">The Spotlight</span>
+            </h1>
+            <p className="text-lg md:text-xl text-neutral-800 max-w-xl">
+              Building your online business from behind the scenes. Strategies, tools, and insights for the solopreneur who values privacy.
+            </p>
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
+              <Link href="#latest-content">
+                <a className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-dark hover:bg-primary transition duration-150 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                  Explore Content
+                </a>
+              </Link>
+              <Link href="#newsletter">
+                <a className="inline-flex justify-center items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary-dark bg-transparent hover:bg-neutral-200 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light">
+                  Join Newsletter
+                </a>
+              </Link>
+            </div>
+          </div>
+          <div className="w-full md:w-1/2 flex justify-center">
+            <img 
+              src="https://images.unsplash.com/photo-1502945015378-0e284ca1a5be?auto=format&fit=crop&w=600&h=500&q=80" 
+              alt="Person working on laptop with face not visible" 
+              className="rounded-lg shadow-xl max-w-full h-auto"
+              loading="eager"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;
