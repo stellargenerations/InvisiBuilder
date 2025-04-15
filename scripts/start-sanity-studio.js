@@ -17,22 +17,19 @@ const SANITY_DIR = path.join(__dirname, '../sanity');
 
 // Check if we have a Sanity project ID environment variable
 function checkSanityConfig() {
-  // Check for .env file
-  const envPath = path.join(SANITY_DIR, '.env');
-  if (!fs.existsSync(envPath)) {
-    console.error('Error: Missing .env file in sanity directory');
-    console.log('Please create a .env file with your Sanity project details.');
+  // Check if environment variables are set
+  const projectId = process.env.SANITY_STUDIO_PROJECT_ID;
+  const dataset = process.env.SANITY_STUDIO_DATASET;
+  
+  if (!projectId) {
+    console.error('Error: Missing Sanity project ID');
+    console.log('Please make sure SANITY_PROJECT_ID environment variable is set');
     process.exit(1);
   }
-
-  // Read .env file
-  const envContent = fs.readFileSync(envPath, 'utf8');
-  const projectIdMatch = envContent.match(/SANITY_STUDIO_PROJECT_ID=([^\s]+)/);
-  const projectId = projectIdMatch ? projectIdMatch[1] : null;
-
-  if (!projectId || projectId === 'your-project-id') {
-    console.error('Error: Missing or default Sanity project ID');
-    console.log('Please set your Sanity project ID in the sanity/.env file');
+  
+  if (!dataset) {
+    console.error('Error: Missing Sanity dataset name');
+    console.log('Please make sure SANITY_DATASET environment variable is set');
     process.exit(1);
   }
 
@@ -90,6 +87,10 @@ function startSanityStudio() {
 // Main function
 async function main() {
   try {
+    // Export environment variables to be used by Sanity
+    process.env.SANITY_STUDIO_PROJECT_ID = process.env.SANITY_PROJECT_ID;
+    process.env.SANITY_STUDIO_DATASET = process.env.SANITY_DATASET;
+    
     // Check Sanity configuration
     const projectId = checkSanityConfig();
     console.log(`Using Sanity project ID: ${projectId}`);
