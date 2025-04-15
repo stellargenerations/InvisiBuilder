@@ -88,7 +88,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
           )}
         </div>
         
-        <Link href={`/content/${article.id}`}>
+        <Link href={`/${article.slug}`}>
           <a className="inline-flex items-center font-medium text-primary-dark hover:text-primary transition duration-150">
             Read Article
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
