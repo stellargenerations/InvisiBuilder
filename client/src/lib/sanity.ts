@@ -2,9 +2,9 @@ import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
-// Replace these values with your actual Sanity project details
-export const projectId = 'your-project-id';
-export const dataset = 'production';
+// Use environment variables for Sanity project details
+export const projectId = import.meta.env.VITE_SANITY_PROJECT_ID || '';
+export const dataset = import.meta.env.VITE_SANITY_DATASET || '';
 export const apiVersion = '2023-03-04'; // Use today's date or the version you're targeting
 
 export const client = createClient({

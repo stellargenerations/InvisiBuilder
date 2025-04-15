@@ -8,8 +8,8 @@ export default defineConfig({
   name: 'invisibuilder',
   title: 'Invisibuilder CMS',
 
-  projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
-  dataset: process.env.SANITY_DATASET || 'production',
+  projectId: process.env.SANITY_PROJECT_ID,
+  dataset: process.env.SANITY_DATASET,
 
   plugins: [
     deskTool({
@@ -17,7 +17,7 @@ export default defineConfig({
     }),
     visionTool({
       defaultApiVersion: 'v2023-03-04',
-      defaultDataset: process.env.SANITY_DATASET || 'production',
+      defaultDataset: process.env.SANITY_DATASET,
     }),
   ],
 
