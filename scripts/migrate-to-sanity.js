@@ -21,8 +21,8 @@ require('dotenv').config();
 
 // Initialize Sanity client
 const sanityClient = createClient({
-  projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
-  dataset: process.env.SANITY_DATASET || 'production',
+  projectId: process.env.SANITY_PROJECT_ID,
+  dataset: process.env.SANITY_DATASET,
   apiVersion: '2023-03-04',
   token: process.env.SANITY_API_TOKEN,
   useCdn: false,
