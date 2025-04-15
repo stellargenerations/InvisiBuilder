@@ -112,6 +112,16 @@ export const articles = pgTable("articles", {
 export const insertArticleSchema = createInsertSchema(articles).omit({
   id: true,
   createdAt: true,
+}).extend({
+  featured: z.boolean().default(false),
+  status: z.string().default("published"),
+  publishedDate: z.date().optional().default(() => new Date()),
+  updatedDate: z.date().optional().default(() => new Date()),
+  tags: z.array(z.string()).optional().default([]),
+  content: z.string().optional().default(""),
+  categoryId: z.number().optional().nullable(),
+  category: z.string().optional().nullable(),
+  readTime: z.string().optional().default("5 min"),
 });
 
 export type InsertArticle = z.infer<typeof insertArticleSchema>;

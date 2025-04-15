@@ -112,16 +112,30 @@ export function DataTable<T extends Record<string, any>>({
     // Initialize with empty values for all columns
     const initialData: Record<string, any> = {};
     columns.forEach(column => {
-      if (column.type === 'boolean') {
+      if (column.key === 'featured') {
+        initialData[column.key] = false;
+      } else if (column.key === 'status') {
+        initialData[column.key] = 'published';
+      } else if (column.type === 'boolean') {
         initialData[column.key] = false;
       } else if (column.type === 'number') {
         initialData[column.key] = 0;
       } else if (column.type === 'date') {
         initialData[column.key] = new Date().toISOString().split('T')[0];
+      } else if (column.key === 'tags') {
+        initialData[column.key] = [];
       } else {
         initialData[column.key] = '';
       }
     });
+    
+    // If it's articles, set some defaults
+    if (endpoint === '/api/articles') {
+      initialData.featured = false;
+      initialData.status = 'published';
+      initialData.content = '';
+      initialData.readTime = '5 min';
+    }
     
     setNewRowData(initialData);
     setIsAdding(true);
