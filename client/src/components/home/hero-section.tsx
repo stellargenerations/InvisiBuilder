@@ -14,14 +14,14 @@ const HeroSection = () => {
             </p>
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
               <Link href="#latest-content">
-                <a className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-dark hover:bg-primary transition duration-150 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <div className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-dark hover:bg-primary transition duration-150 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
                   Explore Content
-                </a>
+                </div>
               </Link>
               <Link href="#newsletter">
-                <a className="inline-flex justify-center items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary-dark bg-transparent hover:bg-neutral-200 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light">
+                <div className="inline-flex justify-center items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary-dark bg-transparent hover:bg-neutral-200 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light cursor-pointer">
                   Join Newsletter
-                </a>
+                </div>
               </Link>
             </div>
           </div>
