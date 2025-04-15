@@ -45,13 +45,13 @@ app.use((req, res, next) => {
   
   const server = await registerRoutes(app);
   
-  // Set up Sanity Studio proxy - this must be done before Vite setup
-  await setupSanityStudioProxy(app);
+  // Sanity Studio proxy disabled
+  // await setupSanityStudioProxy(app);
   
   // Setup graceful shutdown
   process.on('SIGTERM', async () => {
     log('SIGTERM received. Shutting down gracefully...');
-    shutdownSanityStudio();
+    // shutdownSanityStudio(); // Disabled
     server.close(() => {
       log('Server closed');
       process.exit(0);
