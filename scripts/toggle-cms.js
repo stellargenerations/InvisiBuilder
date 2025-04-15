@@ -9,126 +9,139 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
-const POSTGRES_FILES = {
-  'server/routes.ts': 'server/routes.postgres.ts',
-  'server/index.ts': 'server/index.postgres.ts'
-};
+// Paths to server files
+const POSTGRES_SERVER_INDEX = path.join(__dirname, '../server/index.ts');
+const SANITY_SERVER_INDEX = path.join(__dirname, '../server/index.sanity.ts');
 
-const SANITY_FILES = {
-  'server/routes.sanity.ts': 'server/routes.ts',
-  'server/index.sanity.ts': 'server/index.ts'
-};
+const POSTGRES_SERVER_ROUTES = path.join(__dirname, '../server/routes.ts');
+const SANITY_SERVER_ROUTES = path.join(__dirname, '../server/routes.sanity.ts');
 
-// Check which CMS is currently active
+// Backup directories
+const BACKUP_DIR = path.join(__dirname, '../server/backups');
+
+// Ensure backup directory exists
+if (!fs.existsSync(BACKUP_DIR)) {
+  fs.mkdirSync(BACKUP_DIR, { recursive: true });
+}
+
+// Get current CMS setting
 function getCurrentCMS() {
-  // Check if the routes file imports from storage.ts (PostgreSQL) or sanity-api.ts (Sanity)
   try {
-    const routesContent = fs.readFileSync(path.join(__dirname, '../server/routes.ts'), 'utf8');
-    if (routesContent.includes('import { storage } from "./storage";')) {
-      return 'postgres';
-    } else if (routesContent.includes('import * as sanityApi from "./sanity-api";')) {
+    // Check if server/index.ts matches the Sanity version
+    const currentServerContent = fs.readFileSync(POSTGRES_SERVER_INDEX, 'utf8');
+    
+    if (currentServerContent.includes('import { registerRoutes } from "./routes.sanity"')) {
       return 'sanity';
+    } else {
+      return 'postgres';
     }
-    return null;
-  } catch (err) {
-    console.error('Error determining current CMS:', err.message);
-    return null;
+  } catch (error) {
+    console.error('Error determining current CMS:', error.message);
+    return 'unknown';
   }
 }
 
 // Backup current files
 function backupCurrentFiles(currentCMS) {
-  console.log(`Backing up current ${currentCMS} files...`);
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   
-  const filesToBackup = currentCMS === 'postgres' ? POSTGRES_FILES : SANITY_FILES;
-  
-  for (const [src, dest] of Object.entries(filesToBackup)) {
-    try {
-      if (!fs.existsSync(path.join(__dirname, `../${dest}`))) {
-        fs.copyFileSync(
-          path.join(__dirname, `../${src}`),
-          path.join(__dirname, `../${dest}`)
-        );
-        console.log(`  ✓ Backed up ${src} to ${dest}`);
-      } else {
-        console.log(`  ⚠️ Backup already exists for ${src}, skipping`);
-      }
-    } catch (err) {
-      console.error(`  ✗ Error backing up ${src}:`, err.message);
-    }
+  try {
+    fs.copyFileSync(
+      POSTGRES_SERVER_INDEX, 
+      path.join(BACKUP_DIR, `index.${currentCMS}.${timestamp}.ts`)
+    );
+    
+    fs.copyFileSync(
+      POSTGRES_SERVER_ROUTES,
+      path.join(BACKUP_DIR, `routes.${currentCMS}.${timestamp}.ts`)
+    );
+    
+    console.log(`Backed up current ${currentCMS} files to ${BACKUP_DIR}`);
+  } catch (error) {
+    console.error('Error backing up files:', error.message);
   }
 }
 
-// Switch to the specified CMS
+// Switch to specified CMS
 function switchToCMS(targetCMS) {
-  console.log(`Switching to ${targetCMS}...`);
-  
-  const filesToReplace = targetCMS === 'postgres' ? POSTGRES_FILES : SANITY_FILES;
-  
-  for (const [src, dest] of Object.entries(filesToReplace)) {
-    try {
-      // Make sure the source file exists
-      if (!fs.existsSync(path.join(__dirname, `../${src}`))) {
-        console.error(`  ✗ Source file ${src} does not exist`);
-        continue;
-      }
-      
-      // Replace the destination file with the source file
-      fs.copyFileSync(
-        path.join(__dirname, `../${src}`),
-        path.join(__dirname, `../${dest.split('.postgres.ts')[0].split('.sanity.ts')[0]}.ts`)
-      );
-      console.log(`  ✓ Replaced ${dest.split('.postgres.ts')[0].split('.sanity.ts')[0]}.ts with ${src}`);
-    } catch (err) {
-      console.error(`  ✗ Error replacing ${dest}:`, err.message);
-    }
+  if (targetCMS === 'sanity') {
+    // Switch to Sanity
+    console.log('Switching to Sanity.io for content management...');
+    
+    // Update the server index file to use Sanity routes
+    let indexContent = fs.readFileSync(POSTGRES_SERVER_INDEX, 'utf8');
+    indexContent = indexContent.replace(
+      'import { registerRoutes } from "./routes"',
+      'import { registerRoutes } from "./routes.sanity"'
+    );
+    fs.writeFileSync(POSTGRES_SERVER_INDEX, indexContent);
+    
+    console.log('Successfully switched to Sanity.io!');
+    console.log('\nIMPORTANT: Make sure you have the following environment variables set:');
+    console.log('- SANITY_PROJECT_ID');
+    console.log('- SANITY_DATASET');
+    console.log('- SANITY_API_TOKEN (for content migration or management)');
+    
+  } else if (targetCMS === 'postgres') {
+    // Switch to PostgreSQL
+    console.log('Switching to PostgreSQL for content management...');
+    
+    // Update the server index file to use PostgreSQL routes
+    let indexContent = fs.readFileSync(POSTGRES_SERVER_INDEX, 'utf8');
+    indexContent = indexContent.replace(
+      'import { registerRoutes } from "./routes.sanity"',
+      'import { registerRoutes } from "./routes"'
+    );
+    fs.writeFileSync(POSTGRES_SERVER_INDEX, indexContent);
+    
+    console.log('Successfully switched to PostgreSQL!');
+    console.log('\nIMPORTANT: Make sure your DATABASE_URL environment variable is set correctly.');
   }
+  
+  // Restart the server (uncomment if needed)
+  // console.log('Restarting server...');
+  // try {
+  //   execSync('npm run dev');
+  // } catch (error) {
+  //   console.error('Error restarting server:', error.message);
+  // }
 }
 
 // Main function
 function main() {
-  const args = process.argv.slice(2);
-  const targetCMS = args[0]?.toLowerCase();
-  
-  // Check the current CMS
+  // Get the current CMS
   const currentCMS = getCurrentCMS();
-  
-  if (!currentCMS) {
-    console.error('Could not determine the current CMS. Please check your files.');
-    process.exit(1);
-  }
-  
   console.log(`Current CMS: ${currentCMS}`);
   
   // Determine the target CMS
-  let newCMS;
+  let targetCMS;
   
-  if (!targetCMS) {
-    // Toggle between the two
-    newCMS = currentCMS === 'postgres' ? 'sanity' : 'postgres';
-    console.log(`No CMS specified, toggling to ${newCMS}`);
-  } else if (['postgres', 'sanity'].includes(targetCMS)) {
-    // Use the specified CMS
-    newCMS = targetCMS;
+  if (process.argv.length > 2) {
+    // Use command line argument
+    targetCMS = process.argv[2].toLowerCase();
     
-    if (newCMS === currentCMS) {
-      console.log(`Already using ${newCMS}, no changes needed.`);
-      process.exit(0);
+    if (targetCMS !== 'postgres' && targetCMS !== 'sanity') {
+      console.error('Invalid CMS specified. Use "postgres" or "sanity".');
+      process.exit(1);
     }
   } else {
-    console.error('Invalid CMS specified. Use "postgres" or "sanity".');
-    process.exit(1);
+    // Toggle between CMSes
+    targetCMS = currentCMS === 'postgres' ? 'sanity' : 'postgres';
+  }
+  
+  // If already using the target CMS, do nothing
+  if (currentCMS === targetCMS) {
+    console.log(`Already using ${targetCMS} for content management.`);
+    return;
   }
   
   // Backup current files
   backupCurrentFiles(currentCMS);
   
-  // Switch to the new CMS
-  switchToCMS(newCMS);
-  
-  console.log(`\nSuccessfully switched from ${currentCMS} to ${newCMS}.`);
-  console.log('\nYou may need to restart your server for the changes to take effect.');
+  // Switch to the target CMS
+  switchToCMS(targetCMS);
 }
 
 // Run the script
