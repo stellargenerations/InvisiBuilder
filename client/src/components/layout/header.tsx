@@ -25,9 +25,9 @@ const Header = () => {
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center flex-shrink-0">
             <Link href="/">
-              <a className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 cursor-pointer">
                 <Logo />
-              </a>
+              </div>
             </Link>
           </div>
           
@@ -35,9 +35,9 @@ const Header = () => {
             <nav className="ml-10 flex items-center space-x-8">
               {navLinks.map((link) => (
                 <Link key={link.path} href={link.path}>
-                  <a className={`font-medium ${location === link.path ? 'text-primary-dark' : 'text-neutral-800 hover:text-primary-dark'} transition duration-150`}>
+                  <div className={`font-medium cursor-pointer ${location === link.path ? 'text-primary-dark' : 'text-neutral-800 hover:text-primary-dark'} transition duration-150`}>
                     {link.name}
-                  </a>
+                  </div>
                 </Link>
               ))}
             </nav>

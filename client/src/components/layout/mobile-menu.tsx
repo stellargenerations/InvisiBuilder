@@ -12,9 +12,9 @@ const MobileMenu = ({ isOpen, navLinks }: MobileMenuProps) => {
       <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
         {navLinks.map((link) => (
           <Link key={link.path} href={link.path}>
-            <a className="block px-3 py-2 rounded-md text-base font-medium text-neutral-800 hover:bg-neutral-200 hover:text-primary-dark">
+            <div className="block px-3 py-2 rounded-md text-base font-medium text-neutral-800 hover:bg-neutral-200 hover:text-primary-dark cursor-pointer">
               {link.name}
-            </a>
+            </div>
           </Link>
         ))}
         <div className="px-3 py-2">
