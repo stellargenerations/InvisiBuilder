@@ -1,18 +1,26 @@
 import { Express } from 'express';
 import { log } from './vite';
-import * as nocodb from 'nocodb';
-
+// Import nocodb with CommonJS style to avoid TypeScript issues
+const nocodb = require('nocodb');
+const Noco = nocodb.default;
 let nocoApp: any = null;
 
 export async function setupNocoDB(app: Express) {
   try {
     log('Initializing NocoDB...', 'nocodb');
     
+    // Modify the database URL to include SSL requirement
+    let dbUrl = process.env.DATABASE_URL!;
+    if (!dbUrl.includes('sslmode=')) {
+      // Add sslmode=require if not already present
+      dbUrl += dbUrl.includes('?') ? '&sslmode=require' : '?sslmode=require';
+    }
+    
     // Initialize NocoDB with our PostgreSQL database
     nocoApp = await Noco.init({
       title: 'Invisibuilder CMS',
       baseUrl: '/nc',
-      dbUrl: process.env.DATABASE_URL!,
+      dbUrl: dbUrl,
       toolDir: './.nocodb',
       port: process.env.PORT || '5000',
       env: process.env.NODE_ENV || 'development',
@@ -22,6 +30,7 @@ export async function setupNocoDB(app: Express) {
       meta: {
         db: {
           client: 'pg', // PostgreSQL client
+          ssl: { rejectUnauthorized: false } // Allow self-signed certificates
         },
       },
     });

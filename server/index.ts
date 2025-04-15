@@ -42,15 +42,11 @@ app.use((req, res, next) => {
   // Initialize the database
   await initializeDatabase();
   
-  // Initialize NocoDB
-  await setupNocoDB(app);
-  
   const server = await registerRoutes(app);
   
   // Setup graceful shutdown
   process.on('SIGTERM', async () => {
     log('SIGTERM received. Shutting down gracefully...');
-    await shutdownNocoDB();
     server.close(() => {
       log('Server closed');
       process.exit(0);
