@@ -4,7 +4,8 @@ import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 // Use environment variables for Sanity project details
 export const projectId = import.meta.env.VITE_SANITY_PROJECT_ID || '';
-export const dataset = import.meta.env.VITE_SANITY_DATASET || '';
+// Datasets can only contain lowercase characters, numbers, underscores, and dashes
+export const dataset = (import.meta.env.VITE_SANITY_DATASET || '').toLowerCase();
 export const apiVersion = '2023-03-04'; // Use today's date or the version you're targeting
 
 export const client = createClient({

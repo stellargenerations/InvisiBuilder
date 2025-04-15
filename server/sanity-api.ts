@@ -1,9 +1,11 @@
 import { createClient } from '@sanity/client';
 
 // Initialize the Sanity client
+// Note: Datasets can only contain lowercase characters, numbers, underscores, and dashes
+// Convert the dataset name to lowercase to ensure compatibility
 const client = createClient({
   projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
-  dataset: process.env.SANITY_DATASET || 'production',
+  dataset: (process.env.SANITY_DATASET || 'production').toLowerCase(),
   apiVersion: '2023-03-04', // Use today's date or the version you're targeting
   useCdn: process.env.NODE_ENV === 'production', // Use CDN in production
   token: process.env.SANITY_API_TOKEN, // Only required for write operations
