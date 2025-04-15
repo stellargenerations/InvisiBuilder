@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeDatabase } from "./db-init";
+import { setupNocoDB, shutdownNocoDB } from "./nocodb";
 
 const app = express();
 app.use(express.json());
@@ -41,7 +42,20 @@ app.use((req, res, next) => {
   // Initialize the database
   await initializeDatabase();
   
+  // Initialize NocoDB
+  await setupNocoDB(app);
+  
   const server = await registerRoutes(app);
+  
+  // Setup graceful shutdown
+  process.on('SIGTERM', async () => {
+    log('SIGTERM received. Shutting down gracefully...');
+    await shutdownNocoDB();
+    server.close(() => {
+      log('Server closed');
+      process.exit(0);
+    });
+  });
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
