@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes.sanity";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeDatabase } from "./db-init";
 import { setupNocoDB, shutdownNocoDB } from "./nocodb";
+import { setupSanityStudioProxy, shutdownSanityStudio } from "./sanity-studio-proxy";
 
 const app = express();
 app.use(express.json());
@@ -44,9 +45,13 @@ app.use((req, res, next) => {
   
   const server = await registerRoutes(app);
   
+  // Set up Sanity Studio proxy - this must be done before Vite setup
+  await setupSanityStudioProxy(app);
+  
   // Setup graceful shutdown
   process.on('SIGTERM', async () => {
     log('SIGTERM received. Shutting down gracefully...');
+    shutdownSanityStudio();
     server.close(() => {
       log('Server closed');
       process.exit(0);
