@@ -2,17 +2,34 @@ import {defineConfig} from 'sanity'
 import {deskTool} from 'sanity/desk'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
+import {myStructure} from './structure'
 
 export default defineConfig({
-  name: 'default',
+  name: 'invisibuilder',
   title: 'Invisibuilder CMS',
 
-  projectId: 'your-project-id', // You'll replace this with your actual Sanity project ID
-  dataset: 'production',
+  projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
+  dataset: process.env.SANITY_DATASET || 'production',
 
-  plugins: [deskTool(), visionTool()],
+  plugins: [
+    deskTool({
+      structure: myStructure
+    }),
+    visionTool({
+      defaultApiVersion: 'v2023-03-04',
+      defaultDataset: process.env.SANITY_DATASET || 'production',
+    }),
+  ],
 
   schema: {
     types: schemaTypes,
+  },
+  
+  document: {
+    // Actions are configurable by document type
+    actions: (prev, { schemaType }) => {
+      // Show all actions for all document types
+      return prev
+    },
   },
 })
