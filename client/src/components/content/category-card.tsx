@@ -2,8 +2,25 @@ import { Link } from "wouter";
 import { Category } from "@shared/schema";
 
 interface CategoryCardProps {
-  category: Category;
+  category: any; // Using any for Sanity data structure
 }
+
+// Helper function to get slug from Sanity structure
+const getCategorySlug = (category: any) => {
+  if (!category) return '';
+  
+  // Handle both string and object types for backward compatibility
+  if (typeof category.slug === 'string') {
+    return category.slug;
+  }
+  
+  // Handle Sanity object structure with current property
+  if (category.slug && category.slug.current) {
+    return category.slug.current;
+  }
+  
+  return '';
+};
 
 const getCategoryIcon = (iconName: string) => {
   switch (iconName) {
@@ -41,8 +58,11 @@ const getCategoryIcon = (iconName: string) => {
 };
 
 const CategoryCard = ({ category }: CategoryCardProps) => {
+  // Handle articleCount - default to 0 if not available
+  const articleCount = category.articleCount || 0;
+  
   return (
-    <Link href={`/articles?category=${category.slug}`}>
+    <Link href={`/articles?category=${getCategorySlug(category)}`}>
       <a className="group">
         <div className="bg-neutral-100 rounded-lg p-6 text-center shadow-sm hover:shadow-md transition duration-150 h-full flex flex-col">
           <div className="w-16 h-16 bg-primary-light text-white rounded-full flex items-center justify-center mx-auto mb-4">
@@ -51,7 +71,7 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
           <h3 className="font-heading font-semibold text-xl mb-3 text-neutral-900 group-hover:text-primary-dark transition duration-150">{category.name}</h3>
           <p className="text-neutral-800 text-sm flex-grow">{category.description}</p>
           <div className="mt-4 text-primary-dark group-hover:text-primary transition duration-150">
-            <span className="text-sm font-medium">{category.articleCount} Article{category.articleCount !== 1 ? 's' : ''}</span>
+            <span className="text-sm font-medium">{articleCount} Article{articleCount !== 1 ? 's' : ''}</span>
           </div>
         </div>
       </a>

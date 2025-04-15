@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { Category } from "@shared/schema";
 import CategoryCard from "@/components/content/category-card";
 
 const CategoriesSection = () => {
-  const { data: categories, isLoading, error } = useQuery<Category[]>({
+  const { data: categories, isLoading, error } = useQuery<any>({
     queryKey: ['/api/categories'],
   });
 
@@ -81,7 +80,7 @@ const CategoriesSection = () => {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {displayCategories.map(category => (
-            <CategoryCard key={category.id} category={category} />
+            <CategoryCard key={category._id || category.id} category={category} />
           ))}
         </div>
       </div>
