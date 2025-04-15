@@ -92,13 +92,15 @@ export default function AdminPage() {
   
   // Article column definitions for DataTable
   const articleColumns = [
-    { key: "title", title: "Title", type: "text" as const },
-    { key: "slug", title: "Slug", type: "text" as const },
-    { key: "excerpt", title: "Excerpt", type: "textarea" as const },
+    { key: "title", title: "Title *", type: "text" as const, width: "200px" },
+    { key: "slug", title: "Slug * (URL-friendly)", type: "text" as const, width: "180px" },
+    { key: "excerpt", title: "Excerpt * (Plain text)", type: "textarea" as const },
+    { key: "featuredImage", title: "Featured Image *", type: "text" as const },
     { key: "categoryId", title: "Category ID", type: "number" as const },
     { key: "status", title: "Status", type: "text" as const },
     { key: "featured", title: "Featured", type: "boolean" as const },
-    { key: "publishedDate", title: "Publish Date", type: "date" as const }
+    { key: "publishedDate", title: "Publish Date", type: "date" as const },
+    { key: "content", title: "Content", type: "textarea" as const }
   ];
   
   // Media column definitions for DataTable
@@ -229,6 +231,21 @@ export default function AdminPage() {
             </TabsContent>
             
             <TabsContent value="articles" className="space-y-4">
+              <Alert className="mb-4 bg-blue-50">
+                <AlertTitle className="flex items-center gap-2">
+                  <InfoIcon className="h-4 w-4" />
+                  Article Creation Help
+                </AlertTitle>
+                <AlertDescription>
+                  <ul className="list-disc pl-5 space-y-1 text-sm">
+                    <li><strong>Fields marked with * are required</strong></li>
+                    <li><strong>Slug format:</strong> lowercase letters, numbers, and hyphens only (e.g., "my-first-article")</li>
+                    <li><strong>Excerpt:</strong> Enter plain text only (no HTML or Markdown)</li>
+                    <li><strong>Featured Image:</strong> Enter the URL of an image</li>
+                  </ul>
+                </AlertDescription>
+              </Alert>
+              
               <div className="border rounded-md">
                 {articlesQuery.isLoading ? (
                   <div className="p-8 text-center">Loading articles...</div>

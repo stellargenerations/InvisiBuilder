@@ -143,7 +143,33 @@ export function DataTable<T extends Record<string, any>>({
 
   const handleSaveNewRow = async () => {
     try {
-      await apiRequest(endpoint, {
+      // Check required fields for articles
+      if (endpoint === '/api/articles') {
+        const requiredFields = ['title', 'slug', 'excerpt', 'featuredImage'];
+        const missingFields = requiredFields.filter(field => !newRowData[field]);
+        
+        if (missingFields.length > 0) {
+          toast({
+            title: "Validation Error",
+            description: `Please fill in all required fields: ${missingFields.join(', ')}`,
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        // Check slug format
+        const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+        if (newRowData.slug && !slugRegex.test(newRowData.slug)) {
+          toast({
+            title: "Invalid Slug Format",
+            description: "Slug must be lowercase with hyphens between words, no special characters",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+      
+      const response = await apiRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(newRowData)
       });
@@ -156,11 +182,25 @@ export function DataTable<T extends Record<string, any>>({
       setIsAdding(false);
       setNewRowData({});
       onRefresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding new row:', error);
+      
+      // Attempt to parse error message if it's from our API
+      let errorMessage = "Failed to add new item. Please try again.";
+      try {
+        if (error.message && typeof error.message === 'string') {
+          const parsed = JSON.parse(error.message);
+          if (parsed && parsed.message) {
+            errorMessage = parsed.message;
+          }
+        }
+      } catch (e) {
+        // If parsing fails, use generic message
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to add new item. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     }

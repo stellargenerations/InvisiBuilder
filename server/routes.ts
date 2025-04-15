@@ -285,14 +285,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create article
   app.post("/api/articles", async (req: Request, res: Response) => {
     try {
-      const validationResult = insertArticleSchema.safeParse(req.body);
+      console.log("Creating article with data:", JSON.stringify(req.body));
+      
+      // Set defaults for all required fields if not provided
+      const dataWithDefaults = {
+        featured: false,
+        status: "published",
+        readTime: "5 min",
+        tags: [],
+        ...req.body
+      };
+      
+      const validationResult = insertArticleSchema.safeParse(dataWithDefaults);
       
       if (!validationResult.success) {
         const errorMessage = fromZodError(validationResult.error).message;
-        return res.status(400).json({ message: errorMessage });
+        console.error("Article validation failed:", errorMessage);
+        console.error("Validation errors:", JSON.stringify(validationResult.error.errors));
+        return res.status(400).json({ 
+          message: errorMessage,
+          errors: validationResult.error.errors,
+          receivedData: dataWithDefaults
+        });
       }
       
       const article = await storage.createArticle(validationResult.data);
+      console.log("Article created successfully with ID:", article.id);
       res.status(201).json(article);
     } catch (error) {
       console.error("Error creating article:", error);
