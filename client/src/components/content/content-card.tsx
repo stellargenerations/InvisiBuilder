@@ -6,8 +6,9 @@ interface ContentCardProps {
 }
 
 const ContentCard = ({ article }: ContentCardProps) => {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (dateString: string | Date | null) => {
+    if (!dateString) return 'Unknown date';
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
     return new Intl.DateTimeFormat('en-US', { 
       year: 'numeric', 
       month: 'long', 

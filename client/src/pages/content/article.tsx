@@ -15,13 +15,10 @@ const ArticlePage = () => {
     return null;
   }
 
-  const { data: articles, isLoading: articlesLoading } = useQuery<Article[]>({
-    queryKey: ['/api/articles'],
+  const { data: article, isLoading, error } = useQuery<Article>({
+    queryKey: [`/api/articles/slug/${slug}`],
+    enabled: !!slug,
   });
-  
-  const article = articles?.find(a => a.slug === slug);
-  const isLoading = articlesLoading;
-  const error = !articlesLoading && !article;
 
   useEffect(() => {
     if (article) {

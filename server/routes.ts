@@ -96,6 +96,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get article by slug
+  app.get("/api/articles/slug/:slug", async (req: Request, res: Response) => {
+    try {
+      const article = await storage.getArticleBySlug(req.params.slug);
+      
+      if (!article) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.json(article);
+    } catch (error) {
+      console.error("Error fetching article by slug:", error);
+      res.status(500).json({ message: "Failed to fetch article" });
+    }
+  });
+
   // Get preview article
   app.get("/api/articles/preview", async (_req: Request, res: Response) => {
     try {
