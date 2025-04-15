@@ -168,9 +168,9 @@ const About = () => {
               Join thousands of solopreneurs who are building successful online businesses without sacrificing their privacy.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/content">
+              <Link href="/articles">
                 <a className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-dark hover:bg-primary transition duration-150 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                  Explore Our Content
+                  Explore Our Articles
                 </a>
               </Link>
               <Link href="#newsletter">
