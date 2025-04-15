@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Article } from "@shared/schema";
 
 interface ContentCardProps {
-  article: Article;
+  article: any; // Using any for Sanity data structure
 }
 
 const ContentCard = ({ article }: ContentCardProps) => {
@@ -14,6 +14,40 @@ const ContentCard = ({ article }: ContentCardProps) => {
       month: 'long', 
       day: 'numeric' 
     }).format(date);
+  };
+
+  // Get category name from Sanity structure
+  const getCategoryName = () => {
+    if (!article.category) return null;
+    
+    // Handle both string and object types for backward compatibility
+    if (typeof article.category === 'string') {
+      return article.category;
+    }
+    
+    // Handle Sanity object structure
+    if (article.category.name) {
+      return article.category.name;
+    }
+    
+    return null;
+  };
+
+  // Get proper slug from Sanity structure
+  const getSlug = () => {
+    if (!article.slug) return '';
+    
+    // Handle both string and object types for backward compatibility
+    if (typeof article.slug === 'string') {
+      return article.slug;
+    }
+    
+    // Handle Sanity object structure with current property
+    if (article.slug.current) {
+      return article.slug.current;
+    }
+    
+    return '';
   };
 
   return (
@@ -28,7 +62,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
         {article.category && (
           <div className="absolute top-0 right-0 mt-4 mr-4">
             <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-primary-light text-white">
-              {article.category}
+              {getCategoryName()}
             </span>
           </div>
         )}
@@ -89,7 +123,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
           )}
         </div>
         
-        <Link href={`/${article.slug}`}>
+        <Link href={`/${getSlug()}`}>
           <a className="inline-flex items-center font-medium text-primary-dark hover:text-primary transition duration-150">
             Read Article
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
