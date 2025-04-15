@@ -17,11 +17,11 @@ function App() {
       <main className="flex-grow">
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/content" component={ContentList} />
-          <Route path="/content/:id" component={Article} />
+          <Route path="/articles" component={ContentList} />
+          <Route path="/:slug" component={Article} />
           <Route path="/contact" component={Contact} />
           <Route path="/about" component={About} />
-          <Route path="/privacy-policy" component={PrivacyPolicy} />
+          <Route path="/privacy" component={PrivacyPolicy} />
           <Route component={NotFound} />
         </Switch>
       </main>

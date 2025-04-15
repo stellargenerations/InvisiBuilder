@@ -7,13 +7,21 @@ import AudioPlayer from "@/components/content/audio-player";
 import { Helmet } from "react-helmet";
 
 const ArticlePage = () => {
-  const [match, params] = useRoute("/content/:id");
-  const articleId = params?.id;
+  const [match, params] = useRoute("/:slug");
+  const slug = params?.slug;
 
-  const { data: article, isLoading, error } = useQuery<Article>({
-    queryKey: [`/api/articles/${articleId}`],
-    enabled: !!articleId,
+  // For routes that have their own components (/about, /contact, etc.), we need to avoid rendering this component
+  if (slug === 'about' || slug === 'contact' || slug === 'privacy' || slug === 'articles') {
+    return null;
+  }
+
+  const { data: articles, isLoading: articlesLoading } = useQuery<Article[]>({
+    queryKey: ['/api/articles'],
   });
+  
+  const article = articles?.find(a => a.slug === slug);
+  const isLoading = articlesLoading;
+  const error = !articlesLoading && !article;
 
   useEffect(() => {
     if (article) {
@@ -58,8 +66,9 @@ const ArticlePage = () => {
     );
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (dateString: string | Date | null) => {
+    if (!dateString) return 'Unknown date';
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
     return new Intl.DateTimeFormat('en-US', { 
       year: 'numeric', 
       month: 'long', 
@@ -139,10 +148,10 @@ const ArticlePage = () => {
                     <MediaPlayer 
                       type="video"
                       src={article.videoFiles[0].url}
-                      title={article.videoFiles[0].title}
-                      description={article.videoFiles[0].description}
-                      thumbnail={article.videoFiles[0].thumbnail}
-                      duration={article.videoFiles[0].duration}
+                      title={article.videoFiles[0].title || ''}
+                      description={article.videoFiles[0].description || undefined}
+                      thumbnail={article.videoFiles[0].thumbnail || undefined}
+                      duration={article.videoFiles[0].duration || undefined}
                     />
                   </div>
                 )}
@@ -260,7 +269,7 @@ const ArticlePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {article.relatedArticles.map((relatedArticle, index) => (
                   <div key={index} className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
-                    <Link href={`/content/${relatedArticle.id}`}>
+                    <Link href={`/${relatedArticle.slug}`}>
                       <a>
                         <img 
                           src={relatedArticle.featuredImage} 
