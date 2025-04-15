@@ -219,11 +219,11 @@ export default function AdminPage() {
                   </div>
                 ) : (
                   <DataTable 
-                    data={categoriesQuery.data || []}
+                    data={Array.isArray(categoriesQuery.data) ? categoriesQuery.data : []}
                     columns={categoryColumns}
                     endpoint="/api/categories"
                     onRefresh={refreshCategories}
-                    idField="id"
+                    idField="_id"
                     addNewEnabled={true}
                     deletionEnabled={true}
                   />
@@ -257,11 +257,11 @@ export default function AdminPage() {
                   </div>
                 ) : (
                   <DataTable 
-                    data={articlesQuery.data || []}
+                    data={Array.isArray(articlesQuery.data) ? articlesQuery.data : []}
                     columns={articleColumns}
                     endpoint="/api/articles"
                     onRefresh={refreshArticles}
-                    idField="id"
+                    idField="_id"
                     addNewEnabled={true}
                     deletionEnabled={true}
                   />
@@ -280,11 +280,11 @@ export default function AdminPage() {
                   </div>
                 ) : (
                   <DataTable 
-                    data={mediaQuery.data || []}
+                    data={Array.isArray(mediaQuery.data) ? mediaQuery.data : []}
                     columns={mediaColumns}
                     endpoint="/api/media"
                     onRefresh={refreshMedia}
-                    idField="id"
+                    idField="_id"
                     addNewEnabled={true}
                     deletionEnabled={true}
                   />

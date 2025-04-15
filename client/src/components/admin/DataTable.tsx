@@ -281,11 +281,36 @@ export function DataTable<T extends Record<string, any>>({
     } else if (column.type === 'textarea') {
       return (
         <div className="max-h-[100px] overflow-auto text-sm">
-          {value || ''}
+          {typeof value === 'object' 
+            ? (value === null ? '' : JSON.stringify(value, null, 2))
+            : (value || '')}
         </div>
       );
     } else {
-      return value || '';
+      // Handle different value types to prevent React errors
+      if (value === null || value === undefined) {
+        return '';
+      } else if (typeof value === 'object') {
+        if (Array.isArray(value)) {
+          return value.join(', ');
+        } else {
+          // Handle Sanity style objects like {_type: "slug", current: "value"}
+          if (value._type === 'slug' && value.current) {
+            return value.current;
+          } else if (value._id) {
+            return `ID: ${value._id}`;
+          } else {
+            // Convert object to JSON string
+            try {
+              return JSON.stringify(value);
+            } catch (e) {
+              return '[Object]';
+            }
+          }
+        }
+      } else {
+        return String(value);
+      }
     }
   };
 
