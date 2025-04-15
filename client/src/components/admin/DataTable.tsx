@@ -85,11 +85,11 @@ export function DataTable<T extends Record<string, any>>({
       const rowToSave = editingRows[id];
 
       // Use PATCH for updates to existing records
-      await apiRequest(`${endpoint}/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rowToSave)
-      });
+      await apiRequest(
+        `${endpoint}/${id}`,
+        'PATCH',
+        rowToSave
+      );
 
       // Success handling
       toast({
@@ -121,9 +121,10 @@ export function DataTable<T extends Record<string, any>>({
       setIsDeleting(prev => ({ ...prev, [id]: true }));
 
       // DELETE request to remove the record
-      await apiRequest(`${endpoint}/${id}`, {
-        method: 'DELETE'
-      });
+      await apiRequest(
+        `${endpoint}/${id}`,
+        'DELETE'
+      );
 
       // Success handling
       toast({
@@ -152,11 +153,11 @@ export function DataTable<T extends Record<string, any>>({
       setIsAddingNew(true);
       
       // POST request to create a new record
-      await apiRequest(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newRow)
-      });
+      await apiRequest(
+        endpoint,
+        'POST',
+        newRow
+      );
 
       // Success handling
       toast({
