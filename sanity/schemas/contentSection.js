@@ -1,28 +1,18 @@
-export default {
+import {defineField, defineType} from 'sanity'
+import {MdTextFields} from 'react-icons/md'
+
+export default defineType({
   name: 'contentSection',
   title: 'Content Section',
   type: 'document',
+  icon: MdTextFields,
   fields: [
-    {
+    defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: Rule => Rule.required()
-    },
-    {
-      name: 'articleId',
-      title: 'Article',
-      type: 'reference',
-      to: [{ type: 'article' }],
-      validation: Rule => Rule.required()
-    },
-    {
-      name: 'position',
-      title: 'Position',
-      type: 'number',
-      validation: Rule => Rule.required().integer().positive()
-    },
-    {
+    }),
+    defineField({
       name: 'content',
       title: 'Content',
       type: 'array',
@@ -35,11 +25,11 @@ export default {
             {title: 'H2', value: 'h2'},
             {title: 'H3', value: 'h3'},
             {title: 'H4', value: 'h4'},
-            {title: 'Quote', value: 'blockquote'}
+            {title: 'Quote', value: 'blockquote'},
           ],
           lists: [
             {title: 'Bullet', value: 'bullet'},
-            {title: 'Number', value: 'number'}
+            {title: 'Numbered', value: 'number'},
           ],
           marks: {
             decorators: [
@@ -47,111 +37,78 @@ export default {
               {title: 'Emphasis', value: 'em'},
               {title: 'Code', value: 'code'},
               {title: 'Underline', value: 'underline'},
-              {title: 'Strike', value: 'strike-through'}
+              {title: 'Strike', value: 'strike-through'},
             ],
             annotations: [
               {
-                title: 'URL',
                 name: 'link',
                 type: 'object',
+                title: 'Link',
                 fields: [
                   {
-                    title: 'URL',
                     name: 'href',
                     type: 'url',
-                    validation: Rule => Rule.uri({
-                      scheme: ['http', 'https', 'mailto', 'tel']
-                    })
-                  }
-                ]
-              }
-            ]
-          }
+                    title: 'URL',
+                  },
+                  {
+                    name: 'blank',
+                    type: 'boolean',
+                    title: 'Open in new tab',
+                    initialValue: true,
+                  },
+                ],
+              },
+            ],
+          },
         },
         {
           type: 'image',
-          options: {
-            hotspot: true
-          },
+          options: {hotspot: true},
           fields: [
-            {
-              name: 'caption',
-              type: 'string',
-              title: 'Caption',
-              options: {
-                isHighlighted: true
-              }
-            },
             {
               name: 'alt',
+              title: 'Alternative Text',
               type: 'string',
-              title: 'Alternative text',
               description: 'Important for SEO and accessibility',
-              options: {
-                isHighlighted: true
-              }
-            }
-          ]
-        },
-        {
-          name: 'code',
-          title: 'Code Block',
-          type: 'object',
-          fields: [
-            {
-              name: 'language',
-              title: 'Language',
-              type: 'string'
             },
             {
-              name: 'code',
-              title: 'Code',
-              type: 'text'
-            }
-          ]
-        },
-        {
-          name: 'callout',
-          title: 'Callout',
-          type: 'object',
-          fields: [
-            {
-              name: 'text',
-              title: 'Text',
-              type: 'text'
-            },
-            {
-              name: 'type',
-              title: 'Type',
+              name: 'caption',
+              title: 'Caption',
               type: 'string',
-              options: {
-                list: [
-                  { title: 'Info', value: 'info' },
-                  { title: 'Warning', value: 'warning' },
-                  { title: 'Success', value: 'success' },
-                  { title: 'Error', value: 'error' }
-                ]
-              }
-            }
-          ]
-        }
+            },
+          ],
+        },
       ],
-      validation: Rule => Rule.required()
-    }
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
+      name: 'order',
+      title: 'Order',
+      type: 'number',
+      description: 'Order in which this section appears in the article',
+      validation: Rule => Rule.required().integer().min(0),
+      initialValue: 0,
+    }),
+    defineField({
+      name: 'article',
+      title: 'Article',
+      type: 'reference',
+      to: [{type: 'article'}],
+      validation: Rule => Rule.required(),
+    }),
   ],
   preview: {
     select: {
       title: 'title',
-      subtitle: 'position'
-    }
+      subtitle: 'order',
+      article: 'article.title',
+    },
+    prepare({title, subtitle, article}) {
+      return {
+        title: title || 'Untitled Section',
+        subtitle: `Order: ${subtitle} - Article: ${article || 'Unknown'}`,
+        media: MdTextFields,
+      }
+    },
   },
-  orderings: [
-    {
-      title: 'Position',
-      name: 'position',
-      by: [
-        {field: 'position', direction: 'asc'}
-      ]
-    }
-  ]
-}
+})

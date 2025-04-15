@@ -1,65 +1,63 @@
-export default {
+import {defineField, defineType} from 'sanity'
+import {MdEmail} from 'react-icons/md'
+
+export default defineType({
   name: 'subscriber',
-  title: 'Newsletter Subscriber',
+  title: 'Subscriber',
   type: 'document',
+  icon: MdEmail,
   fields: [
-    {
+    defineField({
       name: 'email',
       title: 'Email',
       type: 'string',
-      validation: Rule => Rule.required().email()
-    },
-    {
+      validation: Rule => Rule.required().email(),
+    }),
+    defineField({
       name: 'name',
       title: 'Name',
-      type: 'string'
-    },
-    {
-      name: 'subscriptionDate',
-      title: 'Subscription Date',
-      type: 'datetime',
-      initialValue: (new Date()).toISOString(),
-      readOnly: true
-    },
-    {
+      type: 'string',
+    }),
+    defineField({
       name: 'status',
       title: 'Status',
       type: 'string',
       options: {
         list: [
-          { title: 'Active', value: 'active' },
-          { title: 'Unsubscribed', value: 'unsubscribed' },
-          { title: 'Bounced', value: 'bounced' }
-        ]
+          {title: 'Active', value: 'active'},
+          {title: 'Unsubscribed', value: 'unsubscribed'},
+          {title: 'Bounced', value: 'bounced'},
+        ],
+        layout: 'radio',
       },
       initialValue: 'active',
-      validation: Rule => Rule.required()
-    },
-    {
-      name: 'preferences',
-      title: 'Content Preferences',
-      type: 'array',
-      of: [{ type: 'string' }]
-    },
-    {
-      name: 'lastEmailSent',
-      title: 'Last Email Sent',
-      type: 'datetime'
-    }
+    }),
+    defineField({
+      name: 'consent',
+      title: 'Consent Given',
+      type: 'boolean',
+      description: 'Whether the subscriber has given consent to receive emails',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'subscribedAt',
+      title: 'Subscribed At',
+      type: 'datetime',
+      initialValue: () => new Date().toISOString(),
+    }),
   ],
   preview: {
     select: {
       title: 'email',
-      subtitle: 'status'
-    }
+      subtitle: 'status',
+      name: 'name',
+    },
+    prepare({title, subtitle, name}) {
+      return {
+        title,
+        subtitle: `${name ? name + ' - ' : ''}${subtitle.toUpperCase()}`,
+        media: MdEmail,
+      }
+    },
   },
-  orderings: [
-    {
-      title: 'Subscription Date, New',
-      name: 'subscriptionDateDesc',
-      by: [
-        {field: 'subscriptionDate', direction: 'desc'}
-      ]
-    }
-  ]
-}
+})

@@ -1,99 +1,83 @@
-# Setting Up Sanity.io for Invisibuilder
+# Sanity Studio Setup for Invisibuilder
 
-This guide will walk you through setting up Sanity.io as the content management system for Invisibuilder.
+This document provides instructions for setting up and using Sanity Studio with Invisibuilder.
 
-## Prerequisites
+## Initial Setup
 
-- Node.js and npm installed
-- Sanity CLI installed globally (`npm install -g @sanity/cli`)
-- A Sanity.io account (you can create one at [sanity.io/signup](https://www.sanity.io/signup))
+1. Create a Sanity.io account at [https://www.sanity.io/](https://www.sanity.io/)
+2. Create a new project in Sanity
+3. Note your Project ID and Dataset name (usually "production")
+4. Update the following files with your Project ID and Dataset:
+   - `sanity/.env`
+   - `sanity/sanity.cli.js`
+   - `sanity/sanity.config.js`
 
-## Step 1: Create a Sanity Project
+## Running Sanity Studio
 
-1. Log in to Sanity from the command line:
-   ```bash
-   sanity login
-   ```
+From the project root directory, run:
 
-2. Initialize a new Sanity project:
-   ```bash
-   cd sanity
-   sanity init
-   ```
+```bash
+node scripts/start-sanity-studio.js
+```
 
-3. During the initialization:
-   - Create a new project or select an existing one
-   - Set the dataset name (usually "production")
-   - Choose the "Clean project with no predefined schemas" option
+This will:
+1. Check your configuration
+2. Install dependencies if needed
+3. Start the Sanity Studio development server
 
-4. Make note of your project ID - it will be visible in the `sanity.config.js` file
+The Sanity Studio will be available at: `http://localhost:3333`
 
-## Step 2: Update Configuration Files
+## Deployment
 
-1. Update `sanity/sanity.config.js` with your actual project ID.
-
-2. Update the client configuration in `client/src/lib/sanity.ts` with your actual project ID.
-
-3. Add environment variables to your Replit project:
-   - `SANITY_PROJECT_ID`: Your Sanity project ID
-   - `SANITY_DATASET`: Your dataset name (usually "production")
-   - `SANITY_API_TOKEN`: A token with read/write permissions (for the backend)
-
-## Step 3: Start the Sanity Studio
-
-1. Launch the Sanity Studio:
-   ```bash
-   cd sanity
-   sanity start
-   ```
-
-2. The studio will be available at http://localhost:3333
-
-## Step 4: Deploy the Sanity Studio (Optional)
-
-To make the Sanity Studio accessible online:
+To deploy Sanity Studio to Sanity's hosting:
 
 ```bash
 cd sanity
-sanity deploy
+npm run deploy
 ```
 
-This will deploy your studio to a URL like `https://your-project-name.sanity.studio`
+After deployment, your studio will be accessible at `https://your-project-id.sanity.studio/`
 
-## Step 5: Content Migration
+## Data Migration
 
-If you have existing content in your PostgreSQL database, you'll need to migrate it to Sanity. We've provided a script to help with this:
+To migrate existing data from PostgreSQL to Sanity:
 
 ```bash
 node scripts/migrate-to-sanity.js
 ```
 
-## Using Sanity.io in the Application
+Make sure you've set the following environment variables first:
+- `DATABASE_URL`
+- `SANITY_PROJECT_ID`
+- `SANITY_DATASET`
+- `SANITY_API_TOKEN` (with write permissions)
 
-### In the Frontend
+## Switching Between PostgreSQL and Sanity
 
-Use the helper functions in `client/src/lib/sanity.ts` to fetch data from Sanity. For example:
+To toggle between using PostgreSQL and Sanity for data storage:
 
-```typescript
-import { getArticles, urlFor } from '@/lib/sanity';
-
-// In a React component
-const { data: articles } = useQuery({
-  queryKey: ['articles'],
-  queryFn: () => getArticles({ limit: 10 })
-});
-
-// For images
-<img src={urlFor(article.mainImage).width(800).url()} alt={article.mainImage.alt} />
+```bash
+node scripts/toggle-cms.js [postgres|sanity]
 ```
 
-### In the Backend
+If no argument is provided, it will toggle between the two.
 
-The server now uses Sanity.io as the data source instead of PostgreSQL. All API endpoints remain the same, but internally they call Sanity's API through the functions in `server/sanity-api.ts`.
+## Schema Structure
 
-## Helpful Resources
+The Sanity schemas are organized as follows:
+
+- **Article**: Main content model with rich text content
+- **Category**: Categories for organizing articles
+- **ContentSection**: Modular content sections for articles
+- **MediaFile**: Images, videos, and other media files
+- **Resource**: External resources and links
+- **Subscriber**: Newsletter subscribers
+- **Contact**: Contact form submissions
+
+Each schema is defined in its own file in the `sanity/schemas` directory.
+
+## Additional Resources
 
 - [Sanity Documentation](https://www.sanity.io/docs)
-- [GROQ Query Language](https://www.sanity.io/docs/groq)
-- [Sanity React Hooks](https://www.sanity.io/docs/react-hooks)
-- [Content Modelling](https://www.sanity.io/docs/content-modelling)
+- [Sanity GROQ Query Language](https://www.sanity.io/docs/groq)
+- [Content Lake API Reference](https://www.sanity.io/docs/content-lake-api-rest)

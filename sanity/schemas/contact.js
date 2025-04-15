@@ -1,81 +1,84 @@
-export default {
+import {defineField, defineType} from 'sanity'
+import {MdContactMail} from 'react-icons/md'
+
+export default defineType({
   name: 'contact',
-  title: 'Contact Form Submission',
+  title: 'Contact',
   type: 'document',
+  icon: MdContactMail,
   fields: [
-    {
+    defineField({
       name: 'name',
       title: 'Name',
       type: 'string',
-      validation: Rule => Rule.required()
-    },
-    {
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
       name: 'email',
       title: 'Email',
       type: 'string',
-      validation: Rule => Rule.required().email()
-    },
-    {
+      validation: Rule => Rule.required().email(),
+    }),
+    defineField({
       name: 'subject',
       title: 'Subject',
       type: 'string',
-      validation: Rule => Rule.required()
-    },
-    {
+    }),
+    defineField({
       name: 'message',
       title: 'Message',
       type: 'text',
-      validation: Rule => Rule.required()
-    },
-    {
-      name: 'submittedAt',
-      title: 'Submitted At',
-      type: 'datetime',
-      initialValue: (new Date()).toISOString(),
-      readOnly: true
-    },
-    {
+      rows: 5,
+      validation: Rule => Rule.required(),
+    }),
+    defineField({
       name: 'status',
       title: 'Status',
       type: 'string',
       options: {
         list: [
-          { title: 'New', value: 'new' },
-          { title: 'In Progress', value: 'in-progress' },
-          { title: 'Completed', value: 'completed' },
-          { title: 'Archived', value: 'archived' }
-        ]
+          {title: 'New', value: 'new'},
+          {title: 'In Progress', value: 'in-progress'},
+          {title: 'Resolved', value: 'resolved'},
+          {title: 'Spam', value: 'spam'},
+        ],
+        layout: 'radio',
       },
       initialValue: 'new',
-      validation: Rule => Rule.required()
-    },
-    {
+    }),
+    defineField({
       name: 'notes',
       title: 'Internal Notes',
-      type: 'text'
-    }
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'submittedAt',
+      title: 'Submitted At',
+      type: 'datetime',
+      initialValue: () => new Date().toISOString(),
+      readOnly: true,
+    }),
+    defineField({
+      name: 'ipAddress',
+      title: 'IP Address',
+      type: 'string',
+      hidden: true,
+    }),
   ],
   preview: {
     select: {
-      title: 'subject',
-      subtitle: 'email'
-    }
-  },
-  orderings: [
-    {
-      title: 'Submission Date, New',
-      name: 'submittedAtDesc',
-      by: [
-        {field: 'submittedAt', direction: 'desc'}
-      ]
+      title: 'name',
+      subtitle: 'subject',
+      status: 'status',
+      email: 'email',
     },
-    {
-      title: 'Status',
-      name: 'status',
-      by: [
-        {field: 'status', direction: 'asc'},
-        {field: 'submittedAt', direction: 'desc'}
-      ]
-    }
-  ]
-}
+    prepare({title, subtitle, status, email}) {
+      return {
+        title,
+        subtitle: `${status.toUpperCase()}: ${subtitle || '(No subject)'} - ${email}`,
+        media: MdContactMail,
+      }
+    },
+  },
+})
