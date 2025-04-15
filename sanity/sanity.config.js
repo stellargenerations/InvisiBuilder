@@ -2,7 +2,7 @@ import {defineConfig} from 'sanity'
 import {deskTool} from 'sanity/desk'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
-import {myStructure} from './structure'
+import {myStructure} from './structure.jsx'
 
 export default defineConfig({
   name: 'invisibuilder',
@@ -10,6 +10,11 @@ export default defineConfig({
 
   projectId: process.env.SANITY_PROJECT_ID,
   dataset: process.env.SANITY_DATASET,
+  
+  // CORS Origins allow Sanity Studio to be accessible from different domains
+  cors: {
+    allowOrigins: ['https://o5jvy5xl.sanity.studio'],
+  },
 
   plugins: [
     deskTool({
