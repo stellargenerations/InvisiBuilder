@@ -58,16 +58,19 @@ export function PortableText({ value, className = '' }: PortableTextProps) {
         
         // Handle markdown blocks
         if (block._type === 'markdown') {
-          // Using dynamic import would be better but requires setup - importing directly for now
-          // For debugging purposes, log the markdown content
+          // Get the markdown content
+          // Looking at logs, the markdown content is stored in the 'markdown' property
           console.log('Markdown block content:', block);
+          const markdownText = block.markdown || '';
           
+          // Check if we need to import React Markdown
+          // For now, we'll just render as pre-formatted text with styling
           return (
             <div key={i} className="markdown-content my-4">
-              {/* We'll use a placeholder until we can get ReactMarkdown working properly */}
-              <div className="p-4 border border-gray-300 rounded bg-gray-50">
-                <h3 className="text-lg font-medium mb-2">Markdown Content</h3>
-                <pre className="whitespace-pre-wrap">{block.markdown || block.text || ''}</pre>
+              <div className="prose prose-sm max-w-none">
+                <pre className="whitespace-pre-wrap overflow-x-auto bg-gray-50 p-4 rounded border border-gray-200">
+                  {markdownText}
+                </pre>
               </div>
             </div>
           );

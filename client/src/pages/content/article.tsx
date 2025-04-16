@@ -228,15 +228,24 @@ const ArticlePage = () => {
                       // For debugging, show the content type and value
                       console.log('String content:', section.content);
                       
-                      // Find and process markdown content based on various possible patterns
+                      // We've seen from the logs that when content contains a markdown table,
+                      // it's in a structured JSON format with a 'markdown' property
                       let markdownContent = section.content;
+                      let isMarkdownObject = false;
                       
-                      // 1. Try to extract markdown from JSON-like strings
                       try {
-                        // Case: Full JSON object with markdown property
+                        // Try to parse as JSON and extract markdown if it's a markdown object
                         if (markdownContent.startsWith('{') && markdownContent.endsWith('}')) {
                           const parsed = JSON.parse(markdownContent);
-                          if (parsed.markdown) {
+                          
+                          // Check for the _type property (Sanity's type marker)
+                          if (parsed._type === 'markdown' && parsed.markdown) {
+                            console.log('Markdown Value:', parsed);
+                            markdownContent = parsed.markdown;
+                            isMarkdownObject = true;
+                          }
+                          // Also look for a regular markdown property
+                          else if (parsed.markdown) {
                             markdownContent = parsed.markdown;
                             console.log('Found markdown in JSON object', markdownContent);
                           }
@@ -250,7 +259,7 @@ const ArticlePage = () => {
                         console.log('Error processing markdown content', e);
                       }
                       
-                      // 2. Special case: if content contains escaped markdown indicators
+                      // Handle escaped markdown indicators if present
                       const containsMarkdownIndicators = 
                         markdownContent.includes('\\#') || 
                         markdownContent.includes('\\*') || 
@@ -271,6 +280,37 @@ const ArticlePage = () => {
                         markdownContent = markdownContent.slice(1, -1);
                       }
                       
+                      // If it's a markdown table, render in a special way with better styling
+                      const hasMarkdownTable = markdownContent.includes('|') && 
+                                             markdownContent.includes('---') &&
+                                             /^\|.*\|$/.test(markdownContent.split('\n')[0]);
+                      
+                      if (hasMarkdownTable || isMarkdownObject) {
+                        return (
+                          <div className="markdown-content my-4">
+                            <div className="prose prose-sm max-w-none">
+                              {/* Special styling for tables */}
+                              <div className="overflow-x-auto">
+                                <div className="inline-block min-w-full">
+                                  <pre className="whitespace-pre-wrap bg-white border border-gray-200 rounded-md p-4">
+                                    {markdownContent}
+                                  </pre>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Debugging view */}
+                            {process.env.NODE_ENV === 'development' && (
+                              <details className="mt-4 p-2 border border-gray-300 rounded">
+                                <summary className="text-sm text-gray-500 cursor-pointer">Debug Raw Content</summary>
+                                <pre className="mt-2 p-2 bg-gray-100 text-xs overflow-auto">{section.content}</pre>
+                              </details>
+                            )}
+                          </div>
+                        );
+                      }
+                      
+                      // Otherwise render as normal markdown
                       return (
                         <div className="markdown-content">
                           <ReactMarkdown>{markdownContent}</ReactMarkdown>
@@ -377,13 +417,11 @@ const ArticlePage = () => {
             <div className="flex flex-wrap items-center justify-between">
               <div className="flex items-center space-x-4 mb-4 md:mb-0">
                 {article.tags && article.tags.map((tag, index) => (
-                  <Link key={index} href={`/articles?tag=${tag}`}>
-                    <a className="text-sm text-neutral-800 hover:text-primary-dark transition duration-150">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline text-primary mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                      </svg>
-                      {tag}
-                    </a>
+                  <Link key={index} href={`/articles?tag=${tag}`} className="text-sm text-neutral-800 hover:text-primary-dark transition duration-150">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline text-primary mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                    </svg>
+                    {tag}
                   </Link>
                 ))}
               </div>
