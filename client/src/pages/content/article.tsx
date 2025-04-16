@@ -228,19 +228,52 @@ const ArticlePage = () => {
                       // For debugging, show the content type and value
                       console.log('String content:', section.content);
                       
-                      // First try to remove any surrounding quotes if it's a JSON string
-                      let content = section.content;
-                      if (content.startsWith('"') && content.endsWith('"')) {
-                        try {
-                          content = JSON.parse(content);
-                        } catch (e) {
-                          console.log('Not a valid JSON string');
+                      // Find and process markdown content based on various possible patterns
+                      let markdownContent = section.content;
+                      
+                      // 1. Try to extract markdown from JSON-like strings
+                      try {
+                        // Case: Full JSON object with markdown property
+                        if (markdownContent.startsWith('{') && markdownContent.endsWith('}')) {
+                          const parsed = JSON.parse(markdownContent);
+                          if (parsed.markdown) {
+                            markdownContent = parsed.markdown;
+                            console.log('Found markdown in JSON object', markdownContent);
+                          }
                         }
+                        // Case: Quoted string that needs to be unescaped
+                        else if (markdownContent.startsWith('"') && markdownContent.endsWith('"')) {
+                          markdownContent = JSON.parse(markdownContent);
+                          console.log('Unescaped quoted string', markdownContent);
+                        }
+                      } catch (e) {
+                        console.log('Error processing markdown content', e);
+                      }
+                      
+                      // 2. Special case: if content contains escaped markdown indicators
+                      const containsMarkdownIndicators = 
+                        markdownContent.includes('\\#') || 
+                        markdownContent.includes('\\*') || 
+                        markdownContent.includes('\\`') ||
+                        markdownContent.includes('\\[');
+                        
+                      if (containsMarkdownIndicators) {
+                        markdownContent = markdownContent
+                          .replace(/\\#/g, '#')
+                          .replace(/\\\*/g, '*')
+                          .replace(/\\`/g, '`')
+                          .replace(/\\\[/g, '[');
+                        console.log('Unescaped markdown indicators', markdownContent);
+                      }
+                      
+                      // Remove any enclosing quotes if we missed them earlier
+                      if (markdownContent.startsWith('"') && markdownContent.endsWith('"')) {
+                        markdownContent = markdownContent.slice(1, -1);
                       }
                       
                       return (
                         <div className="markdown-content">
-                          <ReactMarkdown>{content}</ReactMarkdown>
+                          <ReactMarkdown>{markdownContent}</ReactMarkdown>
                           
                           {/* Debugging view */}
                           {process.env.NODE_ENV === 'development' && (
