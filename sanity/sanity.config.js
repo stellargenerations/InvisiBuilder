@@ -3,6 +3,7 @@ import {deskTool} from 'sanity/desk'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
 import {myStructure} from './structure.jsx'
+import {table} from '@sanity/table'
 
 export default defineConfig({
   name: 'invisibuilder',
@@ -25,6 +26,7 @@ export default defineConfig({
       defaultApiVersion: 'v2023-03-04',
       defaultDataset: process.env.SANITY_DATASET,
     }),
+    table(),
   ],
 
   schema: {

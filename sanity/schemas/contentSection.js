@@ -78,6 +78,26 @@ export default defineType({
             },
           ],
         },
+        {
+          type: 'table',
+          title: 'Table',
+        },
+        {
+          type: 'code',
+          title: 'Code Block',
+          options: {
+            language: 'javascript',
+            languageAlternatives: [
+              {title: 'JavaScript', value: 'javascript'},
+              {title: 'HTML', value: 'html'},
+              {title: 'CSS', value: 'css'},
+              {title: 'TypeScript', value: 'typescript'},
+              {title: 'Python', value: 'python'},
+              {title: 'PHP', value: 'php'},
+              {title: 'Shell', value: 'bash'},
+            ],
+          },
+        },
       ],
       validation: Rule => Rule.required(),
     }),
