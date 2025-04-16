@@ -1,5 +1,6 @@
 // This is a simplified Portable Text renderer
 // In a production app, you'd use @portabletext/react for a complete solution
+import React from 'react';
 
 interface Block {
   _type: string;
@@ -52,6 +53,23 @@ export function PortableText({ value, className = '' }: PortableTextProps) {
             <pre key={i} className="bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto my-4">
               <code>{block.code}</code>
             </pre>
+          );
+        }
+        
+        // Handle markdown blocks
+        if (block._type === 'markdown') {
+          // Using dynamic import would be better but requires setup - importing directly for now
+          // For debugging purposes, log the markdown content
+          console.log('Markdown block content:', block);
+          
+          return (
+            <div key={i} className="markdown-content my-4">
+              {/* We'll use a placeholder until we can get ReactMarkdown working properly */}
+              <div className="p-4 border border-gray-300 rounded bg-gray-50">
+                <h3 className="text-lg font-medium mb-2">Markdown Content</h3>
+                <pre className="whitespace-pre-wrap">{block.markdown || block.text || ''}</pre>
+              </div>
+            </div>
           );
         }
         

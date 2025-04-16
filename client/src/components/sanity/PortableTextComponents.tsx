@@ -7,11 +7,14 @@ import ReactMarkdown from 'react-markdown';
 export const portableTextComponents: PortableTextComponents = {
   types: {
     table: ({ value }) => <SanityTable value={value} />,
-    markdown: ({ value }) => (
-      <div className="markdown-content my-4">
-        <ReactMarkdown>{value.markdown}</ReactMarkdown>
-      </div>
-    ),
+    markdown: ({ value }) => {
+      console.log('Markdown Value:', value);
+      return (
+        <div className="markdown-content my-4">
+          <ReactMarkdown>{value.markdown || value.text || ''}</ReactMarkdown>
+        </div>
+      );
+    },
     code: ({ value }) => (
       <pre className="bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto my-4">
         <code>{value.code}</code>

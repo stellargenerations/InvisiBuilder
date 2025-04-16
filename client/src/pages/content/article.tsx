@@ -209,9 +209,46 @@ const ArticlePage = () => {
                     console.log('Section Content:', section.content);
                     
                     if (typeof section.content === 'string') {
+                      // Try to parse JSON string in case it's a stringified object
+                      try {
+                        const parsedContent = JSON.parse(section.content);
+                        console.log('Parsed content:', parsedContent);
+                        if (parsedContent.markdown || parsedContent.text) {
+                          return (
+                            <div className="markdown-content">
+                              <ReactMarkdown>{parsedContent.markdown || parsedContent.text}</ReactMarkdown>
+                            </div>
+                          );
+                        }
+                      } catch (e) {
+                        // If it's not valid JSON, treat as regular markdown
+                        console.log('Not valid JSON, rendering as regular markdown');
+                      }
+                      
+                      // For debugging, show the content type and value
+                      console.log('String content:', section.content);
+                      
+                      // First try to remove any surrounding quotes if it's a JSON string
+                      let content = section.content;
+                      if (content.startsWith('"') && content.endsWith('"')) {
+                        try {
+                          content = JSON.parse(content);
+                        } catch (e) {
+                          console.log('Not a valid JSON string');
+                        }
+                      }
+                      
                       return (
                         <div className="markdown-content">
-                          <ReactMarkdown>{section.content}</ReactMarkdown>
+                          <ReactMarkdown>{content}</ReactMarkdown>
+                          
+                          {/* Debugging view */}
+                          {process.env.NODE_ENV === 'development' && (
+                            <details className="mt-4 p-2 border border-gray-300 rounded">
+                              <summary className="text-sm text-gray-500 cursor-pointer">Debug Raw Content</summary>
+                              <pre className="mt-2 p-2 bg-gray-100 text-xs overflow-auto">{section.content}</pre>
+                            </details>
+                          )}
                         </div>
                       );
                     } else {
