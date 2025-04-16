@@ -88,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const articles = await markdownApi.getAllArticles();
       // Return the first featured article as preview or the most recent one
-      const previewArticle = articles.find(article => article.featured) || articles[0];
+      const previewArticle = articles.find(article => article.featured === true) || articles[0];
       
       if (!previewArticle) {
         return res.status(404).json({ message: "Article not found" });

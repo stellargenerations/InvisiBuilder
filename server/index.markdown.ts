@@ -16,7 +16,7 @@ async function main() {
   
   // Setup Vite development server in development mode
   if (process.env.NODE_ENV !== 'production') {
-    await setupVite(app);
+    await setupVite(app, server);
   } else {
     // Serve static client assets in production
     app.use(express.static(path.join(__dirname, '../client/dist')));

@@ -5,32 +5,63 @@ import { remark } from 'remark';
 import html from 'remark-html';
 import { glob } from 'glob';
 
+// Define types for our content
+export interface Article {
+  slug: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  publishedDate: string;
+  updatedDate?: string;
+  author?: string;
+  category?: string;
+  categories?: string[];
+  tags?: string[];
+  featured?: boolean;
+  coverImage?: string;
+  _id?: string;
+  readTime?: number;
+  [key: string]: any; // For any additional properties
+}
+
+export interface Category {
+  slug: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  articleCount?: number;
+  _id?: string;
+  [key: string]: any; // For any additional properties
+}
+
 const articlesDirectory = join(process.cwd(), 'content/articles');
 const categoriesDirectory = join(process.cwd(), 'content/categories');
 
 // Article functions
-export async function getAllArticles() {
+export async function getAllArticles(): Promise<Article[]> {
   const articleFiles = await glob('*.md', { cwd: articlesDirectory });
   
   const articles = await Promise.all(
     articleFiles.map(async (filename) => {
       const slug = filename.replace(/\.md$/, '');
       const article = await getArticleBySlug(slug);
-      return article;
+      return article as Article;
     })
   );
   
-  // Sort articles by date in descending order
-  return articles.sort((a, b) => {
-    if (a.publishedDate < b.publishedDate) {
-      return 1;
-    } else {
-      return -1;
-    }
-  });
+  // Filter out null values and sort articles by date in descending order
+  return articles
+    .filter((article): article is Article => article !== null)
+    .sort((a, b) => {
+      if ((a.publishedDate || '') < (b.publishedDate || '')) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
 }
 
-export async function getArticleBySlug(slug: string) {
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
   const fullPath = join(articlesDirectory, `${slug}.md`);
   
   try {
@@ -46,16 +77,19 @@ export async function getArticleBySlug(slug: string) {
     
     return {
       slug,
+      title: data.title || '',
+      excerpt: data.excerpt || '',
       content: htmlContent,
+      publishedDate: data.publishedDate || new Date().toISOString(),
       ...data,
-    };
+    } as Article;
   } catch (error) {
     console.error(`Error reading article ${slug}:`, error);
     return null;
   }
 }
 
-export async function getArticlesByCategory(categorySlug: string) {
+export async function getArticlesByCategory(categorySlug: string): Promise<Article[]> {
   const allArticles = await getAllArticles();
   return allArticles.filter(article => 
     article.category === categorySlug || 
@@ -63,14 +97,14 @@ export async function getArticlesByCategory(categorySlug: string) {
   );
 }
 
-export async function getArticlesByTag(tag: string) {
+export async function getArticlesByTag(tag: string): Promise<Article[]> {
   const allArticles = await getAllArticles();
   return allArticles.filter(article => 
     article.tags && article.tags.includes(tag)
   );
 }
 
-export async function searchArticles(query: string) {
+export async function searchArticles(query: string): Promise<Article[]> {
   const allArticles = await getAllArticles();
   const lowerCaseQuery = query.toLowerCase();
   
@@ -82,7 +116,7 @@ export async function searchArticles(query: string) {
 }
 
 // Category functions
-export async function getAllCategories() {
+export async function getAllCategories(): Promise<Category[]> {
   const categoryFiles = await glob('*.md', { cwd: categoriesDirectory });
   
   const categories = await Promise.all(
@@ -93,10 +127,13 @@ export async function getAllCategories() {
     })
   );
   
-  return categories.sort((a, b) => a.name.localeCompare(b.name));
+  // Filter out null values and sort by name
+  return categories
+    .filter((category): category is Category => category !== null)
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 }
 
-export async function getCategoryBySlug(slug: string) {
+export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   const fullPath = join(categoriesDirectory, `${slug}.md`);
   
   try {
@@ -109,9 +146,12 @@ export async function getCategoryBySlug(slug: string) {
     
     return {
       slug,
+      name: data.name || '',
+      description: data.description || '',
+      icon: data.icon || '',
       articleCount,
       ...data,
-    };
+    } as Category;
   } catch (error) {
     console.error(`Error reading category ${slug}:`, error);
     return null;
@@ -119,7 +159,7 @@ export async function getCategoryBySlug(slug: string) {
 }
 
 // File operations
-export async function createArticle(articleData: any) {
+export async function createArticle(articleData: Partial<Article> & { slug: string; title: string }): Promise<Article | null> {
   const { slug, title, content, ...metadata } = articleData;
   
   // Create frontmatter
@@ -138,7 +178,7 @@ export async function createArticle(articleData: any) {
   return await getArticleBySlug(slug);
 }
 
-export async function updateArticle(slug: string, articleData: any) {
+export async function updateArticle(slug: string, articleData: Partial<Article>): Promise<Article | null> {
   const existingArticle = await getArticleBySlug(slug);
   
   if (!existingArticle) {
@@ -166,7 +206,7 @@ export async function updateArticle(slug: string, articleData: any) {
   return await getArticleBySlug(slug);
 }
 
-export async function deleteArticle(slug: string) {
+export async function deleteArticle(slug: string): Promise<boolean> {
   const filePath = join(articlesDirectory, `${slug}.md`);
   
   try {
@@ -178,7 +218,7 @@ export async function deleteArticle(slug: string) {
   }
 }
 
-export async function createCategory(categoryData: any) {
+export async function createCategory(categoryData: Partial<Category> & { slug: string; name: string }): Promise<Category | null> {
   const { slug, name, ...metadata } = categoryData;
   
   // Create frontmatter
@@ -197,7 +237,7 @@ export async function createCategory(categoryData: any) {
   return await getCategoryBySlug(slug);
 }
 
-export async function updateCategory(slug: string, categoryData: any) {
+export async function updateCategory(slug: string, categoryData: Partial<Category>): Promise<Category | null> {
   const existingCategory = await getCategoryBySlug(slug);
   
   if (!existingCategory) {
@@ -220,7 +260,7 @@ export async function updateCategory(slug: string, categoryData: any) {
   return await getCategoryBySlug(slug);
 }
 
-export async function deleteCategory(slug: string) {
+export async function deleteCategory(slug: string): Promise<boolean> {
   const filePath = join(categoriesDirectory, `${slug}.md`);
   
   try {
