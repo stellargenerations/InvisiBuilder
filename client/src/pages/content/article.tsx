@@ -7,6 +7,7 @@ import Breadcrumbs from "@/components/ui/breadcrumb";
 import { Helmet } from "react-helmet";
 import { urlFor } from "@/lib/sanity"; // Import urlFor to handle Sanity images
 import { PortableText } from "@portabletext/react";
+import { portableTextComponents } from "@/components/sanity";
 
 const ArticlePage = () => {
   const [match, params] = useRoute("/:slug");
@@ -190,7 +191,7 @@ const ArticlePage = () => {
             {/* Main content */}
             {article.content && (
               <div className="mb-12">
-                <PortableText value={article.content} />
+                <PortableText value={article.content} components={portableTextComponents} />
               </div>
             )}
             
@@ -204,7 +205,7 @@ const ArticlePage = () => {
                 {section.content && typeof section.content === 'string' ? (
                   <div dangerouslySetInnerHTML={{ __html: section.content }} />
                 ) : (
-                  <PortableText value={section.content} />
+                  <PortableText value={section.content} components={portableTextComponents} />
                 )}
                 
                 {/* Media section */}
