@@ -11,9 +11,9 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center mb-4">
               <Link href="/">
-                <a>
+                <div className="cursor-pointer">
                   <Logo className="text-primary" />
-                </a>
+                </div>
               </Link>
             </div>
             <p className="text-sm mb-4">Resources for solopreneurs who prefer to work from behind the scenes, without sacrificing success.</p>
@@ -42,30 +42,30 @@ const Footer = () => {
           <div>
             <h4 className="font-heading font-semibold text-lg mb-4 text-white">Content</h4>
             <ul className="space-y-2">
-              <li><Link href="/content"><a className="text-sm hover:text-primary transition duration-150">Articles</a></Link></li>
-              <li><Link href="/content?type=tutorial"><a className="text-sm hover:text-primary transition duration-150">Tutorials</a></Link></li>
-              <li><Link href="/content?type=case-study"><a className="text-sm hover:text-primary transition duration-150">Case Studies</a></Link></li>
-              <li><Link href="/content?category=resources"><a className="text-sm hover:text-primary transition duration-150">Resources</a></Link></li>
+              <li><Link href="/content"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Articles</div></Link></li>
+              <li><Link href="/content?type=tutorial"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Tutorials</div></Link></li>
+              <li><Link href="/content?type=case-study"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Case Studies</div></Link></li>
+              <li><Link href="/content?category=resources"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Resources</div></Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-heading font-semibold text-lg mb-4 text-white">Categories</h4>
             <ul className="space-y-2">
-              <li><Link href="/content?category=content-creation"><a className="text-sm hover:text-primary transition duration-150">Content Creation</a></Link></li>
-              <li><Link href="/content?category=monetization"><a className="text-sm hover:text-primary transition duration-150">Monetization</a></Link></li>
-              <li><Link href="/content?category=privacy-tools"><a className="text-sm hover:text-primary transition duration-150">Privacy Tools</a></Link></li>
-              <li><Link href="/content?category=automation"><a className="text-sm hover:text-primary transition duration-150">Automation</a></Link></li>
+              <li><Link href="/content?category=content-creation"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Content Creation</div></Link></li>
+              <li><Link href="/content?category=monetization"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Monetization</div></Link></li>
+              <li><Link href="/content?category=privacy-tools"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Privacy Tools</div></Link></li>
+              <li><Link href="/content?category=automation"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Automation</div></Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-heading font-semibold text-lg mb-4 text-white">Legal</h4>
             <ul className="space-y-2">
-              <li><Link href="/privacy-policy"><a className="text-sm hover:text-primary transition duration-150">Privacy Policy</a></Link></li>
-              <li><Link href="/terms"><a className="text-sm hover:text-primary transition duration-150">Terms of Service</a></Link></li>
-              <li><Link href="/cookie-policy"><a className="text-sm hover:text-primary transition duration-150">Cookie Policy</a></Link></li>
-              <li><Link href="/disclaimer"><a className="text-sm hover:text-primary transition duration-150">Disclaimer</a></Link></li>
+              <li><Link href="/privacy-policy"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Privacy Policy</div></Link></li>
+              <li><Link href="/terms"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Terms of Service</div></Link></li>
+              <li><Link href="/cookie-policy"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Cookie Policy</div></Link></li>
+              <li><Link href="/disclaimer"><div className="text-sm hover:text-primary transition duration-150 cursor-pointer">Disclaimer</div></Link></li>
             </ul>
           </div>
         </div>
@@ -76,7 +76,7 @@ const Footer = () => {
               &copy; {currentYear} Invisibuilder. All rights reserved.
             </div>
             <div>
-              <Link href="/contact"><a className="text-sm text-neutral-400 hover:text-primary transition duration-150">Contact</a></Link>
+              <Link href="/contact"><div className="text-sm text-neutral-400 hover:text-primary transition duration-150 cursor-pointer">Contact</div></Link>
             </div>
           </div>
         </div>
