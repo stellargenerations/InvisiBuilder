@@ -11,7 +11,11 @@ To use Sanity Studio with tables within Replit, you need to run Sanity Studio in
 cd sanity && npx sanity dev --host=0.0.0.0 --port=3333
 ```
 
-3. Once Sanity Studio is running, you can access it at: http://0.0.0.0:3333/
+3. Once Sanity Studio is running, you can access it by replacing the port in your Replit URL:
+   - Take your current Replit URL (e.g., https://myproject.username.replit.app)
+   - Change it to use port 3333 (e.g., https://3333-myproject-username.replit.app)
+   
+   Alternatively, you can click on the "Webview" tab in Replit and manually change the port to 3333.
 
 ## Using Tables in Sanity Studio
 
