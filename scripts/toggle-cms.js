@@ -1,5 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * This script toggles between using Sanity.io and Markdown files for content management.
@@ -8,12 +9,16 @@ const path = require('path');
  * If no argument is provided, it will toggle between the two.
  */
 
+// Get current file's directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // File paths
-const serverIndexPath = path.join(process.cwd(), 'server', 'index.ts');
-const packageJsonPath = path.join(process.cwd(), 'package.json');
+const serverIndexPath = path.join(path.dirname(__dirname), 'server', 'index.ts');
+const packageJsonPath = path.join(path.dirname(__dirname), 'package.json');
 
 // Backup directories
-const backupDir = path.join(process.cwd(), 'server', 'backups');
+const backupDir = path.join(path.dirname(__dirname), 'server', 'backups');
 const sanityBackupDir = path.join(backupDir, 'sanity');
 const markdownBackupDir = path.join(backupDir, 'markdown');
 
@@ -60,7 +65,7 @@ function switchToCMS(targetCMS) {
   // Update server/index.ts
   const sourcePath = targetCMS === 'sanity' 
     ? path.join(sanityBackupDir, 'index.ts') 
-    : path.join(process.cwd(), 'server', 'index.markdown.ts');
+    : path.join(path.dirname(__dirname), 'server', 'index.markdown.ts');
   
   if (!fs.existsSync(sourcePath)) {
     console.error(`Source file not found: ${sourcePath}`);
