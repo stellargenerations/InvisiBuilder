@@ -118,7 +118,7 @@ const ArticlesPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {categories.map((category, index) => (
                 <CategoryCard 
-                  key={category._id || category.id || `category-${index}`} 
+                  key={category.id || `category-${index}`} 
                   category={category} 
                 />
               ))}

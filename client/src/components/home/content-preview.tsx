@@ -142,12 +142,12 @@ const ContentPreview = () => {
                 <div className="flex items-center space-x-4 mb-4 md:mb-0">
                   {previewArticle.tags && previewArticle.tags.map((tag, index) => (
                     <Link key={index} href={`/content?tag=${tag}`}>
-                      <a className="text-sm text-neutral-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline text-primary mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <div className="text-sm text-neutral-800 cursor-pointer inline-flex items-center mr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary mr-1" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                         </svg>
                         {tag}
-                      </a>
+                      </div>
                     </Link>
                   ))}
                 </div>
@@ -179,12 +179,12 @@ const ContentPreview = () => {
         
         <div className="mt-8 text-center">
           <Link href={`/content/${previewArticle.id}`}>
-            <a className="inline-flex items-center font-medium text-primary-dark hover:text-primary transition duration-150">
+            <div className="inline-flex items-center font-medium text-primary-dark hover:text-primary transition duration-150 cursor-pointer">
               View Full Article
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
-            </a>
+            </div>
           </Link>
         </div>
       </div>
