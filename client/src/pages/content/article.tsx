@@ -8,6 +8,7 @@ import { Helmet } from "react-helmet";
 import { urlFor } from "@/lib/sanity"; // Import urlFor to handle Sanity images
 import { PortableText } from "@portabletext/react";
 import { portableTextComponents } from "@/components/sanity";
+import ReactMarkdown from "react-markdown";
 
 const ArticlePage = () => {
   const [match, params] = useRoute("/:slug");
@@ -203,7 +204,9 @@ const ArticlePage = () => {
                 )}
                 
                 {section.content && typeof section.content === 'string' ? (
-                  <div dangerouslySetInnerHTML={{ __html: section.content }} />
+                  <div className="markdown-content">
+                    <ReactMarkdown>{section.content}</ReactMarkdown>
+                  </div>
                 ) : (
                   <PortableText value={section.content} components={portableTextComponents} />
                 )}

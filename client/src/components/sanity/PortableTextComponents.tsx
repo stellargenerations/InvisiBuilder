@@ -1,11 +1,17 @@
 import React from 'react';
 import { PortableTextComponents } from '@portabletext/react';
 import SanityTable from './SanityTable';
+import ReactMarkdown from 'react-markdown';
 
 // Configure components for @portabletext/react
 export const portableTextComponents: PortableTextComponents = {
   types: {
     table: ({ value }) => <SanityTable value={value} />,
+    markdown: ({ value }) => (
+      <div className="markdown-content my-4">
+        <ReactMarkdown>{value.markdown}</ReactMarkdown>
+      </div>
+    ),
     code: ({ value }) => (
       <pre className="bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto my-4">
         <code>{value.code}</code>
