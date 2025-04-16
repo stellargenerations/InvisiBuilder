@@ -55,8 +55,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/articles/:id", async (req: Request, res: Response) => {
     try {
-      // In our markdown implementation, we'll use slug instead of ID
-      const article = await markdownApi.getArticleBySlug(req.params.id);
+      // Convert the ID to kebab-case format used in filenames
+      const formattedId = req.params.id
+        .toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with hyphens
+        .replace(/[^\w\-]+/g, '')       // Remove special characters
+        .replace(/\-\-+/g, '-')         // Replace multiple hyphens with single hyphen
+        .replace(/^-+/, '')             // Remove leading hyphens
+        .replace(/-+$/, '');            // Remove trailing hyphens
+      
+      console.log(`Looking for article with ID: ${formattedId}`);
+      const article = await markdownApi.getArticleBySlug(formattedId);
       
       if (!article) {
         return res.status(404).json({ message: "Article not found" });
@@ -71,7 +80,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/articles/slug/:slug", async (req: Request, res: Response) => {
     try {
-      const article = await markdownApi.getArticleBySlug(req.params.slug);
+      // Convert the slug to kebab-case format used in filenames
+      const formattedSlug = req.params.slug
+        .toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with hyphens
+        .replace(/[^\w\-]+/g, '')       // Remove special characters
+        .replace(/\-\-+/g, '-')         // Replace multiple hyphens with single hyphen
+        .replace(/^-+/, '')             // Remove leading hyphens
+        .replace(/-+$/, '');            // Remove trailing hyphens
+      
+      console.log(`Looking for article with slug: ${formattedSlug}`);
+      const article = await markdownApi.getArticleBySlug(formattedSlug);
       
       if (!article) {
         return res.status(404).json({ message: "Article not found" });
@@ -87,6 +106,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/articles/preview", async (_req: Request, res: Response) => {
     try {
       const articles = await markdownApi.getAllArticles();
+      
+      if (!articles || articles.length === 0) {
+        return res.status(404).json({ message: "No articles found" });
+      }
+      
       // Return the first featured article as preview or the most recent one
       const previewArticle = articles.find(article => article.featured === true) || articles[0];
       

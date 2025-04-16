@@ -39,26 +39,36 @@ const categoriesDirectory = join(process.cwd(), 'content/categories');
 
 // Article functions
 export async function getAllArticles(): Promise<Article[]> {
-  const articleFiles = await glob('*.md', { cwd: articlesDirectory });
-  
-  const articles = await Promise.all(
-    articleFiles.map(async (filename) => {
-      const slug = filename.replace(/\.md$/, '');
-      const article = await getArticleBySlug(slug);
-      return article as Article;
-    })
-  );
-  
-  // Filter out null values and sort articles by date in descending order
-  return articles
-    .filter((article): article is Article => article !== null)
-    .sort((a, b) => {
-      if ((a.publishedDate || '') < (b.publishedDate || '')) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
+  try {
+    const articleFiles = await glob('*.md', { cwd: articlesDirectory });
+    
+    if (!articleFiles || articleFiles.length === 0) {
+      console.log("No article files found in directory:", articlesDirectory);
+      return [];
+    }
+    
+    const articles = await Promise.all(
+      articleFiles.map(async (filename) => {
+        const slug = filename.replace(/\.md$/, '');
+        const article = await getArticleBySlug(slug);
+        return article as Article;
+      })
+    );
+    
+    // Filter out null values and sort articles by date in descending order
+    return articles
+      .filter((article): article is Article => article !== null)
+      .sort((a, b) => {
+        if ((a.publishedDate || '') < (b.publishedDate || '')) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+  } catch (error) {
+    console.error("Error getting all articles:", error);
+    return [];
+  }
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
@@ -117,20 +127,30 @@ export async function searchArticles(query: string): Promise<Article[]> {
 
 // Category functions
 export async function getAllCategories(): Promise<Category[]> {
-  const categoryFiles = await glob('*.md', { cwd: categoriesDirectory });
-  
-  const categories = await Promise.all(
-    categoryFiles.map(async (filename) => {
-      const slug = filename.replace(/\.md$/, '');
-      const category = await getCategoryBySlug(slug);
-      return category;
-    })
-  );
-  
-  // Filter out null values and sort by name
-  return categories
-    .filter((category): category is Category => category !== null)
-    .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  try {
+    const categoryFiles = await glob('*.md', { cwd: categoriesDirectory });
+    
+    if (!categoryFiles || categoryFiles.length === 0) {
+      console.log("No category files found in directory:", categoriesDirectory);
+      return [];
+    }
+    
+    const categories = await Promise.all(
+      categoryFiles.map(async (filename) => {
+        const slug = filename.replace(/\.md$/, '');
+        const category = await getCategoryBySlug(slug);
+        return category;
+      })
+    );
+    
+    // Filter out null values and sort by name
+    return categories
+      .filter((category): category is Category => category !== null)
+      .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  } catch (error) {
+    console.error("Error getting all categories:", error);
+    return [];
+  }
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
