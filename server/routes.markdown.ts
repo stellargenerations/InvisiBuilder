@@ -30,54 +30,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Article routes
-  app.get("/api/articles", async (req: Request, res: Response) => {
+  // The order of these routes is important - more specific routes should come first
+  
+  app.get("/api/articles/preview", async (_req: Request, res: Response) => {
     try {
-      const { category, tag, search } = req.query;
+      const articles = await markdownApi.getAllArticles();
       
-      let articles;
-      
-      if (category) {
-        articles = await markdownApi.getArticlesByCategory(category as string);
-      } else if (tag) {
-        articles = await markdownApi.getArticlesByTag(tag as string);
-      } else if (search) {
-        articles = await markdownApi.searchArticles(search as string);
-      } else {
-        articles = await markdownApi.getAllArticles();
+      if (!articles || articles.length === 0) {
+        return res.status(404).json({ message: "No articles found" });
       }
       
-      res.json(articles);
-    } catch (error) {
-      console.error("Error fetching articles:", error);
-      res.status(500).json({ message: "Error fetching articles" });
-    }
-  });
-
-  app.get("/api/articles/:id", async (req: Request, res: Response) => {
-    try {
-      // Convert the ID to kebab-case format used in filenames
-      const formattedId = req.params.id
-        .toLowerCase()
-        .replace(/\s+/g, '-')           // Replace spaces with hyphens
-        .replace(/[^\w\-]+/g, '')       // Remove special characters
-        .replace(/\-\-+/g, '-')         // Replace multiple hyphens with single hyphen
-        .replace(/^-+/, '')             // Remove leading hyphens
-        .replace(/-+$/, '');            // Remove trailing hyphens
+      // Return the first featured article as preview or the most recent one
+      // By sorting the articles, we ensure we get the most recent one if no featured article is found
+      const previewArticle = articles.find(article => article.featured === true) || articles[0];
       
-      console.log(`Looking for article with ID: ${formattedId}`);
-      const article = await markdownApi.getArticleBySlug(formattedId);
-      
-      if (!article) {
+      if (!previewArticle) {
         return res.status(404).json({ message: "Article not found" });
       }
       
-      res.json(article);
+      // Log the preview article being returned
+      console.log("Returning preview article:", previewArticle.title);
+      
+      res.json(previewArticle);
     } catch (error) {
-      console.error(`Error fetching article ${req.params.id}:`, error);
-      res.status(500).json({ message: "Error fetching article" });
+      console.error("Error fetching preview article:", error);
+      res.status(500).json({ message: "Error fetching preview article" });
     }
   });
-
+  
   app.get("/api/articles/slug/:slug", async (req: Request, res: Response) => {
     try {
       // Convert the slug to kebab-case format used in filenames
@@ -102,26 +82,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error fetching article" });
     }
   });
-
-  app.get("/api/articles/preview", async (_req: Request, res: Response) => {
+  
+  app.get("/api/articles/:id", async (req: Request, res: Response) => {
     try {
-      const articles = await markdownApi.getAllArticles();
+      // Convert the ID to kebab-case format used in filenames
+      const formattedId = req.params.id
+        .toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with hyphens
+        .replace(/[^\w\-]+/g, '')       // Remove special characters
+        .replace(/\-\-+/g, '-')         // Replace multiple hyphens with single hyphen
+        .replace(/^-+/, '')             // Remove leading hyphens
+        .replace(/-+$/, '');            // Remove trailing hyphens
       
-      if (!articles || articles.length === 0) {
-        return res.status(404).json({ message: "No articles found" });
-      }
+      console.log(`Looking for article with ID: ${formattedId}`);
+      const article = await markdownApi.getArticleBySlug(formattedId);
       
-      // Return the first featured article as preview or the most recent one
-      const previewArticle = articles.find(article => article.featured === true) || articles[0];
-      
-      if (!previewArticle) {
+      if (!article) {
         return res.status(404).json({ message: "Article not found" });
       }
       
-      res.json(previewArticle);
+      res.json(article);
     } catch (error) {
-      console.error("Error fetching preview article:", error);
-      res.status(500).json({ message: "Error fetching preview article" });
+      console.error(`Error fetching article ${req.params.id}:`, error);
+      res.status(500).json({ message: "Error fetching article" });
+    }
+  });
+  
+  // Generic articles endpoint (must come after the specific routes to avoid conflict)
+  app.get("/api/articles", async (req: Request, res: Response) => {
+    try {
+      const { category, tag, search } = req.query;
+      
+      let articles;
+      
+      if (category) {
+        articles = await markdownApi.getArticlesByCategory(category as string);
+      } else if (tag) {
+        articles = await markdownApi.getArticlesByTag(tag as string);
+      } else if (search) {
+        articles = await markdownApi.searchArticles(search as string);
+      } else {
+        articles = await markdownApi.getAllArticles();
+      }
+      
+      res.json(articles);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      res.status(500).json({ message: "Error fetching articles" });
     }
   });
 
