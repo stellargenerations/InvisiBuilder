@@ -116,9 +116,9 @@ const ArticlesPage = () => {
           <div className="mb-12">
             <h2 className="text-xl font-heading font-semibold mb-6">Browse by Category</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {categories.map((category) => (
+              {categories.map((category, index) => (
                 <CategoryCard 
-                  key={category.id} 
+                  key={category._id || category.id || `category-${index}`} 
                   category={category} 
                 />
               ))}
