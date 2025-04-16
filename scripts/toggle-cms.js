@@ -1,117 +1,87 @@
-#!/usr/bin/env node
+const fs = require('fs');
+const path = require('path');
 
 /**
- * This script toggles between using the PostgreSQL database and Sanity.io for content management.
- * Usage: node scripts/toggle-cms.js [postgres|sanity]
+ * This script toggles between using Sanity.io and Markdown files for content management.
+ * Usage: node scripts/toggle-cms.js [sanity|markdown]
  * 
  * If no argument is provided, it will toggle between the two.
  */
 
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
-
-// Get the directory name in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Paths to server files
-const POSTGRES_SERVER_INDEX = path.join(__dirname, '../server/index.ts');
-const SANITY_SERVER_INDEX = path.join(__dirname, '../server/index.sanity.ts');
-
-const POSTGRES_SERVER_ROUTES = path.join(__dirname, '../server/routes.ts');
-const SANITY_SERVER_ROUTES = path.join(__dirname, '../server/routes.sanity.ts');
+// File paths
+const serverIndexPath = path.join(process.cwd(), 'server', 'index.ts');
+const packageJsonPath = path.join(process.cwd(), 'package.json');
 
 // Backup directories
-const BACKUP_DIR = path.join(__dirname, '../server/backups');
+const backupDir = path.join(process.cwd(), 'server', 'backups');
+const sanityBackupDir = path.join(backupDir, 'sanity');
+const markdownBackupDir = path.join(backupDir, 'markdown');
 
-// Ensure backup directory exists
-if (!fs.existsSync(BACKUP_DIR)) {
-  fs.mkdirSync(BACKUP_DIR, { recursive: true });
+// Ensure backup directories exist
+if (!fs.existsSync(backupDir)) {
+  fs.mkdirSync(backupDir);
+}
+if (!fs.existsSync(sanityBackupDir)) {
+  fs.mkdirSync(sanityBackupDir);
+}
+if (!fs.existsSync(markdownBackupDir)) {
+  fs.mkdirSync(markdownBackupDir);
 }
 
-// Get current CMS setting
+// Function to determine current CMS
 function getCurrentCMS() {
-  try {
-    // Check if server/index.ts matches the Sanity version
-    const currentServerContent = fs.readFileSync(POSTGRES_SERVER_INDEX, 'utf8');
-    
-    if (currentServerContent.includes('import { registerRoutes } from "./routes.sanity"')) {
-      return 'sanity';
-    } else {
-      return 'postgres';
-    }
-  } catch (error) {
-    console.error('Error determining current CMS:', error.message);
-    return 'unknown';
+  const serverIndexContent = fs.readFileSync(serverIndexPath, 'utf8');
+  
+  if (serverIndexContent.includes('./routes.sanity') || serverIndexContent.includes('./routes')) {
+    return 'sanity';
+  } else if (serverIndexContent.includes('./routes.markdown')) {
+    return 'markdown';
+  } else {
+    console.error('Cannot determine current CMS. Server index file might be corrupted.');
+    process.exit(1);
   }
 }
 
-// Backup current files
+// Function to backup current files
 function backupCurrentFiles(currentCMS) {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const backupDirPath = currentCMS === 'sanity' ? sanityBackupDir : markdownBackupDir;
   
-  try {
-    fs.copyFileSync(
-      POSTGRES_SERVER_INDEX, 
-      path.join(BACKUP_DIR, `index.${currentCMS}.${timestamp}.ts`)
-    );
-    
-    fs.copyFileSync(
-      POSTGRES_SERVER_ROUTES,
-      path.join(BACKUP_DIR, `routes.${currentCMS}.${timestamp}.ts`)
-    );
-    
-    console.log(`Backed up current ${currentCMS} files to ${BACKUP_DIR}`);
-  } catch (error) {
-    console.error('Error backing up files:', error.message);
-  }
+  // Backup server/index.ts
+  fs.copyFileSync(
+    serverIndexPath,
+    path.join(backupDirPath, 'index.ts')
+  );
+  
+  console.log(`Backed up current ${currentCMS} files.`);
 }
 
-// Switch to specified CMS
+// Function to switch to a specific CMS
 function switchToCMS(targetCMS) {
-  if (targetCMS === 'sanity') {
-    // Switch to Sanity
-    console.log('Switching to Sanity.io for content management...');
-    
-    // Update the server index file to use Sanity routes
-    let indexContent = fs.readFileSync(POSTGRES_SERVER_INDEX, 'utf8');
-    indexContent = indexContent.replace(
-      'import { registerRoutes } from "./routes"',
-      'import { registerRoutes } from "./routes.sanity"'
-    );
-    fs.writeFileSync(POSTGRES_SERVER_INDEX, indexContent);
-    
-    console.log('Successfully switched to Sanity.io!');
-    console.log('\nIMPORTANT: Make sure you have the following environment variables set:');
-    console.log('- SANITY_PROJECT_ID');
-    console.log('- SANITY_DATASET');
-    console.log('- SANITY_API_TOKEN (for content migration or management)');
-    
-  } else if (targetCMS === 'postgres') {
-    // Switch to PostgreSQL
-    console.log('Switching to PostgreSQL for content management...');
-    
-    // Update the server index file to use PostgreSQL routes
-    let indexContent = fs.readFileSync(POSTGRES_SERVER_INDEX, 'utf8');
-    indexContent = indexContent.replace(
-      'import { registerRoutes } from "./routes.sanity"',
-      'import { registerRoutes } from "./routes"'
-    );
-    fs.writeFileSync(POSTGRES_SERVER_INDEX, indexContent);
-    
-    console.log('Successfully switched to PostgreSQL!');
-    console.log('\nIMPORTANT: Make sure your DATABASE_URL environment variable is set correctly.');
+  // Update server/index.ts
+  const sourcePath = targetCMS === 'sanity' 
+    ? path.join(sanityBackupDir, 'index.ts') 
+    : path.join(process.cwd(), 'server', 'index.markdown.ts');
+  
+  if (!fs.existsSync(sourcePath)) {
+    console.error(`Source file not found: ${sourcePath}`);
+    process.exit(1);
   }
   
-  // Restart the server (uncomment if needed)
-  // console.log('Restarting server...');
-  // try {
-  //   execSync('npm run dev');
-  // } catch (error) {
-  //   console.error('Error restarting server:', error.message);
-  // }
+  fs.copyFileSync(sourcePath, serverIndexPath);
+  
+  // Update package.json to use the correct dev script
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  
+  // Update dev script if needed
+  if (targetCMS === 'sanity' && packageJson.scripts.dev !== 'tsx server/index.ts') {
+    packageJson.scripts.dev = 'tsx server/index.ts';
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  } else if (targetCMS === 'markdown' && packageJson.scripts.dev !== 'tsx server/index.ts') {
+    packageJson.scripts.dev = 'tsx server/index.ts';
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  }
+  
+  console.log(`Switched to ${targetCMS} CMS successfully.`);
 }
 
 // Main function
@@ -120,34 +90,39 @@ function main() {
   const currentCMS = getCurrentCMS();
   console.log(`Current CMS: ${currentCMS}`);
   
-  // Determine the target CMS
-  let targetCMS;
+  // Determine target CMS from arguments or toggle
+  let targetCMS = process.argv[2];
   
-  if (process.argv.length > 2) {
-    // Use command line argument
-    targetCMS = process.argv[2].toLowerCase();
-    
-    if (targetCMS !== 'postgres' && targetCMS !== 'sanity') {
-      console.error('Invalid CMS specified. Use "postgres" or "sanity".');
-      process.exit(1);
-    }
-  } else {
-    // Toggle between CMSes
-    targetCMS = currentCMS === 'postgres' ? 'sanity' : 'postgres';
+  if (!targetCMS) {
+    // Toggle between the two
+    targetCMS = currentCMS === 'sanity' ? 'markdown' : 'sanity';
   }
   
-  // If already using the target CMS, do nothing
+  // Validate target CMS
+  if (targetCMS !== 'sanity' && targetCMS !== 'markdown') {
+    console.error('Invalid CMS specified. Use "sanity" or "markdown".');
+    process.exit(1);
+  }
+  
+  // If already using the target CMS, exit
   if (currentCMS === targetCMS) {
-    console.log(`Already using ${targetCMS} for content management.`);
-    return;
+    console.log(`Already using ${targetCMS} CMS.`);
+    process.exit(0);
   }
   
   // Backup current files
   backupCurrentFiles(currentCMS);
   
-  // Switch to the target CMS
+  // Switch to target CMS
   switchToCMS(targetCMS);
+  
+  console.log(`
+===================================================
+CMS switched from ${currentCMS} to ${targetCMS}.
+Restart your development server to apply changes.
+===================================================
+`);
 }
 
-// Run the script
+// Run the main function
 main();
