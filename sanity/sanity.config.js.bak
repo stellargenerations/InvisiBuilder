@@ -8,8 +8,8 @@ export default defineConfig({
   name: 'invisibuilder',
   title: 'Invisibuilder CMS',
 
-  projectId: 'o5jvy5xl',
-  dataset: 'invisibuilder',
+  projectId: process.env.SANITY_PROJECT_ID,
+  dataset: process.env.SANITY_DATASET,
   
   // CORS Origins allow Sanity Studio to be accessible from different domains
   cors: {
