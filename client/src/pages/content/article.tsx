@@ -203,13 +203,23 @@ const ArticlePage = () => {
                   <h2 className="text-2xl font-heading font-semibold mb-4">{section.title}</h2>
                 )}
                 
-                {section.content && typeof section.content === 'string' ? (
-                  <div className="markdown-content">
-                    <ReactMarkdown>{section.content}</ReactMarkdown>
-                  </div>
-                ) : (
-                  <PortableText value={section.content} components={portableTextComponents} />
-                )}
+                {section.content && (() => {
+                    // Debug output
+                    console.log('Section Content Type:', typeof section.content);
+                    console.log('Section Content:', section.content);
+                    
+                    if (typeof section.content === 'string') {
+                      return (
+                        <div className="markdown-content">
+                          <ReactMarkdown>{section.content}</ReactMarkdown>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <PortableText value={section.content} components={portableTextComponents} />
+                      );
+                    }
+                  })()}
                 
                 {/* Media section */}
                 {index === 0 && article.videoFiles && article.videoFiles.length > 0 && (
