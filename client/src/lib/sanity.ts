@@ -8,6 +8,10 @@ export const projectId = import.meta.env.VITE_SANITY_PROJECT_ID || '';
 export const dataset = (import.meta.env.VITE_SANITY_DATASET || '').toLowerCase();
 export const apiVersion = '2023-03-04'; // Use today's date or the version you're targeting
 
+// Log environment variables (for debugging purposes only)
+console.log('Sanity Config - Project ID:', projectId);
+console.log('Sanity Config - Dataset:', dataset);
+
 export const client = createClient({
   projectId,
   dataset,

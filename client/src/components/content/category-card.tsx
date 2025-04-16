@@ -63,7 +63,7 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
   
   return (
     <Link href={`/articles?category=${getCategorySlug(category)}`}>
-      <a className="group">
+      <div className="group cursor-pointer">
         <div className="bg-neutral-100 rounded-lg p-6 text-center shadow-sm hover:shadow-md transition duration-150 h-full flex flex-col">
           <div className="w-16 h-16 bg-primary-light text-white rounded-full flex items-center justify-center mx-auto mb-4">
             {getCategoryIcon(category.icon)}
@@ -74,7 +74,7 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
             <span className="text-sm font-medium">{articleCount} Article{articleCount !== 1 ? 's' : ''}</span>
           </div>
         </div>
-      </a>
+      </div>
     </Link>
   );
 };
