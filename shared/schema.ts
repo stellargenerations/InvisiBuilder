@@ -32,7 +32,11 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
 });
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
-export type Category = typeof categories.$inferSelect;
+export type Category = typeof categories.$inferSelect & {
+  // Additional fields for Sanity or Markdown compatibility
+  _id?: string; // Sanity ID
+  slug?: string | { current: string }; // Support both string and Sanity object format
+};
 
 // Media file model for various media types
 export const mediaFiles = pgTable("media_files", {
@@ -132,6 +136,15 @@ export type Article = typeof articles.$inferSelect & {
   images?: MediaFile[];
   resources?: Resource[];
   relatedArticles?: Article[];
+  
+  // Additional fields for Sanity or Markdown compatibility
+  _id?: string; // Sanity ID
+  slug?: string | { current: string }; // Support both string and Sanity object format 
+  author?: string;
+  category?: string | { name: string; slug: string | { current: string } };
+  coverImage?: string; // Alternative to featuredImage
+  mainImage?: string; // Alternative to featuredImage
+  featuredImage?: string;
 };
 
 // Newsletter subscribers

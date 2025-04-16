@@ -2,20 +2,20 @@ import { Link } from "wouter";
 import { Category } from "@shared/schema";
 
 interface CategoryCardProps {
-  category: any; // Using any for Sanity data structure
+  category: Category;
 }
 
-// Helper function to get slug from Sanity structure
-const getCategorySlug = (category: any) => {
+// Helper function to get slug from both markdown and Sanity structure
+const getCategorySlug = (category: Category) => {
   if (!category) return '';
   
-  // Handle both string and object types for backward compatibility
+  // Handle string type (from markdown)
   if (typeof category.slug === 'string') {
     return category.slug;
   }
   
-  // Handle Sanity object structure with current property
-  if (category.slug && category.slug.current) {
+  // Handle object type (Sanity structure with current property)
+  if (typeof category.slug === 'object' && category.slug?.current) {
     return category.slug.current;
   }
   

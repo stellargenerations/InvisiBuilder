@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Article } from "@shared/schema";
 
 interface ContentCardProps {
-  article: any; // Using any for Sanity data structure
+  article: Article;
 }
 
 const ContentCard = ({ article }: ContentCardProps) => {
@@ -16,34 +16,34 @@ const ContentCard = ({ article }: ContentCardProps) => {
     }).format(date);
   };
 
-  // Get category name from Sanity structure
+  // Get category name handling both string and object types
   const getCategoryName = () => {
     if (!article.category) return null;
     
-    // Handle both string and object types for backward compatibility
+    // Handle string type (from markdown)
     if (typeof article.category === 'string') {
       return article.category;
     }
     
-    // Handle Sanity object structure
-    if (article.category.name) {
+    // Handle object type (category object with name property)
+    if (typeof article.category === 'object' && article.category?.name) {
       return article.category.name;
     }
     
     return null;
   };
 
-  // Get proper slug from Sanity structure
+  // Get proper slug handling different formats
   const getSlug = () => {
     if (!article.slug) return '';
     
-    // Handle both string and object types for backward compatibility
+    // Handle string type (from markdown)
     if (typeof article.slug === 'string') {
       return article.slug;
     }
     
-    // Handle Sanity object structure with current property
-    if (article.slug.current) {
+    // Handle object type (slug object with current property from Sanity)
+    if (typeof article.slug === 'object' && article.slug?.current) {
       return article.slug.current;
     }
     
@@ -54,7 +54,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
     <article className="bg-neutral-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-150">
       <div className="relative">
         <img 
-          src={article.featuredImage} 
+          src={article.featuredImage || article.coverImage || article.mainImage || '/placeholder-image.jpg'} 
           alt={article.title} 
           className="w-full h-48 object-cover"
           loading="lazy"
