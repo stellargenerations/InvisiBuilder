@@ -5,6 +5,8 @@ import MediaPlayer from "@/components/content/media-player";
 import AudioPlayer from "@/components/content/audio-player";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 import { Helmet } from "react-helmet";
+import { urlFor } from "@/lib/sanity"; // Import urlFor to handle Sanity images
+import { PortableText } from "@portabletext/react";
 
 const ArticlePage = () => {
   const [match, params] = useRoute("/:slug");
@@ -141,11 +143,15 @@ const ArticlePage = () => {
       <article className="bg-white">
         {/* Hero section with featured image */}
         <div className="w-full h-64 md:h-96 bg-neutral-900 relative">
-          <img 
-            src={article.featuredImage} 
-            alt={article.title} 
-            className="w-full h-full object-cover opacity-70"
-          />
+          {article.featuredImage && (
+            <img 
+              src={article.featuredImage._type === 'image' 
+                ? urlFor(article.featuredImage).width(1200).url() 
+                : article.featuredImage}
+              alt={article.title} 
+              className="w-full h-full object-cover opacity-70"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900 opacity-80"></div>
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
             <div className="max-w-5xl mx-auto">
@@ -181,13 +187,25 @@ const ArticlePage = () => {
           <div className="prose prose-lg max-w-none">
             <p className="text-xl text-neutral-700 mb-8">{article.excerpt}</p>
             
+            {/* Main content */}
+            {article.content && (
+              <div className="mb-12">
+                <PortableText value={article.content} />
+              </div>
+            )}
+            
+            {/* Content Sections */}
             {article.contentSections && article.contentSections.map((section, index) => (
               <div key={index} className="mb-12">
                 {section.title && (
                   <h2 className="text-2xl font-heading font-semibold mb-4">{section.title}</h2>
                 )}
                 
-                <div dangerouslySetInnerHTML={{ __html: section.content }} />
+                {section.content && typeof section.content === 'string' ? (
+                  <div dangerouslySetInnerHTML={{ __html: section.content }} />
+                ) : (
+                  <PortableText value={section.content} />
+                )}
                 
                 {/* Media section */}
                 {index === 0 && article.videoFiles && article.videoFiles.length > 0 && (
@@ -319,7 +337,9 @@ const ArticlePage = () => {
                     <Link href={`/${relatedArticle.slug?.current || relatedArticle.slug}`}>
                       <a>
                         <img 
-                          src={relatedArticle.featuredImage} 
+                          src={relatedArticle.featuredImage && relatedArticle.featuredImage._type === 'image' 
+                            ? urlFor(relatedArticle.featuredImage).width(600).height(320).url()
+                            : relatedArticle.featuredImage}
                           alt={relatedArticle.title} 
                           className="w-full h-40 object-cover"
                         />
