@@ -61,12 +61,12 @@ const FeaturedContent = () => {
         
         <div className="mt-12 text-center">
           <Link href="/content">
-            <a className="inline-flex items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary-dark hover:bg-neutral-200 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light">
+            <div className="inline-flex items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary-dark hover:bg-neutral-200 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light cursor-pointer">
               View All Content
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
-            </a>
+            </div>
           </Link>
         </div>
       </div>
