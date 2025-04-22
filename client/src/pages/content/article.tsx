@@ -455,8 +455,11 @@ const ArticlePage = () => {
               <h3 className="text-2xl font-heading font-semibold mb-8 text-center">You May Also Like</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {article.relatedArticles.map((relatedArticle, index) => (
-                  <div key={index} className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
-                    <Link href={`/${relatedArticle.slug?.current || relatedArticle.slug}`} className="block">
+                  <Link 
+                    key={index} 
+                    href={`/${relatedArticle.slug?.current || relatedArticle.slug}`}
+                  >
+                    <div className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
                       <img 
                         src={relatedArticle.featuredImage && relatedArticle.featuredImage._type === 'image' 
                           ? urlFor(relatedArticle.featuredImage).width(600).height(320).url()
@@ -468,8 +471,8 @@ const ArticlePage = () => {
                         <h4 className="font-heading font-semibold text-lg mb-2">{relatedArticle.title}</h4>
                         <p className="text-sm text-neutral-700 line-clamp-2">{relatedArticle.excerpt}</p>
                       </div>
-                    </Link>
-                  </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
