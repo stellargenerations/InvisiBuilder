@@ -41,12 +41,12 @@ const categoriesDirectory = join(process.cwd(), 'content/categories');
 export async function getAllArticles(): Promise<Article[]> {
   try {
     const articleFiles = await glob('*.md', { cwd: articlesDirectory });
-    
+
     if (!articleFiles || articleFiles.length === 0) {
       console.log("No article files found in directory:", articlesDirectory);
       return [];
     }
-    
+
     const articles = await Promise.all(
       articleFiles.map(async (filename) => {
         const slug = filename.replace(/\.md$/, '');
@@ -54,7 +54,7 @@ export async function getAllArticles(): Promise<Article[]> {
         return article as Article;
       })
     );
-    
+
     // Filter out null values and sort articles by date in descending order
     return articles
       .filter((article): article is Article => article !== null)
@@ -73,23 +73,19 @@ export async function getAllArticles(): Promise<Article[]> {
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   const fullPath = join(articlesDirectory, `${slug}.md`);
-  
+
   try {
     const fileContents = await fs.readFile(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
-    
-    // Convert markdown to HTML
-    const processedContent = await remark()
-      .use(html)
-      .process(content);
-    
-    const htmlContent = processedContent.toString();
-    
+
+    // Return the raw markdown content instead of converting to HTML
+    // This allows the client to render it using ReactMarkdown
+
     return {
       slug,
       title: data.title || '',
       excerpt: data.excerpt || '',
-      content: htmlContent,
+      content: content,
       publishedDate: data.publishedDate || new Date().toISOString(),
       ...data,
     } as Article;
@@ -101,15 +97,15 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 
 export async function getArticlesByCategory(categorySlug: string): Promise<Article[]> {
   const allArticles = await getAllArticles();
-  return allArticles.filter(article => 
-    article.category === categorySlug || 
+  return allArticles.filter(article =>
+    article.category === categorySlug ||
     (article.categories && article.categories.includes(categorySlug))
   );
 }
 
 export async function getArticlesByTag(tag: string): Promise<Article[]> {
   const allArticles = await getAllArticles();
-  return allArticles.filter(article => 
+  return allArticles.filter(article =>
     article.tags && article.tags.includes(tag)
   );
 }
@@ -117,8 +113,8 @@ export async function getArticlesByTag(tag: string): Promise<Article[]> {
 export async function searchArticles(query: string): Promise<Article[]> {
   const allArticles = await getAllArticles();
   const lowerCaseQuery = query.toLowerCase();
-  
-  return allArticles.filter(article => 
+
+  return allArticles.filter(article =>
     article.title.toLowerCase().includes(lowerCaseQuery) ||
     article.excerpt.toLowerCase().includes(lowerCaseQuery) ||
     (article.content && article.content.toLowerCase().includes(lowerCaseQuery))
@@ -129,12 +125,12 @@ export async function searchArticles(query: string): Promise<Article[]> {
 export async function getAllCategories(): Promise<Category[]> {
   try {
     const categoryFiles = await glob('*.md', { cwd: categoriesDirectory });
-    
+
     if (!categoryFiles || categoryFiles.length === 0) {
       console.log("No category files found in directory:", categoriesDirectory);
       return [];
     }
-    
+
     const categories = await Promise.all(
       categoryFiles.map(async (filename) => {
         const slug = filename.replace(/\.md$/, '');
@@ -142,7 +138,7 @@ export async function getAllCategories(): Promise<Category[]> {
         return category;
       })
     );
-    
+
     // Filter out null values and sort by name
     return categories
       .filter((category): category is Category => category !== null)
@@ -155,15 +151,15 @@ export async function getAllCategories(): Promise<Category[]> {
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   const fullPath = join(categoriesDirectory, `${slug}.md`);
-  
+
   try {
     const fileContents = await fs.readFile(fullPath, 'utf8');
     const { data } = matter(fileContents);
-    
+
     // Count articles in this category
     const articles = await getArticlesByCategory(slug);
     const articleCount = articles.length;
-    
+
     return {
       slug,
       name: data.name || '',
@@ -181,54 +177,58 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 // File operations
 export async function createArticle(articleData: Partial<Article> & { slug: string; title: string }): Promise<Article | null> {
   const { slug, title, content, ...metadata } = articleData;
-  
+
   // Create frontmatter
   const frontmatter = {
     title,
     ...metadata,
   };
-  
+
+  // If content is HTML, try to convert it back to markdown for storage
+  // For now, we'll just use it as is, assuming it's already markdown
+  const markdownContent = content || '';
+
   // Create file content with frontmatter and markdown content
-  const fileContent = matter.stringify(content || '', frontmatter);
-  
+  const fileContent = matter.stringify(markdownContent, frontmatter);
+
   // Write to file
   const filePath = join(articlesDirectory, `${slug}.md`);
   await fs.writeFile(filePath, fileContent, 'utf8');
-  
+
   return await getArticleBySlug(slug);
 }
 
 export async function updateArticle(slug: string, articleData: Partial<Article>): Promise<Article | null> {
   const existingArticle = await getArticleBySlug(slug);
-  
+
   if (!existingArticle) {
     throw new Error(`Article with slug "${slug}" not found`);
   }
-  
+
   const { content, ...metadata } = articleData;
-  
+
   // Create frontmatter
   const frontmatter = {
     ...existingArticle,
     ...metadata,
   };
-  
+
+  // Use the provided content or fall back to existing content
+  const markdownContent = content || existingArticle.content || '';
+
   // Create file content with frontmatter and markdown content
-  const fileContent = matter.stringify(
-    content || existingArticle.content || '', 
-    frontmatter
-  );
-  
+  const fileContent = matter.stringify(markdownContent, frontmatter);
+
   // Write to file
   const filePath = join(articlesDirectory, `${slug}.md`);
   await fs.writeFile(filePath, fileContent, 'utf8');
-  
+
   return await getArticleBySlug(slug);
 }
 
 export async function deleteArticle(slug: string): Promise<boolean> {
   const filePath = join(articlesDirectory, `${slug}.md`);
-  
+
   try {
     await fs.remove(filePath);
     return true;
@@ -240,49 +240,49 @@ export async function deleteArticle(slug: string): Promise<boolean> {
 
 export async function createCategory(categoryData: Partial<Category> & { slug: string; name: string }): Promise<Category | null> {
   const { slug, name, ...metadata } = categoryData;
-  
+
   // Create frontmatter
   const frontmatter = {
     name,
     ...metadata,
   };
-  
+
   // Create file content with frontmatter and empty content
   const fileContent = matter.stringify('', frontmatter);
-  
+
   // Write to file
   const filePath = join(categoriesDirectory, `${slug}.md`);
   await fs.writeFile(filePath, fileContent, 'utf8');
-  
+
   return await getCategoryBySlug(slug);
 }
 
 export async function updateCategory(slug: string, categoryData: Partial<Category>): Promise<Category | null> {
   const existingCategory = await getCategoryBySlug(slug);
-  
+
   if (!existingCategory) {
     throw new Error(`Category with slug "${slug}" not found`);
   }
-  
+
   // Create frontmatter
   const frontmatter = {
     ...existingCategory,
     ...categoryData,
   };
-  
+
   // Create file content with frontmatter and empty content
   const fileContent = matter.stringify('', frontmatter);
-  
+
   // Write to file
   const filePath = join(categoriesDirectory, `${slug}.md`);
   await fs.writeFile(filePath, fileContent, 'utf8');
-  
+
   return await getCategoryBySlug(slug);
 }
 
 export async function deleteCategory(slug: string): Promise<boolean> {
   const filePath = join(categoriesDirectory, `${slug}.md`);
-  
+
   try {
     await fs.remove(filePath);
     return true;
