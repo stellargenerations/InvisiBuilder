@@ -95,9 +95,9 @@ const ArticlePage = () => {
           <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
           <p className="mb-6">The article you're looking for doesn't exist or has been removed.</p>
           <Link href="/articles">
-            <a className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-dark hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            <div className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-dark hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
               Browse All Content
-            </a>
+            </div>
           </Link>
         </div>
       </div>
@@ -159,9 +159,9 @@ const ArticlePage = () => {
             <div className="max-w-5xl mx-auto">
               {article.category && (
                 <Link href={`/articles?category=${getCategorySlug()}`}>
-                  <a className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-dark text-white mb-4">
+                  <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-dark text-white mb-4 cursor-pointer">
                     {getCategoryName()}
-                  </a>
+                  </div>
                 </Link>
               )}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold">{article.title}</h1>
