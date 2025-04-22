@@ -189,10 +189,14 @@ const ArticlePage = () => {
           <div className="prose prose-lg max-w-none">
             <p className="text-xl text-neutral-700 mb-8">{article.excerpt}</p>
 
-            {/* Main content */}
+            {/* Main content - handle both formats */}
             {article.content && (
               <div className="mb-12">
-                <PortableText value={article.content} components={portableTextComponents} />
+                {typeof article.content === 'string' ? (
+                  <ReactMarkdown>{article.content}</ReactMarkdown>
+                ) : (
+                  <PortableText value={article.content} components={portableTextComponents} />
+                )}
               </div>
             )}
 

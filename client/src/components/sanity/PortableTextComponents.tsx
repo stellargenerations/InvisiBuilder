@@ -5,7 +5,34 @@ import ReactMarkdown from 'react-markdown';
 
 // Configure components for @portabletext/react
 export const portableTextComponents: PortableTextComponents = {
+  // Add default handler for unknown types
+  unknownType: ({ value }) => {
+    console.log('Unknown block type:', value);
+    return <p className="text-red-500">Unknown block type: {value._type}</p>;
+  },
+  
+  // Handle the undefined type explicitly
   types: {
+    undefined: ({ value }) => {
+      console.log('Undefined value:', value);
+      // For undefined types, try to render as markdown if possible
+      if (typeof value === 'string') {
+        return <ReactMarkdown>{value}</ReactMarkdown>;
+      }
+      // If it's an object, try to identify useful content
+      if (value && typeof value === 'object') {
+        if (value.text) {
+          return <p>{value.text}</p>;
+        }
+        if (value.markdown) {
+          return <ReactMarkdown>{value.markdown}</ReactMarkdown>;
+        }
+        if (value.content) {
+          return <p>{value.content}</p>;
+        }
+      }
+      return <p>Content could not be displayed</p>;
+    },
     table: ({ value }) => <SanityTable value={value} />,
     markdown: ({ value }) => {
       console.log('Markdown Value:', value);
