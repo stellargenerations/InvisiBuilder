@@ -4,6 +4,8 @@ import SanityTable from './SanityTable';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw'; // For rendering HTML in markdown
 import remarkGfm from 'remark-gfm'; // For GitHub-flavored markdown (tables, etc.)
+import YouTubeEmbed from '@/components/content/youtube-embed';
+import { isYouTubeUrl, extractYouTubeVideoId } from '@/lib/youtube-utils';
 
 // Configure components for @portabletext/react
 export const portableTextComponents: PortableTextComponents = {
@@ -12,14 +14,30 @@ export const portableTextComponents: PortableTextComponents = {
     console.log('Unknown block type:', value);
     return <p className="text-red-500">Unknown block type: {value._type}</p>;
   },
-  
+
   // Handle the undefined type explicitly
   types: {
     undefined: ({ value }) => {
       console.log('Undefined value:', value);
       // For undefined types, try to render as markdown if possible
       if (typeof value === 'string') {
-        return <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>;
+        return <ReactMarkdown
+          rehypePlugins={[rehypeRaw]}
+          remarkPlugins={[remarkGfm]}
+          components={{
+            a: ({ node, href, children, ...props }) => {
+              // Check if it's a YouTube link
+              if (href && isYouTubeUrl(href)) {
+                const videoId = extractYouTubeVideoId(href);
+                if (videoId) {
+                  return <YouTubeEmbed videoId={videoId} title={String(children)} />;
+                }
+              }
+              // Regular link
+              return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+            }
+          }}
+        >{value}</ReactMarkdown>;
       }
       // If it's an object, try to identify useful content
       if (value && typeof value === 'object') {
@@ -27,12 +45,44 @@ export const portableTextComponents: PortableTextComponents = {
           return <p>{value.text}</p>;
         }
         if (value.markdown) {
-          return <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>{value.markdown}</ReactMarkdown>;
+          return <ReactMarkdown
+            rehypePlugins={[rehypeRaw]}
+            remarkPlugins={[remarkGfm]}
+            components={{
+              a: ({ node, href, children, ...props }) => {
+                // Check if it's a YouTube link
+                if (href && isYouTubeUrl(href)) {
+                  const videoId = extractYouTubeVideoId(href);
+                  if (videoId) {
+                    return <YouTubeEmbed videoId={videoId} title={String(children)} />;
+                  }
+                }
+                // Regular link
+                return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+              }
+            }}
+          >{value.markdown}</ReactMarkdown>;
         }
         if (value.content) {
           // Try to render as markdown with HTML support
           if (typeof value.content === 'string') {
-            return <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>{value.content}</ReactMarkdown>;
+            return <ReactMarkdown
+              rehypePlugins={[rehypeRaw]}
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ node, href, children, ...props }) => {
+                  // Check if it's a YouTube link
+                  if (href && isYouTubeUrl(href)) {
+                    const videoId = extractYouTubeVideoId(href);
+                    if (videoId) {
+                      return <YouTubeEmbed videoId={videoId} title={String(children)} />;
+                    }
+                  }
+                  // Regular link
+                  return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+                }
+              }}
+            >{value.content}</ReactMarkdown>;
           }
           return <p>{String(value.content)}</p>;
         }
@@ -44,9 +94,22 @@ export const portableTextComponents: PortableTextComponents = {
       console.log('Markdown Value:', value);
       return (
         <div className="markdown-content my-4">
-          <ReactMarkdown 
-            rehypePlugins={[rehypeRaw]} 
+          <ReactMarkdown
+            rehypePlugins={[rehypeRaw]}
             remarkPlugins={[remarkGfm]}
+            components={{
+              a: ({ node, href, children, ...props }) => {
+                // Check if it's a YouTube link
+                if (href && isYouTubeUrl(href)) {
+                  const videoId = extractYouTubeVideoId(href);
+                  if (videoId) {
+                    return <YouTubeEmbed videoId={videoId} title={String(children)} />;
+                  }
+                }
+                // Regular link
+                return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+              }
+            }}
           >
             {value.markdown || value.text || ''}
           </ReactMarkdown>
@@ -60,10 +123,10 @@ export const portableTextComponents: PortableTextComponents = {
     ),
     image: ({ value }) => (
       <figure className="my-4">
-        <img 
-          src={value.asset.url} 
-          alt={value.alt || 'Image'} 
-          className="rounded-md" 
+        <img
+          src={value.asset.url}
+          alt={value.alt || 'Image'}
+          className="rounded-md"
         />
         {value.caption && (
           <figcaption className="text-sm text-gray-500 mt-2">

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
 import MediaPlayer from "@/components/content/media-player";
 import AudioPlayer from "@/components/content/audio-player";
+import YouTubeEmbed from "@/components/content/youtube-embed";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 import { Helmet } from "react-helmet";
 import { urlFor } from "@/lib/sanity"; // Import urlFor to handle Sanity images
@@ -11,6 +12,7 @@ import { portableTextComponents } from "@/components/sanity";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw'; // For rendering HTML in markdown
 import remarkGfm from 'remark-gfm'; // For GitHub-flavored markdown (tables, etc.)
+import { isYouTubeUrl, extractYouTubeVideoId } from "@/lib/youtube-utils";
 
 const ArticlePage = () => {
   const [match, params] = useRoute("/:slug");
@@ -109,10 +111,10 @@ const ArticlePage = () => {
   const formatDate = (dateString: string | Date | null) => {
     if (!dateString) return 'Unknown date';
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
-    return new Intl.DateTimeFormat('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     }).format(date);
   };
 
@@ -134,12 +136,12 @@ const ArticlePage = () => {
       {/* Breadcrumb navigation */}
       <div className="bg-neutral-100 py-4 border-b border-neutral-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Breadcrumbs 
+          <Breadcrumbs
             items={[
               { label: 'Home', href: '/' },
               { label: 'Articles', href: '/articles' },
               { label: article.title }
-            ]} 
+            ]}
           />
         </div>
       </div>
@@ -148,11 +150,11 @@ const ArticlePage = () => {
         {/* Hero section with featured image */}
         <div className="w-full h-64 md:h-96 bg-neutral-900 relative">
           {article.featuredImage && (
-            <img 
-              src={article.featuredImage._type === 'image' 
-                ? urlFor(article.featuredImage).width(1200).url() 
+            <img
+              src={article.featuredImage._type === 'image'
+                ? urlFor(article.featuredImage).width(1200).url()
                 : article.featuredImage}
-              alt={article.title} 
+              alt={article.title}
               className="w-full h-full object-cover opacity-70"
             />
           )}
@@ -195,9 +197,23 @@ const ArticlePage = () => {
             {article.content && (
               <div className="mb-12">
                 {typeof article.content === 'string' ? (
-                  <ReactMarkdown 
+                  <ReactMarkdown
                     rehypePlugins={[rehypeRaw]}
                     remarkPlugins={[remarkGfm]}
+                    components={{
+                      // Custom component for links
+                      a: ({ node, href, children, ...props }) => {
+                        // Check if it's a YouTube link
+                        if (href && isYouTubeUrl(href)) {
+                          const videoId = extractYouTubeVideoId(href);
+                          if (videoId) {
+                            return <YouTubeEmbed videoId={videoId} title={String(children)} />;
+                          }
+                        }
+                        // Regular link
+                        return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+                      }
+                    }}
                   >
                     {article.content}
                   </ReactMarkdown>
@@ -227,7 +243,7 @@ const ArticlePage = () => {
                         if (parsedContent.markdown || parsedContent.text) {
                           return (
                             <div className="markdown-content">
-                              <ReactMarkdown 
+                              <ReactMarkdown
                                 rehypePlugins={[rehypeRaw]}
                                 remarkPlugins={[remarkGfm]}
                               >
@@ -276,9 +292,9 @@ const ArticlePage = () => {
                       }
 
                       // Handle escaped markdown indicators if present
-                      const containsMarkdownIndicators = 
-                        markdownContent.includes('\\#') || 
-                        markdownContent.includes('\\*') || 
+                      const containsMarkdownIndicators =
+                        markdownContent.includes('\\#') ||
+                        markdownContent.includes('\\*') ||
                         markdownContent.includes('\\`') ||
                         markdownContent.includes('\\[');
 
@@ -297,7 +313,7 @@ const ArticlePage = () => {
                       }
 
                       // If it's a markdown table, render in a special way with better styling
-                      const hasMarkdownTable = markdownContent.includes('|') && 
+                      const hasMarkdownTable = markdownContent.includes('|') &&
                                              markdownContent.includes('---') &&
                                              /^\|.*\|$/.test(markdownContent.split('\n')[0]);
 
@@ -354,9 +370,23 @@ const ArticlePage = () => {
                       // Otherwise render as normal markdown
                       return (
                         <div className="markdown-content">
-                          <ReactMarkdown 
+                          <ReactMarkdown
                             rehypePlugins={[rehypeRaw]}
                             remarkPlugins={[remarkGfm]}
+                            components={{
+                              // Custom component for links
+                              a: ({ node, href, children, ...props }) => {
+                                // Check if it's a YouTube link
+                                if (href && isYouTubeUrl(href)) {
+                                  const videoId = extractYouTubeVideoId(href);
+                                  if (videoId) {
+                                    return <YouTubeEmbed videoId={videoId} title={String(children)} />;
+                                  }
+                                }
+                                // Regular link
+                                return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+                              }
+                            }}
                           >
                             {markdownContent}
                           </ReactMarkdown>
@@ -380,7 +410,7 @@ const ArticlePage = () => {
                 {/* Media section */}
                 {index === 0 && article.videoFiles && article.videoFiles.length > 0 && (
                   <div className="my-8">
-                    <MediaPlayer 
+                    <MediaPlayer
                       type="video"
                       src={article.videoFiles[0].url}
                       title={article.videoFiles[0].title || ''}
@@ -400,10 +430,10 @@ const ArticlePage = () => {
                       <h5 className="font-heading font-medium text-lg">Audio Insight</h5>
                     </div>
 
-                    <AudioPlayer 
-                      title={article.audioFiles[0].title || ''} 
-                      duration={article.audioFiles[0].duration || '0:00'} 
-                      src={article.audioFiles[0].url} 
+                    <AudioPlayer
+                      title={article.audioFiles[0].title || ''}
+                      duration={article.audioFiles[0].duration || '0:00'}
+                      src={article.audioFiles[0].url}
                     />
                   </div>
                 )}
@@ -411,7 +441,7 @@ const ArticlePage = () => {
                 {index === 2 && article.images && article.images.length > 0 && (
                   <div className="my-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                     {article.images.slice(0, 2).map((image, imgIndex) => (
-                      <MediaPlayer 
+                      <MediaPlayer
                         key={imgIndex}
                         type="image"
                         src={image.url}
@@ -504,11 +534,11 @@ const ArticlePage = () => {
                   <div key={index} className="inline-block">
                     <Link href={`/${relatedArticle.slug?.current || relatedArticle.slug}`}>
                       <div className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
-                        <img 
-                          src={relatedArticle.featuredImage && relatedArticle.featuredImage._type === 'image' 
+                        <img
+                          src={relatedArticle.featuredImage && relatedArticle.featuredImage._type === 'image'
                             ? urlFor(relatedArticle.featuredImage).width(600).height(320).url()
                             : relatedArticle.featuredImage}
-                          alt={relatedArticle.title} 
+                          alt={relatedArticle.title}
                           className="w-full h-40 object-cover"
                         />
                         <div className="p-4">
