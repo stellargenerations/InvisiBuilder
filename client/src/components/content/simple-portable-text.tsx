@@ -22,8 +22,8 @@ interface SimplePortableTextProps {
 }
 
 /**
- * A simplified version of PortableText that can handle basic block content
- * This is a replacement for Sanity's PortableText component
+ * A component that can handle basic block content and markdown
+ * rendering with proper formatting and media embedding
  */
 const SimplePortableText: React.FC<SimplePortableTextProps> = ({ value, components }) => {
   // If value is not provided or is empty, return null

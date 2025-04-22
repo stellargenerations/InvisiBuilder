@@ -8,7 +8,7 @@ import MarkdownWithYouTube from "@/components/content/markdown-with-youtube";
 import SimplePortableText from "@/components/content/simple-portable-text";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 import { Helmet } from "react-helmet";
-import { urlFor } from "@/lib/image-utils"; // Import replacement for Sanity's urlFor
+import { urlFor } from "@/lib/image-utils"; // Utility for image URL processing
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw'; // For rendering HTML in markdown
 import remarkGfm from 'remark-gfm'; // For GitHub-flavored markdown (tables, etc.)
@@ -23,13 +23,13 @@ const ArticlePage = () => {
     return null;
   }
 
-  // Using any for Sanity data structure
+  // Using generic data structure for article
   const { data: article, isLoading, error } = useQuery<any>({
     queryKey: [`/api/articles/slug/${slug}`],
     enabled: !!slug,
   });
 
-  // Helper function to get category name from Sanity structure
+  // Helper function to get category name from different data structures
   const getCategoryName = () => {
     if (!article?.category) return null;
 
@@ -38,7 +38,7 @@ const ArticlePage = () => {
       return article.category;
     }
 
-    // Handle Sanity object structure
+    // Handle object structure with name property
     if (article.category.name) {
       return article.category.name;
     }
@@ -50,14 +50,17 @@ const ArticlePage = () => {
   const getCategorySlug = () => {
     if (!article?.category) return '';
 
+    // Handle string format - convert to slug format
     if (typeof article.category === 'string') {
       return article.category.toLowerCase().replace(/\s+/g, '-');
     }
 
+    // Handle object format with nested slug and current property
     if (article.category.slug && article.category.slug.current) {
       return article.category.slug.current;
     }
 
+    // Handle object format with name property
     if (article.category.name) {
       return article.category.name.toLowerCase().replace(/\s+/g, '-');
     }
@@ -251,7 +254,7 @@ const ArticlePage = () => {
                         if (markdownContent.startsWith('{') && markdownContent.endsWith('}')) {
                           const parsed = JSON.parse(markdownContent);
 
-                          // Check for the _type property (Sanity's type marker)
+                          // Check for the _type property that indicates a markdown object
                           if (parsed._type === 'markdown' && parsed.markdown) {
                             console.log('Markdown Value:', parsed);
                             markdownContent = parsed.markdown;

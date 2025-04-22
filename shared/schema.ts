@@ -33,9 +33,8 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
 export type Category = typeof categories.$inferSelect & {
-  // Additional fields for Sanity or Markdown compatibility
-  _id?: string; // Sanity ID
-  slug?: string | { current: string }; // Support both string and Sanity object format
+  // Additional fields for data structure compatibility
+  slug?: string | { current: string }; // Support both string and object format with current property
 };
 
 // Media file model for various media types
@@ -137,9 +136,8 @@ export type Article = typeof articles.$inferSelect & {
   resources?: Resource[];
   relatedArticles?: Article[];
   
-  // Additional fields for Sanity or Markdown compatibility
-  _id?: string; // Sanity ID
-  slug?: string | { current: string }; // Support both string and Sanity object format 
+  // Additional fields for data structure compatibility
+  slug?: string | { current: string }; // Support both string and object format with current property
   author?: string;
   category?: string | { name: string; slug: string | { current: string } };
   coverImage?: string; // Alternative to featuredImage
