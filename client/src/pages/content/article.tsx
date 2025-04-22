@@ -27,12 +27,19 @@ const ArticlePage = () => {
   const { data: article, isLoading, error } = useQuery<any>({
     queryKey: [`/api/articles/slug/${slug}`],
     enabled: !!slug,
+    queryFn: async ({ queryKey }) => {
+      const response = await fetch(queryKey[0] as string);
+      if (!response.ok) {
+        throw new Error('Failed to fetch article');
+      }
+      return response.json();
+    },
   });
 
   // Helper function to get category name from different data structures
   const getCategoryName = () => {
     if (!article?.category) return null;
-    
+
     // Our data now uses simple string format
     return article.category;
   };
@@ -40,7 +47,7 @@ const ArticlePage = () => {
   // Helper function to get category slug for links
   const getCategorySlug = () => {
     if (!article?.category) return '';
-    
+
     // Convert string to slug format
     return article.category.toLowerCase().replace(/\s+/g, '-');
   };
@@ -188,7 +195,7 @@ const ArticlePage = () => {
                 {section.content && (
                   <div className="markdown-content">
                     <MarkdownWithYouTube content={section.content} />
-                    
+
                     {/* Debugging view in development */}
                     {process.env.NODE_ENV === 'development' && (
                       <details className="mt-4 p-2 border border-gray-300 rounded">
