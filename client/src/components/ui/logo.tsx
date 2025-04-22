@@ -8,9 +8,9 @@ interface LogoProps {
 
 const Logo: FC<LogoProps> = ({ className = "", size = "md" }) => {
   const sizes = {
-    sm: "h-12", // Increased by 50% from h-8
-    md: "h-14", // Increased by 50% from h-10 (using h-14 as Tailwind doesn't have h-15)
-    lg: "h-16", // Increased by 50% from h-12 (using h-16 which is 4rem)
+    sm: "h-8",  // Original size
+    md: "h-10", // Original size
+    lg: "h-12", // Original size
   };
 
   return (
