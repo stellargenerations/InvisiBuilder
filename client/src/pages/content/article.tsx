@@ -24,40 +24,40 @@ const ArticlePage = () => {
     queryKey: [`/api/articles/slug/${slug}`],
     enabled: !!slug,
   });
-  
+
   // Helper function to get category name from Sanity structure
   const getCategoryName = () => {
     if (!article?.category) return null;
-    
+
     // Handle both string and object types for backward compatibility
     if (typeof article.category === 'string') {
       return article.category;
     }
-    
+
     // Handle Sanity object structure
     if (article.category.name) {
       return article.category.name;
     }
-    
+
     return null;
   };
-  
+
   // Helper function to get category slug for links
   const getCategorySlug = () => {
     if (!article?.category) return '';
-    
+
     if (typeof article.category === 'string') {
       return article.category.toLowerCase().replace(/\s+/g, '-');
     }
-    
+
     if (article.category.slug && article.category.slug.current) {
       return article.category.slug.current;
     }
-    
+
     if (article.category.name) {
       return article.category.name.toLowerCase().replace(/\s+/g, '-');
     }
-    
+
     return '';
   };
 
@@ -183,31 +183,31 @@ const ArticlePage = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Article content */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="prose prose-lg max-w-none">
             <p className="text-xl text-neutral-700 mb-8">{article.excerpt}</p>
-            
+
             {/* Main content */}
             {article.content && (
               <div className="mb-12">
                 <PortableText value={article.content} components={portableTextComponents} />
               </div>
             )}
-            
+
             {/* Content Sections */}
             {article.contentSections && article.contentSections.map((section, index) => (
               <div key={index} className="mb-12">
                 {section.title && (
                   <h2 className="text-2xl font-heading font-semibold mb-4">{section.title}</h2>
                 )}
-                
+
                 {section.content && (() => {
                     // Debug output
                     console.log('Section Content Type:', typeof section.content);
                     console.log('Section Content:', section.content);
-                    
+
                     if (typeof section.content === 'string') {
                       // Try to parse JSON string in case it's a stringified object
                       try {
@@ -224,20 +224,20 @@ const ArticlePage = () => {
                         // If it's not valid JSON, treat as regular markdown
                         console.log('Not valid JSON, rendering as regular markdown');
                       }
-                      
+
                       // For debugging, show the content type and value
                       console.log('String content:', section.content);
-                      
+
                       // We've seen from the logs that when content contains a markdown table,
                       // it's in a structured JSON format with a 'markdown' property
                       let markdownContent = section.content;
                       let isMarkdownObject = false;
-                      
+
                       try {
                         // Try to parse as JSON and extract markdown if it's a markdown object
                         if (markdownContent.startsWith('{') && markdownContent.endsWith('}')) {
                           const parsed = JSON.parse(markdownContent);
-                          
+
                           // Check for the _type property (Sanity's type marker)
                           if (parsed._type === 'markdown' && parsed.markdown) {
                             console.log('Markdown Value:', parsed);
@@ -258,14 +258,14 @@ const ArticlePage = () => {
                       } catch (e) {
                         console.log('Error processing markdown content', e);
                       }
-                      
+
                       // Handle escaped markdown indicators if present
                       const containsMarkdownIndicators = 
                         markdownContent.includes('\\#') || 
                         markdownContent.includes('\\*') || 
                         markdownContent.includes('\\`') ||
                         markdownContent.includes('\\[');
-                        
+
                       if (containsMarkdownIndicators) {
                         markdownContent = markdownContent
                           .replace(/\\#/g, '#')
@@ -274,17 +274,17 @@ const ArticlePage = () => {
                           .replace(/\\\[/g, '[');
                         console.log('Unescaped markdown indicators', markdownContent);
                       }
-                      
+
                       // Remove any enclosing quotes if we missed them earlier
                       if (markdownContent.startsWith('"') && markdownContent.endsWith('"')) {
                         markdownContent = markdownContent.slice(1, -1);
                       }
-                      
+
                       // If it's a markdown table, render in a special way with better styling
                       const hasMarkdownTable = markdownContent.includes('|') && 
                                              markdownContent.includes('---') &&
                                              /^\|.*\|$/.test(markdownContent.split('\n')[0]);
-                      
+
                       if (hasMarkdownTable || isMarkdownObject) {
                         return (
                           <div className="markdown-content my-4">
@@ -298,7 +298,7 @@ const ArticlePage = () => {
                                 </div>
                               </div>
                             </div>
-                            
+
                             {/* Debugging view */}
                             {process.env.NODE_ENV === 'development' && (
                               <details className="mt-4 p-2 border border-gray-300 rounded">
@@ -309,12 +309,12 @@ const ArticlePage = () => {
                           </div>
                         );
                       }
-                      
+
                       // Otherwise render as normal markdown
                       return (
                         <div className="markdown-content">
                           <ReactMarkdown>{markdownContent}</ReactMarkdown>
-                          
+
                           {/* Debugging view */}
                           {process.env.NODE_ENV === 'development' && (
                             <details className="mt-4 p-2 border border-gray-300 rounded">
@@ -330,7 +330,7 @@ const ArticlePage = () => {
                       );
                     }
                   })()}
-                
+
                 {/* Media section */}
                 {index === 0 && article.videoFiles && article.videoFiles.length > 0 && (
                   <div className="my-8">
@@ -344,7 +344,7 @@ const ArticlePage = () => {
                     />
                   </div>
                 )}
-                
+
                 {index === 1 && article.audioFiles && article.audioFiles.length > 0 && (
                   <div className="my-6 bg-neutral-100 p-4 rounded-lg">
                     <div className="flex items-center mb-3">
@@ -353,7 +353,7 @@ const ArticlePage = () => {
                       </svg>
                       <h5 className="font-heading font-medium text-lg">Audio Insight</h5>
                     </div>
-                    
+
                     <AudioPlayer 
                       title={article.audioFiles[0].title || ''} 
                       duration={article.audioFiles[0].duration || '0:00'} 
@@ -361,7 +361,7 @@ const ArticlePage = () => {
                     />
                   </div>
                 )}
-                
+
                 {index === 2 && article.images && article.images.length > 0 && (
                   <div className="my-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                     {article.images.slice(0, 2).map((image, imgIndex) => (
@@ -376,7 +376,7 @@ const ArticlePage = () => {
                 )}
               </div>
             ))}
-            
+
             {/* Resources section */}
             {article.resources && article.resources.length > 0 && (
               <div className="mt-12 border-t border-neutral-200 pt-8">
@@ -411,7 +411,7 @@ const ArticlePage = () => {
               </div>
             )}
           </div>
-          
+
           {/* Tags and sharing */}
           <div className="mt-12 pt-6 border-t border-neutral-200">
             <div className="flex flex-wrap items-center justify-between">
@@ -425,7 +425,7 @@ const ArticlePage = () => {
                   </Link>
                 ))}
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <button className="inline-flex items-center px-3 py-1 border border-primary rounded-md text-sm font-medium text-primary-dark hover:bg-neutral-200 transition duration-150" aria-label="Share on Twitter">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
@@ -448,31 +448,30 @@ const ArticlePage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Related articles */}
           {article.relatedArticles && article.relatedArticles.length > 0 && (
             <div className="mt-16 border-t border-neutral-200 pt-12">
               <h3 className="text-2xl font-heading font-semibold mb-8 text-center">You May Also Like</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {article.relatedArticles.map((relatedArticle, index) => (
-                  <Link 
-                    key={index} 
-                    href={`/${relatedArticle.slug?.current || relatedArticle.slug}`}
-                  >
-                    <div className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
-                      <img 
-                        src={relatedArticle.featuredImage && relatedArticle.featuredImage._type === 'image' 
-                          ? urlFor(relatedArticle.featuredImage).width(600).height(320).url()
-                          : relatedArticle.featuredImage}
-                        alt={relatedArticle.title} 
-                        className="w-full h-40 object-cover"
-                      />
-                      <div className="p-4">
-                        <h4 className="font-heading font-semibold text-lg mb-2">{relatedArticle.title}</h4>
-                        <p className="text-sm text-neutral-700 line-clamp-2">{relatedArticle.excerpt}</p>
+                  <div key={index} className="inline-block">
+                    <Link href={`/${relatedArticle.slug?.current || relatedArticle.slug}`}>
+                      <div className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
+                        <img 
+                          src={relatedArticle.featuredImage && relatedArticle.featuredImage._type === 'image' 
+                            ? urlFor(relatedArticle.featuredImage).width(600).height(320).url()
+                            : relatedArticle.featuredImage}
+                          alt={relatedArticle.title} 
+                          className="w-full h-40 object-cover"
+                        />
+                        <div className="p-4">
+                          <h4 className="font-heading font-semibold text-lg mb-2">{relatedArticle.title}</h4>
+                          <p className="text-sm text-neutral-700 line-clamp-2">{relatedArticle.excerpt}</p>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
+                    </Link>
+                  </div>
                 ))}
               </div>
             </div>
