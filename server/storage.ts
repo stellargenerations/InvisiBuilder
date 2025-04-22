@@ -297,8 +297,8 @@ export class MemStorage implements IStorage {
 
     // Create content sections for preview article
     this.createContentSection({
-      title: "Introduction",
-      content: "<p>The traditional advice for starting a service-based business often revolves around personal branding, networking events, and putting yourself in the spotlight. But what if that approach doesn't align with your personality or preferences?</p><p>In this comprehensive guide, we'll explore how to build a successful digital agency while maintaining your privacy and working entirely behind the scenes.</p>",
+      title: "Introduction to Directory Monetization",
+      content: "<p>Creating directory websites can be an excellent way to generate passive income online. This comprehensive guide explores various monetization strategies for directory websites, from paid listings to affiliate marketing and beyond.</p><p>Below is a video guide that explains the fundamental concepts of website directory monetization:</p><div class=\"youtube-embed\"><iframe width=\"100%\" height=\"400\" src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" title=\"Website Directory Monetization\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe></div><p>Let's explore the different ways you can generate revenue from your directory website.</p>",
       order: 1,
       articleId: previewArticle.id
     });
