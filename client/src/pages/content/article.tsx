@@ -131,9 +131,7 @@ const ArticlePage = () => {
         <div className="w-full h-64 md:h-96 bg-neutral-900 relative">
           {article.featuredImage && (
             <img
-              src={typeof article.featuredImage === 'object' && article.featuredImage.type === 'image'
-                ? urlFor(article.featuredImage).width(1200).url()
-                : (typeof article.featuredImage === 'string' ? article.featuredImage : urlFor(article.featuredImage).url())}
+              src={article.featuredImage}
               alt={article.title}
               className="w-full h-full object-cover opacity-70"
             />
@@ -173,14 +171,10 @@ const ArticlePage = () => {
           <div className="prose prose-lg max-w-none">
             <p className="text-xl text-neutral-700 mb-8">{article.excerpt}</p>
 
-            {/* Main content - handle both formats */}
+            {/* Main content - now uses consistent markdown format */}
             {article.content && (
               <div className="mb-12">
-                {typeof article.content === 'string' ? (
-                  <MarkdownWithYouTube content={article.content} />
-                ) : (
-                  <SimplePortableText value={article.content} />
-                )}
+                <MarkdownWithYouTube content={article.content} />
               </div>
             )}
 
@@ -191,163 +185,19 @@ const ArticlePage = () => {
                   <h2 className="text-2xl font-heading font-semibold mb-4">{section.title}</h2>
                 )}
 
-                {section.content && (() => {
-                    // Debug output
-                    console.log('Section Content Type:', typeof section.content);
-                    console.log('Section Content:', section.content);
-
-                    if (typeof section.content === 'string') {
-                      // Try to parse JSON string in case it's a stringified object
-                      try {
-                        const parsedContent = JSON.parse(section.content);
-                        console.log('Parsed content:', parsedContent);
-                        if (parsedContent.markdown || parsedContent.text) {
-                          return (
-                            <div className="markdown-content">
-                              <ReactMarkdown
-                                rehypePlugins={[rehypeRaw]}
-                                remarkPlugins={[remarkGfm]}
-                              >
-                                {parsedContent.markdown || parsedContent.text}
-                              </ReactMarkdown>
-                            </div>
-                          );
-                        }
-                      } catch (e) {
-                        // If it's not valid JSON, treat as regular markdown
-                        console.log('Not valid JSON, rendering as regular markdown');
-                      }
-
-                      // For debugging, show the content type and value
-                      console.log('String content:', section.content);
-
-                      // We've seen from the logs that when content contains a markdown table,
-                      // it's in a structured JSON format with a 'markdown' property
-                      let markdownContent = section.content;
-                      let isMarkdownObject = false;
-
-                      try {
-                        // Try to parse as JSON and extract markdown if it's a markdown object
-                        if (markdownContent.startsWith('{') && markdownContent.endsWith('}')) {
-                          const parsed = JSON.parse(markdownContent);
-
-                          // Check for the type property that indicates a markdown object
-                          if ((parsed.type === 'markdown' || parsed._type === 'markdown') && parsed.markdown) {
-                            console.log('Markdown Value:', parsed);
-                            markdownContent = parsed.markdown;
-                            isMarkdownObject = true;
-                          }
-                          // Also look for a regular markdown property
-                          else if (parsed.markdown) {
-                            markdownContent = parsed.markdown;
-                            console.log('Found markdown in JSON object', markdownContent);
-                          }
-                        }
-                        // Case: Quoted string that needs to be unescaped
-                        else if (markdownContent.startsWith('"') && markdownContent.endsWith('"')) {
-                          markdownContent = JSON.parse(markdownContent);
-                          console.log('Unescaped quoted string', markdownContent);
-                        }
-                      } catch (e) {
-                        console.log('Error processing markdown content', e);
-                      }
-
-                      // Handle escaped markdown indicators if present
-                      const containsMarkdownIndicators =
-                        markdownContent.includes('\\#') ||
-                        markdownContent.includes('\\*') ||
-                        markdownContent.includes('\\`') ||
-                        markdownContent.includes('\\[');
-
-                      if (containsMarkdownIndicators) {
-                        markdownContent = markdownContent
-                          .replace(/\\#/g, '#')
-                          .replace(/\\\*/g, '*')
-                          .replace(/\\`/g, '`')
-                          .replace(/\\\[/g, '[');
-                        console.log('Unescaped markdown indicators', markdownContent);
-                      }
-
-                      // Remove any enclosing quotes if we missed them earlier
-                      if (markdownContent.startsWith('"') && markdownContent.endsWith('"')) {
-                        markdownContent = markdownContent.slice(1, -1);
-                      }
-
-                      // If it's a markdown table, render in a special way with better styling
-                      const hasMarkdownTable = markdownContent.includes('|') &&
-                                             markdownContent.includes('---') &&
-                                             /^\|.*\|$/.test(markdownContent.split('\n')[0]);
-
-                      if (hasMarkdownTable || isMarkdownObject) {
-                        return (
-                          <div className="markdown-content my-4">
-                            <div className="prose prose-sm max-w-none">
-                              {/* Special styling for tables */}
-                              <div className="overflow-x-auto">
-                                <div className="inline-block min-w-full">
-                                  <ReactMarkdown
-                                    rehypePlugins={[rehypeRaw]}
-                                    remarkPlugins={[remarkGfm]}
-                                    components={{
-                                      table: ({node, ...props}) => (
-                                        <div className="overflow-auto my-6">
-                                          <table className="min-w-full divide-y divide-gray-300 border border-gray-300" {...props} />
-                                        </div>
-                                      ),
-                                      thead: ({node, ...props}) => (
-                                        <thead className="bg-gray-50" {...props} />
-                                      ),
-                                      tbody: ({node, ...props}) => (
-                                        <tbody className="divide-y divide-gray-200 bg-white" {...props} />
-                                      ),
-                                      tr: ({node, ...props}) => (
-                                        <tr className="hover:bg-gray-50" {...props} />
-                                      ),
-                                      th: ({node, ...props}) => (
-                                        <th className="py-3.5 px-4 text-left text-sm font-semibold text-gray-900 border-r last:border-r-0" {...props} />
-                                      ),
-                                      td: ({node, ...props}) => (
-                                        <td className="whitespace-nowrap py-4 px-4 text-sm text-gray-800 border-r last:border-r-0" {...props} />
-                                      )
-                                    }}
-                                  >
-                                    {markdownContent}
-                                  </ReactMarkdown>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Debugging view */}
-                            {process.env.NODE_ENV === 'development' && (
-                              <details className="mt-4 p-2 border border-gray-300 rounded">
-                                <summary className="text-sm text-gray-500 cursor-pointer">Debug Raw Content</summary>
-                                <pre className="mt-2 p-2 bg-gray-100 text-xs overflow-auto">{section.content}</pre>
-                              </details>
-                            )}
-                          </div>
-                        );
-                      }
-
-                      // Otherwise render as normal markdown
-                      return (
-                        <div className="markdown-content">
-                          <MarkdownWithYouTube content={markdownContent} />
-
-                          {/* Debugging view */}
-                          {process.env.NODE_ENV === 'development' && (
-                            <details className="mt-4 p-2 border border-gray-300 rounded">
-                              <summary className="text-sm text-gray-500 cursor-pointer">Debug Raw Content</summary>
-                              <pre className="mt-2 p-2 bg-gray-100 text-xs overflow-auto">{section.content}</pre>
-                            </details>
-                          )}
-                        </div>
-                      );
-                    } else {
-                      return (
-                        <SimplePortableText value={section.content} />
-                      );
-                    }
-                  })()}
+                {section.content && (
+                  <div className="markdown-content">
+                    <MarkdownWithYouTube content={section.content} />
+                    
+                    {/* Debugging view in development */}
+                    {process.env.NODE_ENV === 'development' && (
+                      <details className="mt-4 p-2 border border-gray-300 rounded">
+                        <summary className="text-sm text-gray-500 cursor-pointer">Debug Raw Content</summary>
+                        <pre className="mt-2 p-2 bg-gray-100 text-xs overflow-auto">{section.content}</pre>
+                      </details>
+                    )}
+                  </div>
+                )}
 
                 {/* Media section */}
                 {index === 0 && article.videoFiles && article.videoFiles.length > 0 && (
@@ -474,12 +324,10 @@ const ArticlePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {article.relatedArticles.map((relatedArticle: any, index: number) => (
                   <div key={index} className="inline-block">
-                    <Link href={`/${relatedArticle.slug?.current || relatedArticle.slug}`}>
+                    <Link href={`/${relatedArticle.slug}`}>
                       <div className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
                         <img
-                          src={relatedArticle.featuredImage && relatedArticle.featuredImage._type === 'image'
-                            ? urlFor(relatedArticle.featuredImage).width(600).height(320).url()
-                            : relatedArticle.featuredImage}
+                          src={relatedArticle.featuredImage}
                           alt={relatedArticle.title}
                           className="w-full h-40 object-cover"
                         />
