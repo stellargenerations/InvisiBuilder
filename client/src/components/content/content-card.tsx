@@ -19,35 +19,17 @@ const ContentCard = ({ article }: ContentCardProps) => {
   // Get category name handling both string and object types
   const getCategoryName = () => {
     if (!article.category) return null;
-
-    // Handle string type (from markdown)
-    if (typeof article.category === 'string') {
-      return article.category;
-    }
-
-    // Handle object type (category object with name property)
-    if (typeof article.category === 'object' && article.category?.name) {
-      return article.category.name;
-    }
-
-    return null;
+    
+    // Our data now uses the string format directly 
+    return article.category;
   };
 
   // Get proper slug handling different formats
   const getSlug = () => {
     if (!article.slug) return '';
-
-    // Handle string type (from markdown)
-    if (typeof article.slug === 'string') {
-      return article.slug;
-    }
-
-    // Handle object type (slug object with current property)
-    if (typeof article.slug === 'object' && article.slug?.current) {
-      return article.slug.current;
-    }
-
-    return '';
+    
+    // Our data now uses the string format directly
+    return article.slug;
   };
 
   return (

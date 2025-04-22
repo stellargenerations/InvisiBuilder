@@ -32,10 +32,7 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
 });
 
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
-export type Category = typeof categories.$inferSelect & {
-  // Additional fields for data structure compatibility
-  slug?: string | { current: string }; // Support both string and object format with current property
-};
+export type Category = typeof categories.$inferSelect;
 
 // Media file model for various media types
 export const mediaFiles = pgTable("media_files", {
@@ -136,13 +133,10 @@ export type Article = typeof articles.$inferSelect & {
   resources?: Resource[];
   relatedArticles?: Article[];
   
-  // Additional fields for data structure compatibility
-  slug?: string | { current: string }; // Support both string and object format with current property
+  // Provide aliases for legacy field names
   author?: string;
-  category?: string | { name: string; slug: string | { current: string } };
   coverImage?: string; // Alternative to featuredImage
   mainImage?: string; // Alternative to featuredImage
-  featuredImage?: string;
 };
 
 // Newsletter subscribers

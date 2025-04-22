@@ -32,40 +32,17 @@ const ArticlePage = () => {
   // Helper function to get category name from different data structures
   const getCategoryName = () => {
     if (!article?.category) return null;
-
-    // Handle both string and object types for backward compatibility
-    if (typeof article.category === 'string') {
-      return article.category;
-    }
-
-    // Handle object structure with name property
-    if (article.category.name) {
-      return article.category.name;
-    }
-
-    return null;
+    
+    // Our data now uses simple string format
+    return article.category;
   };
 
   // Helper function to get category slug for links
   const getCategorySlug = () => {
     if (!article?.category) return '';
-
-    // Handle string format - convert to slug format
-    if (typeof article.category === 'string') {
-      return article.category.toLowerCase().replace(/\s+/g, '-');
-    }
-
-    // Handle object format with nested slug and current property
-    if (article.category.slug && article.category.slug.current) {
-      return article.category.slug.current;
-    }
-
-    // Handle object format with name property
-    if (article.category.name) {
-      return article.category.name.toLowerCase().replace(/\s+/g, '-');
-    }
-
-    return '';
+    
+    // Convert string to slug format
+    return article.category.toLowerCase().replace(/\s+/g, '-');
   };
 
   useEffect(() => {
