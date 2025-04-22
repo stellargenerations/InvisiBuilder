@@ -4,11 +4,11 @@ import { useRoute, Link } from "wouter";
 import MediaPlayer from "@/components/content/media-player";
 import AudioPlayer from "@/components/content/audio-player";
 import YouTubeEmbed from "@/components/content/youtube-embed";
+import MarkdownWithYouTube from "@/components/content/markdown-with-youtube";
+import SimplePortableText from "@/components/content/simple-portable-text";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 import { Helmet } from "react-helmet";
-import { urlFor } from "@/lib/sanity"; // Import urlFor to handle Sanity images
-import { PortableText } from "@portabletext/react";
-import { portableTextComponents } from "@/components/sanity";
+import { urlFor } from "@/lib/image-utils"; // Import replacement for Sanity's urlFor
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw'; // For rendering HTML in markdown
 import remarkGfm from 'remark-gfm'; // For GitHub-flavored markdown (tables, etc.)
@@ -197,34 +197,15 @@ const ArticlePage = () => {
             {article.content && (
               <div className="mb-12">
                 {typeof article.content === 'string' ? (
-                  <ReactMarkdown
-                    rehypePlugins={[rehypeRaw]}
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      // Custom component for links
-                      a: ({ node, href, children, ...props }) => {
-                        // Check if it's a YouTube link
-                        if (href && isYouTubeUrl(href)) {
-                          const videoId = extractYouTubeVideoId(href);
-                          if (videoId) {
-                            return <YouTubeEmbed videoId={videoId} title={String(children)} />;
-                          }
-                        }
-                        // Regular link
-                        return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
-                      }
-                    }}
-                  >
-                    {article.content}
-                  </ReactMarkdown>
+                  <MarkdownWithYouTube content={article.content} />
                 ) : (
-                  <PortableText value={article.content} components={portableTextComponents} />
+                  <SimplePortableText value={article.content} />
                 )}
               </div>
             )}
 
             {/* Content Sections */}
-            {article.contentSections && article.contentSections.map((section, index) => (
+            {article.contentSections && article.contentSections.map((section: any, index: number) => (
               <div key={index} className="mb-12">
                 {section.title && (
                   <h2 className="text-2xl font-heading font-semibold mb-4">{section.title}</h2>
@@ -370,26 +351,7 @@ const ArticlePage = () => {
                       // Otherwise render as normal markdown
                       return (
                         <div className="markdown-content">
-                          <ReactMarkdown
-                            rehypePlugins={[rehypeRaw]}
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                              // Custom component for links
-                              a: ({ node, href, children, ...props }) => {
-                                // Check if it's a YouTube link
-                                if (href && isYouTubeUrl(href)) {
-                                  const videoId = extractYouTubeVideoId(href);
-                                  if (videoId) {
-                                    return <YouTubeEmbed videoId={videoId} title={String(children)} />;
-                                  }
-                                }
-                                // Regular link
-                                return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
-                              }
-                            }}
-                          >
-                            {markdownContent}
-                          </ReactMarkdown>
+                          <MarkdownWithYouTube content={markdownContent} />
 
                           {/* Debugging view */}
                           {process.env.NODE_ENV === 'development' && (
@@ -402,7 +364,7 @@ const ArticlePage = () => {
                       );
                     } else {
                       return (
-                        <PortableText value={section.content} components={portableTextComponents} />
+                        <SimplePortableText value={section.content} />
                       );
                     }
                   })()}
@@ -440,7 +402,7 @@ const ArticlePage = () => {
 
                 {index === 2 && article.images && article.images.length > 0 && (
                   <div className="my-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {article.images.slice(0, 2).map((image, imgIndex) => (
+                    {article.images.slice(0, 2).map((image: any, imgIndex: number) => (
                       <MediaPlayer
                         key={imgIndex}
                         type="image"
@@ -458,7 +420,7 @@ const ArticlePage = () => {
               <div className="mt-12 border-t border-neutral-200 pt-8">
                 <h3 className="text-xl font-heading font-semibold mb-4">Related Resources</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {article.resources.map((resource, index) => (
+                  {article.resources.map((resource: any, index: number) => (
                     <div key={index} className="bg-neutral-100 rounded-lg p-4 flex items-center">
                       <div className="flex-shrink-0 mr-4">
                         {resource.type === 'pdf' ? (
@@ -492,7 +454,7 @@ const ArticlePage = () => {
           <div className="mt-12 pt-6 border-t border-neutral-200">
             <div className="flex flex-wrap items-center justify-between">
               <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                {article.tags && article.tags.map((tag, index) => (
+                {article.tags && article.tags.map((tag: string, index: number) => (
                   <Link key={index} href={`/articles?tag=${tag}`} className="text-sm text-neutral-800 hover:text-primary-dark transition duration-150">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline text-primary mr-1" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
@@ -530,7 +492,7 @@ const ArticlePage = () => {
             <div className="mt-16 border-t border-neutral-200 pt-12">
               <h3 className="text-2xl font-heading font-semibold mb-8 text-center">You May Also Like</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {article.relatedArticles.map((relatedArticle, index) => (
+                {article.relatedArticles.map((relatedArticle: any, index: number) => (
                   <div key={index} className="inline-block">
                     <Link href={`/${relatedArticle.slug?.current || relatedArticle.slug}`}>
                       <div className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">

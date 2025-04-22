@@ -1,6 +1,6 @@
 /**
  * Extracts the YouTube video ID from various YouTube URL formats
- * 
+ *
  * Supports:
  * - https://www.youtube.com/watch?v=VIDEO_ID
  * - https://youtu.be/VIDEO_ID
@@ -9,23 +9,28 @@
  */
 export function extractYouTubeVideoId(url: string): string | null {
   if (!url) return null;
-  
+
+  console.log('Extracting YouTube ID from URL:', url);
+
   // Regular YouTube watch URLs
   const watchRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
   const watchMatch = url.match(watchRegex);
-  
+
   if (watchMatch && watchMatch[1]) {
+    console.log('Matched YouTube watch URL, ID:', watchMatch[1]);
     return watchMatch[1];
   }
-  
+
   // YouTube Shorts URLs
   const shortsRegex = /youtube\.com\/shorts\/([^"&?\/\s]{11})/i;
   const shortsMatch = url.match(shortsRegex);
-  
+
   if (shortsMatch && shortsMatch[1]) {
+    console.log('Matched YouTube shorts URL, ID:', shortsMatch[1]);
     return shortsMatch[1];
   }
-  
+
+  console.log('No YouTube ID found in URL');
   return null;
 }
 
@@ -34,5 +39,8 @@ export function extractYouTubeVideoId(url: string): string | null {
  */
 export function isYouTubeUrl(url: string): boolean {
   if (!url) return false;
-  return !!extractYouTubeVideoId(url);
+  console.log('Checking if URL is a YouTube URL:', url);
+  const result = !!extractYouTubeVideoId(url);
+  console.log('Is YouTube URL:', result);
+  return result;
 }

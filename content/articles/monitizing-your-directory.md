@@ -18,6 +18,8 @@ readTime: "15 min"
 
 ---
 
+https://www.youtube.com/watch?v=wLHdtFL_G28
+
 ## Introduction
 
 Imagine earning a steady stream of income from a website that works for you—no cold calls, no networking events, no need to be the face of your brand. For introverts, the dream of financial independence often collides with the reality of a world that rewards extroverted hustle. But what if you could build a business that leverages your strengths—strategy, process, and quiet focus—while keeping you comfortably behind the scenes?
