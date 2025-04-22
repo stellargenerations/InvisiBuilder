@@ -4,7 +4,7 @@ import ContentCard from "@/components/content/content-card";
 import { Link } from "wouter";
 
 const FeaturedContent = () => {
-  // Using 'any' for Sanity data structure
+  // Using the Article type from our schema
   const { data: articles, isLoading, error } = useQuery<any[]>({
     queryKey: ['/api/articles?featured=true'],
   });
