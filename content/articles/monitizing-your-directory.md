@@ -4,7 +4,7 @@ slug: "monitizing-your-directory"
 excerpt: "Discover how introverts can leverage website directories to build automated income streams without the need for extroverted hustle. Learn four proven monetization methods and practical strategies for building a business that works on your terms."
 publishedDate: "2023-3-15"
 updatedDate: "2023-3-15"
-author: "Your Name"
+author: "Invisibuilder"
 category: "Business"
 tags: ["passive income", "website directories", "introvert entrepreneurship", "monetization", "automation"]
 featured: true
@@ -14,7 +14,7 @@ readTime: "15 min"
 
 # Silent Success: How Introverts Can Build Automated Income Streams with Website Directories (Without the Hustle)
 
-*By [Your Name], inspired by [Creator's Name]'s "How To Monetize Your Website Directory (4 Proven Methods)" ([Watch the original video](https://www.youtube.com/watch?v=wLHdtFL_G28))*
+*By Invisibuilder, inspired by Frey Chue's "How To Monetize Your Website Directory (4 Proven Methods)" ([Watch the original video](https://www.youtube.com/watch?v=wLHdtFL_G28))*
 
 ---
 
@@ -24,7 +24,7 @@ https://www.youtube.com/watch?v=wLHdtFL_G28
 
 Imagine earning a steady stream of income from a website that works for you—no cold calls, no networking events, no need to be the face of your brand. For introverts, the dream of financial independence often collides with the reality of a world that rewards extroverted hustle. But what if you could build a business that leverages your strengths—strategy, process, and quiet focus—while keeping you comfortably behind the scenes?
 
-That's the promise at the heart of [Creator's Name]'s video, "How To Monetize Your Website Directory (4 Proven Methods)." In this comprehensive review, I'll break down the actionable insights, unique strategies, and real-world examples from the video, showing how directory websites can become the ultimate low-profile, high-leverage asset for introverts. Along the way, I'll share my own opinions (highlighted for easy editing) and practical takeaways, so you can decide if this path is right for you.
+That's the promise at the heart of Frey Chue's video, "How To Monetize Your Website Directory (4 Proven Methods)." In this comprehensive review, I'll break down the actionable insights, unique strategies, and real-world examples from the video, showing how directory websites can become the ultimate low-profile, high-leverage asset for introverts. Along the way, I'll share my own opinions (highlighted for easy editing) and practical takeaways, so you can decide if this path is right for you.
 
 ---
 
@@ -32,7 +32,7 @@ That's the promise at the heart of [Creator's Name]'s video, "How To Monetize Yo
 
 ### The Introvert's Edge: Systems Over Social Skills
 
-[Creator's Name] opens with a question that cuts to the core: "What do you want out of this directory journey that you're on?" (0:19–0:22). For many, the answer is simple: freedom. Whether it's escaping the 9-to-5, supplementing your income, or just having more control over your time, directory websites offer a unique blend of automation, scalability, and anonymity.
+Frey Chue opens with a question that cuts to the core: "What do you want out of this directory journey that you're on?" (0:19–0:22). For many, the answer is simple: freedom. Whether it's escaping the 9-to-5, supplementing your income, or just having more control over your time, directory websites offer a unique blend of automation, scalability, and anonymity.
 
 #### Specific "Why's" Outlined in the Video
 
@@ -227,7 +227,7 @@ That's the promise at the heart of [Creator's Name]'s video, "How To Monetize Yo
 
 ### Personal Journey: Display Ads
 
-- [Creator's Name] shares their experience with Ezoic and Mediavine, noting similar revenue but different support and requirements.
+- Frey Chue shares their experience with Ezoic and Mediavine, noting similar revenue but different support and requirements.
 - "I made pretty much very similar revenue on Ezoic than I did with Mediavine." (5:26–5:29)
 - Ad revenue is easy to set up but can be volatile.
 
@@ -246,7 +246,7 @@ That's the promise at the heart of [Creator's Name]'s video, "How To Monetize Yo
 
 ## Conclusion
 
-Website directories are a powerful, underappreciated tool for introverts seeking financial freedom through technology, automation, and strategic processes. As [Creator's Name] demonstrates in "How To Monetize Your Website Directory (4 Proven Methods)," the path to success is paved with systems, not hustle.
+Website directories are a powerful, underappreciated tool for introverts seeking financial freedom through technology, automation, and strategic processes. As Frey Chue demonstrates in "How To Monetize Your Website Directory (4 Proven Methods)," the path to success is paved with systems, not hustle.
 
 By clarifying your "why," choosing the right monetization model, and leveraging your strengths in research and process, you can build a business that works for you—quietly, efficiently, and profitably.
 
@@ -256,7 +256,7 @@ By clarifying your "why," choosing the right monetization model, and leveraging 
 
 **Credits & Resources**
 
-- Video: [How To Monetize Your Website Directory (4 Proven Methods)](https://www.youtube.com/watch?v=wLHdtFL_G28) by [Creator's Name]
+- Video: [How To Monetize Your Website Directory (4 Proven Methods)](https://www.youtube.com/watch?v=wLHdtFL_G28) by Frey Chue
 - Newsletter: Ship Your Directory News (referenced at 3:00–3:03)
 
 *Highlighted opinions reflect the reviewer's perspective and can be edited to align with your own voice.*
