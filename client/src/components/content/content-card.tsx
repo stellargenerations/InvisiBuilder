@@ -9,53 +9,53 @@ const ContentCard = ({ article }: ContentCardProps) => {
   const formatDate = (dateString: string | Date | null) => {
     if (!dateString) return 'Unknown date';
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
-    return new Intl.DateTimeFormat('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     }).format(date);
   };
 
   // Get category name handling both string and object types
   const getCategoryName = () => {
     if (!article.category) return null;
-    
+
     // Handle string type (from markdown)
     if (typeof article.category === 'string') {
       return article.category;
     }
-    
+
     // Handle object type (category object with name property)
     if (typeof article.category === 'object' && article.category?.name) {
       return article.category.name;
     }
-    
+
     return null;
   };
 
   // Get proper slug handling different formats
   const getSlug = () => {
     if (!article.slug) return '';
-    
+
     // Handle string type (from markdown)
     if (typeof article.slug === 'string') {
       return article.slug;
     }
-    
-    // Handle object type (slug object with current property from Sanity)
+
+    // Handle object type (slug object with current property)
     if (typeof article.slug === 'object' && article.slug?.current) {
       return article.slug.current;
     }
-    
+
     return '';
   };
 
   return (
     <article className="bg-neutral-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-150">
       <div className="relative">
-        <img 
-          src={article.featuredImage || article.coverImage || article.mainImage || '/placeholder-image.jpg'} 
-          alt={article.title} 
+        <img
+          src={article.featuredImage || article.coverImage || article.mainImage || '/placeholder-image.jpg'}
+          alt={article.title}
           className="w-full h-48 object-cover"
           loading="lazy"
         />
@@ -67,7 +67,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
           </div>
         )}
       </div>
-      
+
       <div className="p-6">
         <div className="flex items-center text-sm text-neutral-800 mb-2">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-primary" viewBox="0 0 20 20" fill="currentColor">
@@ -80,11 +80,11 @@ const ContentCard = ({ article }: ContentCardProps) => {
           </svg>
           <span>{article.readTime} read</span>
         </div>
-        
+
         <h3 className="font-heading font-semibold text-xl mb-2 text-neutral-900">{article.title}</h3>
-        
+
         <p className="text-neutral-800 mb-4">{article.excerpt}</p>
-        
+
         <div className="flex items-center space-x-3 mb-4">
           {article.videoFiles && article.videoFiles.length > 0 && (
             <div className="inline-flex items-center">
@@ -94,7 +94,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
               <span className="text-sm">{article.videoFiles.length} Video{article.videoFiles.length !== 1 ? 's' : ''}</span>
             </div>
           )}
-          
+
           {article.images && article.images.length > 0 && (
             <div className="inline-flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -103,7 +103,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
               <span className="text-sm">{article.images.length} Image{article.images.length !== 1 ? 's' : ''}</span>
             </div>
           )}
-          
+
           {article.audioFiles && article.audioFiles.length > 0 && (
             <div className="inline-flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -112,7 +112,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
               <span className="text-sm">{article.audioFiles.length} Audio</span>
             </div>
           )}
-          
+
           {article.resources && article.resources.length > 0 && (
             <div className="inline-flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -122,7 +122,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
             </div>
           )}
         </div>
-        
+
         <Link href={`/${getSlug()}`}>
           <div className="inline-flex items-center font-medium text-primary-dark hover:text-primary transition duration-150 cursor-pointer">
             Read Article

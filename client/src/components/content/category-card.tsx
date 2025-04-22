@@ -5,20 +5,20 @@ interface CategoryCardProps {
   category: Category;
 }
 
-// Helper function to get slug from both markdown and Sanity structure
+// Helper function to get slug from different structures
 const getCategorySlug = (category: Category) => {
   if (!category) return '';
-  
-  // Handle string type (from markdown)
+
+  // Handle string type
   if (typeof category.slug === 'string') {
     return category.slug;
   }
-  
-  // Handle object type (Sanity structure with current property)
+
+  // Handle object type with current property
   if (typeof category.slug === 'object' && category.slug?.current) {
     return category.slug.current;
   }
-  
+
   return '';
 };
 
@@ -60,7 +60,7 @@ const getCategoryIcon = (iconName: string) => {
 const CategoryCard = ({ category }: CategoryCardProps) => {
   // Handle articleCount - default to 0 if not available
   const articleCount = category.articleCount || 0;
-  
+
   return (
     <Link href={`/articles?category=${getCategorySlug(category)}`}>
       <div className="group cursor-pointer">

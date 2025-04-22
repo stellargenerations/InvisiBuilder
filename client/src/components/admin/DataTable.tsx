@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,10 +19,10 @@ import { z } from "zod";
 
 interface DataTableProps<T> {
   data: T[];
-  columns: { 
-    key: string; 
-    title: string; 
-    type: 'text' | 'number' | 'boolean' | 'date' | 'textarea'; 
+  columns: {
+    key: string;
+    title: string;
+    type: 'text' | 'number' | 'boolean' | 'date' | 'textarea';
     editable?: boolean;
     width?: string;
   }[];
@@ -128,7 +128,7 @@ export function DataTable<T extends Record<string, any>>({
         initialData[column.key] = '';
       }
     });
-    
+
     // If it's articles, set some defaults
     if (endpoint === '/api/articles') {
       initialData.featured = false;
@@ -136,7 +136,7 @@ export function DataTable<T extends Record<string, any>>({
       initialData.content = '';
       initialData.readTime = '5 min';
     }
-    
+
     setNewRowData(initialData);
     setIsAdding(true);
   };
@@ -147,7 +147,7 @@ export function DataTable<T extends Record<string, any>>({
       if (endpoint === '/api/articles') {
         const requiredFields = ['title', 'slug', 'excerpt', 'featuredImage'];
         const missingFields = requiredFields.filter(field => !newRowData[field]);
-        
+
         if (missingFields.length > 0) {
           toast({
             title: "Validation Error",
@@ -156,7 +156,7 @@ export function DataTable<T extends Record<string, any>>({
           });
           return;
         }
-        
+
         // Check slug format
         const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
         if (newRowData.slug && !slugRegex.test(newRowData.slug)) {
@@ -168,7 +168,7 @@ export function DataTable<T extends Record<string, any>>({
           return;
         }
       }
-      
+
       const response = await apiRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(newRowData)
@@ -184,7 +184,7 @@ export function DataTable<T extends Record<string, any>>({
       onRefresh();
     } catch (error: any) {
       console.error('Error adding new row:', error);
-      
+
       // Attempt to parse error message if it's from our API
       let errorMessage = "Failed to add new item. Please try again.";
       try {
@@ -197,7 +197,7 @@ export function DataTable<T extends Record<string, any>>({
       } catch (e) {
         // If parsing fails, use generic message
       }
-      
+
       toast({
         title: "Error",
         description: errorMessage,
@@ -212,8 +212,8 @@ export function DataTable<T extends Record<string, any>>({
   };
 
   const handleInputChange = (
-    key: string, 
-    value: string | number | boolean | null | undefined, 
+    key: string,
+    value: string | number | boolean | null | undefined,
     isNewRow: boolean = false
   ) => {
     if (isNewRow) {
@@ -227,11 +227,11 @@ export function DataTable<T extends Record<string, any>>({
     const isEditing = editRowId === row[idField];
     const value = row[column.key];
     const editable = column.editable !== false;
-    
+
     if (isEditing && editable) {
       if (column.type === 'text') {
         return (
-          <Input 
+          <Input
             value={editData[column.key] || ''}
             onChange={(e) => handleInputChange(column.key, e.target.value)}
             className="w-full"
@@ -239,7 +239,7 @@ export function DataTable<T extends Record<string, any>>({
         );
       } else if (column.type === 'textarea') {
         return (
-          <Textarea 
+          <Textarea
             value={editData[column.key] || ''}
             onChange={(e) => handleInputChange(column.key, e.target.value)}
             className="w-full min-h-[100px]"
@@ -247,7 +247,7 @@ export function DataTable<T extends Record<string, any>>({
         );
       } else if (column.type === 'number') {
         return (
-          <Input 
+          <Input
             type="number"
             value={editData[column.key] || 0}
             onChange={(e) => handleInputChange(column.key, Number(e.target.value))}
@@ -256,14 +256,14 @@ export function DataTable<T extends Record<string, any>>({
         );
       } else if (column.type === 'boolean') {
         return (
-          <Checkbox 
+          <Checkbox
             checked={!!editData[column.key]}
             onCheckedChange={(checked) => handleInputChange(column.key, !!checked)}
           />
         );
       } else if (column.type === 'date') {
         return (
-          <Input 
+          <Input
             type="date"
             value={editData[column.key] ? new Date(editData[column.key]).toISOString().split('T')[0] : ''}
             onChange={(e) => handleInputChange(column.key, e.target.value)}
@@ -272,7 +272,7 @@ export function DataTable<T extends Record<string, any>>({
         );
       }
     }
-    
+
     // Display mode
     if (column.type === 'boolean') {
       return <Checkbox checked={!!value} disabled />;
@@ -281,7 +281,7 @@ export function DataTable<T extends Record<string, any>>({
     } else if (column.type === 'textarea') {
       return (
         <div className="max-h-[100px] overflow-auto text-sm">
-          {typeof value === 'object' 
+          {typeof value === 'object'
             ? (value === null ? '' : JSON.stringify(value, null, 2))
             : (value || '')}
         </div>
@@ -294,7 +294,7 @@ export function DataTable<T extends Record<string, any>>({
         if (Array.isArray(value)) {
           return value.join(', ');
         } else {
-          // Handle Sanity style objects like {_type: "slug", current: "value"}
+          // Handle objects with special properties
           if (value._type === 'slug' && value.current) {
             return value.current;
           } else if (value._id) {
@@ -320,7 +320,7 @@ export function DataTable<T extends Record<string, any>>({
         {columns.map((column, colIndex) => (
           <TableCell key={colIndex}>
             {column.type === 'text' && (
-              <Input 
+              <Input
                 value={newRowData[column.key] || ''}
                 onChange={(e) => handleInputChange(column.key, e.target.value, true)}
                 className="w-full"
@@ -328,7 +328,7 @@ export function DataTable<T extends Record<string, any>>({
               />
             )}
             {column.type === 'textarea' && (
-              <Textarea 
+              <Textarea
                 value={newRowData[column.key] || ''}
                 onChange={(e) => handleInputChange(column.key, e.target.value, true)}
                 className="w-full min-h-[100px]"
@@ -336,7 +336,7 @@ export function DataTable<T extends Record<string, any>>({
               />
             )}
             {column.type === 'number' && (
-              <Input 
+              <Input
                 type="number"
                 value={newRowData[column.key] || 0}
                 onChange={(e) => handleInputChange(column.key, Number(e.target.value), true)}
@@ -345,13 +345,13 @@ export function DataTable<T extends Record<string, any>>({
               />
             )}
             {column.type === 'boolean' && (
-              <Checkbox 
+              <Checkbox
                 checked={!!newRowData[column.key]}
                 onCheckedChange={(checked) => handleInputChange(column.key, !!checked, true)}
               />
             )}
             {column.type === 'date' && (
-              <Input 
+              <Input
                 type="date"
                 value={newRowData[column.key] || ''}
                 onChange={(e) => handleInputChange(column.key, e.target.value, true)}
@@ -398,7 +398,7 @@ export function DataTable<T extends Record<string, any>>({
         </TableHeader>
         <TableBody>
           {isAdding && renderNewRowInputs()}
-          
+
           {data.length === 0 ? (
             <TableRow>
               <TableCell colSpan={columns.length + 1} className="text-center py-6 text-gray-500">
@@ -426,11 +426,11 @@ export function DataTable<T extends Record<string, any>>({
                         Edit
                       </Button>
                     )}
-                    
+
                     {deletionEnabled && (
-                      <Button 
-                        size="sm" 
-                        variant="destructive" 
+                      <Button
+                        size="sm"
+                        variant="destructive"
                         onClick={() => handleDeleteRow(row[idField])}
                       >
                         <Trash className="h-4 w-4 mr-1" />
