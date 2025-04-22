@@ -25,13 +25,15 @@ const HeroSection = () => {
               </Link>
             </div>
           </div>
-          <div className="w-full md:w-1/2 flex justify-center">
-            <img 
-              src="https://images.unsplash.com/photo-1502945015378-0e284ca1a5be?auto=format&fit=crop&w=600&h=500&q=80" 
-              alt="Person working on laptop with face not visible" 
-              className="rounded-lg shadow-xl max-w-full h-auto"
-              loading="eager"
-            />
+          <div className="w-full md:w-1/2 flex justify-center items-center">
+            <div className="bg-transparent p-8 rounded-full">
+              <img 
+                src="/invisibuilder-logo.png" 
+                alt="Invisibuilder Logo" 
+                className="max-w-full h-auto w-4/5 mx-auto"
+                loading="eager"
+              />
+            </div>
           </div>
         </div>
       </div>
