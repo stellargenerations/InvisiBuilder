@@ -97,7 +97,7 @@ const ContentPreview = () => {
                 {previewArticle.videoFiles && previewArticle.videoFiles.length > 0 && (
                   <div className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm">
                     <MediaPlayer 
-                      type="video"
+                      type={previewArticle.videoFiles[0].url.includes('youtube.com') || previewArticle.videoFiles[0].url.includes('youtu.be') ? 'youtube' : 'video'}
                       src={previewArticle.videoFiles[0].url}
                       title={previewArticle.videoFiles[0].title}
                       description={previewArticle.videoFiles[0].description}

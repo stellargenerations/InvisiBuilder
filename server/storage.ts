@@ -280,25 +280,25 @@ export class MemStorage implements IStorage {
 
     // Create special preview article
     const previewArticle = this.createArticle({
-      title: "Starting an Anonymous Digital Agency",
-      slug: "anonymous-digital-agency",
-      excerpt: "The traditional advice for starting a service-based business often revolves around personal branding, networking events, and putting yourself in the spotlight. But what if that approach doesn't align with your personality or preferences?",
+      title: "Website Directory Monetization",
+      slug: "website-directory-monetization",
+      excerpt: "Learn how to build and monetize website directories for passive income with this comprehensive guide featuring 6 viable business models.",
       content: "",
-      featuredImage: "https://images.unsplash.com/photo-1508830524289-0adcbe822b40?auto=format&fit=crop&w=1200&h=600&q=80",
-      publishedDate: new Date("2023-04-20"),
-      updatedDate: new Date("2023-04-20"),
-      categoryId: privacyToolsCategory.id,
-      category: "Business Strategy",
-      readTime: "14 min",
-      tags: ["agency", "services", "anonymity"],
-      featured: false,
+      featuredImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2404&q=80",
+      publishedDate: new Date("2025-04-15"),
+      updatedDate: new Date("2025-04-15"),
+      categoryId: monetizationCategory.id,
+      category: "business-category",
+      readTime: "5 min",
+      tags: ["monetization", "directories", "passive-income", "business-models"],
+      featured: true,
       status: "published"
     });
 
     // Create content sections for preview article
     this.createContentSection({
-      title: "Introduction",
-      content: "<p>The traditional advice for starting a service-based business often revolves around personal branding, networking events, and putting yourself in the spotlight. But what if that approach doesn't align with your personality or preferences?</p><p>In this comprehensive guide, we'll explore how to build a successful digital agency while maintaining your privacy and working entirely behind the scenes.</p>",
+      title: "Introduction to Directory Monetization",
+      content: "<p>Creating directory websites can be an excellent way to generate passive income online. This comprehensive guide explores various monetization strategies for directory websites, from paid listings to affiliate marketing and beyond.</p><p>Below is a video guide that explains the fundamental concepts of website directory monetization:</p><div class=\"youtube-embed\"><iframe width=\"100%\" height=\"400\" src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" title=\"Website Directory Monetization\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe></div><p>Let's explore the different ways you can generate revenue from your directory website.</p>",
       order: 1,
       articleId: previewArticle.id
     });
@@ -319,12 +319,12 @@ export class MemStorage implements IStorage {
 
     // Create media for preview article
     this.createMediaFile({
-      title: "Setting Up An Anonymous Agency",
-      url: "https://example.com/videos/anonymous-agency-setup.mp4",
+      title: "Website Directory Monetization",
+      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       type: "video",
-      description: "This video walks through the technical and legal setup required to operate an agency without revealing personal details.",
-      thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&h=450&q=80",
-      duration: "8:42",
+      description: "Learn how to monetize a website directory with multiple revenue streams including premium listings, affiliate programs, and advertisements.",
+      thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&h=450&q=80",
+      duration: "10:26",
       articleId: previewArticle.id
     });
 
@@ -490,8 +490,8 @@ export class MemStorage implements IStorage {
   }
 
   async getArticlePreview(): Promise<Article | undefined> {
-    // Get article with "anonymous-digital-agency" slug which is our preview article
-    const previewArticle = Array.from(this.articles.values()).find(a => a.slug === "anonymous-digital-agency");
+    // Get article with "website-directory-monetization" slug which is our preview article
+    const previewArticle = Array.from(this.articles.values()).find(a => a.slug === "website-directory-monetization");
     if (!previewArticle) return undefined;
     
     return this.enhanceArticle(previewArticle);
@@ -714,7 +714,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-import { DatabaseStorage } from './database-storage';
-
-// Use the DatabaseStorage implementation for persistent storage
-export const storage = new DatabaseStorage();
+// Use the MemStorage implementation
+export const storage = new MemStorage();
