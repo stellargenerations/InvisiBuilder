@@ -19,7 +19,7 @@ export const portableTextComponents: PortableTextComponents = {
       console.log('Undefined value:', value);
       // For undefined types, try to render as markdown if possible
       if (typeof value === 'string') {
-        return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value}</ReactMarkdown>;
+        return <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>;
       }
       // If it's an object, try to identify useful content
       if (value && typeof value === 'object') {
@@ -27,12 +27,12 @@ export const portableTextComponents: PortableTextComponents = {
           return <p>{value.text}</p>;
         }
         if (value.markdown) {
-          return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value.markdown}</ReactMarkdown>;
+          return <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>{value.markdown}</ReactMarkdown>;
         }
         if (value.content) {
           // Try to render as markdown with HTML support
           if (typeof value.content === 'string') {
-            return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value.content}</ReactMarkdown>;
+            return <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>{value.content}</ReactMarkdown>;
           }
           return <p>{String(value.content)}</p>;
         }
@@ -44,7 +44,12 @@ export const portableTextComponents: PortableTextComponents = {
       console.log('Markdown Value:', value);
       return (
         <div className="markdown-content my-4">
-          <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value.markdown || value.text || ''}</ReactMarkdown>
+          <ReactMarkdown 
+            rehypePlugins={[rehypeRaw]} 
+            remarkPlugins={[remarkGfm]}
+          >
+            {value.markdown || value.text || ''}
+          </ReactMarkdown>
         </div>
       );
     },
