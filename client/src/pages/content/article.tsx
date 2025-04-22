@@ -381,7 +381,7 @@ const ArticlePage = () => {
                 {index === 0 && article.videoFiles && article.videoFiles.length > 0 && (
                   <div className="my-8">
                     <MediaPlayer 
-                      type="video"
+                      type={article.videoFiles[0].url.includes('youtube.com') || article.videoFiles[0].url.includes('youtu.be') ? 'youtube' : 'video'}
                       src={article.videoFiles[0].url}
                       title={article.videoFiles[0].title || ''}
                       description={article.videoFiles[0].description || undefined}

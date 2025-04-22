@@ -319,12 +319,12 @@ export class MemStorage implements IStorage {
 
     // Create media for preview article
     this.createMediaFile({
-      title: "Setting Up An Anonymous Agency",
-      url: "https://example.com/videos/anonymous-agency-setup.mp4",
+      title: "Website Directory Monetization",
+      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       type: "video",
-      description: "This video walks through the technical and legal setup required to operate an agency without revealing personal details.",
-      thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&h=450&q=80",
-      duration: "8:42",
+      description: "Learn how to monetize a website directory with multiple revenue streams including premium listings, affiliate programs, and advertisements.",
+      thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&h=450&q=80",
+      duration: "10:26",
       articleId: previewArticle.id
     });
 
