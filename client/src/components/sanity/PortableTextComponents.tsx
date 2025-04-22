@@ -3,6 +3,7 @@ import { PortableTextComponents } from '@portabletext/react';
 import SanityTable from './SanityTable';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw'; // For rendering HTML in markdown
+import remarkGfm from 'remark-gfm'; // For GitHub-flavored markdown (tables, etc.)
 
 // Configure components for @portabletext/react
 export const portableTextComponents: PortableTextComponents = {

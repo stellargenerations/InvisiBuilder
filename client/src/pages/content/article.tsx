@@ -10,6 +10,7 @@ import { PortableText } from "@portabletext/react";
 import { portableTextComponents } from "@/components/sanity";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw'; // For rendering HTML in markdown
+import remarkGfm from 'remark-gfm'; // For GitHub-flavored markdown (tables, etc.)
 
 const ArticlePage = () => {
   const [match, params] = useRoute("/:slug");
@@ -194,7 +195,12 @@ const ArticlePage = () => {
             {article.content && (
               <div className="mb-12">
                 {typeof article.content === 'string' ? (
-                  <ReactMarkdown rehypePlugins={[rehypeRaw]}>{article.content}</ReactMarkdown>
+                  <ReactMarkdown 
+                    rehypePlugins={[rehypeRaw]}
+                    remarkPlugins={[remarkGfm]}
+                  >
+                    {article.content}
+                  </ReactMarkdown>
                 ) : (
                   <PortableText value={article.content} components={portableTextComponents} />
                 )}
@@ -221,7 +227,12 @@ const ArticlePage = () => {
                         if (parsedContent.markdown || parsedContent.text) {
                           return (
                             <div className="markdown-content">
-                              <ReactMarkdown rehypePlugins={[rehypeRaw]}>{parsedContent.markdown || parsedContent.text}</ReactMarkdown>
+                              <ReactMarkdown 
+                                rehypePlugins={[rehypeRaw]}
+                                remarkPlugins={[remarkGfm]}
+                              >
+                                {parsedContent.markdown || parsedContent.text}
+                              </ReactMarkdown>
                             </div>
                           );
                         }
@@ -297,9 +308,34 @@ const ArticlePage = () => {
                               {/* Special styling for tables */}
                               <div className="overflow-x-auto">
                                 <div className="inline-block min-w-full">
-                                  <pre className="whitespace-pre-wrap bg-white border border-gray-200 rounded-md p-4">
+                                  <ReactMarkdown
+                                    rehypePlugins={[rehypeRaw]}
+                                    remarkPlugins={[remarkGfm]}
+                                    components={{
+                                      table: ({node, ...props}) => (
+                                        <div className="overflow-auto my-6">
+                                          <table className="min-w-full divide-y divide-gray-300 border border-gray-300" {...props} />
+                                        </div>
+                                      ),
+                                      thead: ({node, ...props}) => (
+                                        <thead className="bg-gray-50" {...props} />
+                                      ),
+                                      tbody: ({node, ...props}) => (
+                                        <tbody className="divide-y divide-gray-200 bg-white" {...props} />
+                                      ),
+                                      tr: ({node, ...props}) => (
+                                        <tr className="hover:bg-gray-50" {...props} />
+                                      ),
+                                      th: ({node, ...props}) => (
+                                        <th className="py-3.5 px-4 text-left text-sm font-semibold text-gray-900 border-r last:border-r-0" {...props} />
+                                      ),
+                                      td: ({node, ...props}) => (
+                                        <td className="whitespace-nowrap py-4 px-4 text-sm text-gray-800 border-r last:border-r-0" {...props} />
+                                      )
+                                    }}
+                                  >
                                     {markdownContent}
-                                  </pre>
+                                  </ReactMarkdown>
                                 </div>
                               </div>
                             </div>
@@ -318,7 +354,12 @@ const ArticlePage = () => {
                       // Otherwise render as normal markdown
                       return (
                         <div className="markdown-content">
-                          <ReactMarkdown rehypePlugins={[rehypeRaw]}>{markdownContent}</ReactMarkdown>
+                          <ReactMarkdown 
+                            rehypePlugins={[rehypeRaw]}
+                            remarkPlugins={[remarkGfm]}
+                          >
+                            {markdownContent}
+                          </ReactMarkdown>
 
                           {/* Debugging view */}
                           {process.env.NODE_ENV === 'development' && (
