@@ -280,18 +280,18 @@ export class MemStorage implements IStorage {
 
     // Create special preview article
     const previewArticle = this.createArticle({
-      title: "Starting an Anonymous Digital Agency",
-      slug: "anonymous-digital-agency",
-      excerpt: "The traditional advice for starting a service-based business often revolves around personal branding, networking events, and putting yourself in the spotlight. But what if that approach doesn't align with your personality or preferences?",
+      title: "Website Directory Monetization",
+      slug: "website-directory-monetization",
+      excerpt: "Learn how to build and monetize website directories for passive income with this comprehensive guide featuring 6 viable business models.",
       content: "",
-      featuredImage: "https://images.unsplash.com/photo-1508830524289-0adcbe822b40?auto=format&fit=crop&w=1200&h=600&q=80",
-      publishedDate: new Date("2023-04-20"),
-      updatedDate: new Date("2023-04-20"),
-      categoryId: privacyToolsCategory.id,
-      category: "Business Strategy",
-      readTime: "14 min",
-      tags: ["agency", "services", "anonymity"],
-      featured: false,
+      featuredImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2404&q=80",
+      publishedDate: new Date("2025-04-15"),
+      updatedDate: new Date("2025-04-15"),
+      categoryId: monetizationCategory.id,
+      category: "business-category",
+      readTime: "5 min",
+      tags: ["monetization", "directories", "passive-income", "business-models"],
+      featured: true,
       status: "published"
     });
 
@@ -490,8 +490,8 @@ export class MemStorage implements IStorage {
   }
 
   async getArticlePreview(): Promise<Article | undefined> {
-    // Get article with "anonymous-digital-agency" slug which is our preview article
-    const previewArticle = Array.from(this.articles.values()).find(a => a.slug === "anonymous-digital-agency");
+    // Get article with "website-directory-monetization" slug which is our preview article
+    const previewArticle = Array.from(this.articles.values()).find(a => a.slug === "website-directory-monetization");
     if (!previewArticle) return undefined;
     
     return this.enhanceArticle(previewArticle);
@@ -714,7 +714,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-import { DatabaseStorage } from './database-storage';
-
-// Use the DatabaseStorage implementation for persistent storage
-export const storage = new DatabaseStorage();
+// Use the MemStorage implementation
+export const storage = new MemStorage();
