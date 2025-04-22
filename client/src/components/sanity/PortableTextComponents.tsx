@@ -2,6 +2,7 @@ import React from 'react';
 import { PortableTextComponents } from '@portabletext/react';
 import SanityTable from './SanityTable';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw'; // For rendering HTML in markdown
 
 // Configure components for @portabletext/react
 export const portableTextComponents: PortableTextComponents = {
@@ -17,7 +18,7 @@ export const portableTextComponents: PortableTextComponents = {
       console.log('Undefined value:', value);
       // For undefined types, try to render as markdown if possible
       if (typeof value === 'string') {
-        return <ReactMarkdown>{value}</ReactMarkdown>;
+        return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value}</ReactMarkdown>;
       }
       // If it's an object, try to identify useful content
       if (value && typeof value === 'object') {
@@ -25,10 +26,14 @@ export const portableTextComponents: PortableTextComponents = {
           return <p>{value.text}</p>;
         }
         if (value.markdown) {
-          return <ReactMarkdown>{value.markdown}</ReactMarkdown>;
+          return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value.markdown}</ReactMarkdown>;
         }
         if (value.content) {
-          return <p>{value.content}</p>;
+          // Try to render as markdown with HTML support
+          if (typeof value.content === 'string') {
+            return <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value.content}</ReactMarkdown>;
+          }
+          return <p>{String(value.content)}</p>;
         }
       }
       return <p>Content could not be displayed</p>;
@@ -38,7 +43,7 @@ export const portableTextComponents: PortableTextComponents = {
       console.log('Markdown Value:', value);
       return (
         <div className="markdown-content my-4">
-          <ReactMarkdown>{value.markdown || value.text || ''}</ReactMarkdown>
+          <ReactMarkdown rehypePlugins={[rehypeRaw]}>{value.markdown || value.text || ''}</ReactMarkdown>
         </div>
       );
     },

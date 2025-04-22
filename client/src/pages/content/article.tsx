@@ -9,6 +9,7 @@ import { urlFor } from "@/lib/sanity"; // Import urlFor to handle Sanity images
 import { PortableText } from "@portabletext/react";
 import { portableTextComponents } from "@/components/sanity";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from 'rehype-raw'; // For rendering HTML in markdown
 
 const ArticlePage = () => {
   const [match, params] = useRoute("/:slug");
@@ -193,7 +194,7 @@ const ArticlePage = () => {
             {article.content && (
               <div className="mb-12">
                 {typeof article.content === 'string' ? (
-                  <ReactMarkdown>{article.content}</ReactMarkdown>
+                  <ReactMarkdown rehypePlugins={[rehypeRaw]}>{article.content}</ReactMarkdown>
                 ) : (
                   <PortableText value={article.content} components={portableTextComponents} />
                 )}
@@ -220,7 +221,7 @@ const ArticlePage = () => {
                         if (parsedContent.markdown || parsedContent.text) {
                           return (
                             <div className="markdown-content">
-                              <ReactMarkdown>{parsedContent.markdown || parsedContent.text}</ReactMarkdown>
+                              <ReactMarkdown rehypePlugins={[rehypeRaw]}>{parsedContent.markdown || parsedContent.text}</ReactMarkdown>
                             </div>
                           );
                         }
@@ -317,7 +318,7 @@ const ArticlePage = () => {
                       // Otherwise render as normal markdown
                       return (
                         <div className="markdown-content">
-                          <ReactMarkdown>{markdownContent}</ReactMarkdown>
+                          <ReactMarkdown rehypePlugins={[rehypeRaw]}>{markdownContent}</ReactMarkdown>
 
                           {/* Debugging view */}
                           {process.env.NODE_ENV === 'development' && (
