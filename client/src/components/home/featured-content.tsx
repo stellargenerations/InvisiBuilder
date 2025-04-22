@@ -50,7 +50,7 @@ const FeaturedContent = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles && articles.length > 0 ? (
             articles.map(article => (
-              <ContentCard key={article._id || `article-${article.title}`} article={article} />
+              <ContentCard key={article.id || `article-${article.slug}`} article={article} />
             ))
           ) : (
             <div className="col-span-full text-center py-8">

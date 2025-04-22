@@ -5,14 +5,16 @@ import remarkGfm from 'remark-gfm';
 import MarkdownWithYouTube from './markdown-with-youtube';
 
 interface Block {
-  _type?: string;
-  _key?: string;
+  type?: string;
+  id?: string;
   style?: string;
   children?: any[];
-  markDefs?: any[];
+  marks?: any[];
   text?: string;
   content?: string;
   markdown?: string;
+  _type?: string; // For backward compatibility
+  _key?: string;  // For backward compatibility
   [key: string]: any;
 }
 
@@ -41,7 +43,7 @@ const SimplePortableText: React.FC<SimplePortableTextProps> = ({ value, componen
     <div className="portable-text">
       {blocks.map((block, index) => {
         // Handle different block types
-        if (block._type === 'block' || !block._type) {
+        if (block._type === 'block' || block.type === 'block' || !block._type) {
           // Basic text block
           if (block.children && Array.isArray(block.children)) {
             const text = block.children.map(child => child.text).join('');
@@ -70,7 +72,7 @@ const SimplePortableText: React.FC<SimplePortableTextProps> = ({ value, componen
         }
         
         // Handle markdown blocks
-        if (block._type === 'markdown' || block.markdown) {
+        if (block._type === 'markdown' || block.type === 'markdown' || block.markdown) {
           const markdownContent = block.markdown || '';
           return <MarkdownWithYouTube key={index} content={markdownContent} />;
         }

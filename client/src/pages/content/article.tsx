@@ -154,9 +154,9 @@ const ArticlePage = () => {
         <div className="w-full h-64 md:h-96 bg-neutral-900 relative">
           {article.featuredImage && (
             <img
-              src={article.featuredImage._type === 'image'
+              src={typeof article.featuredImage === 'object' && article.featuredImage.type === 'image'
                 ? urlFor(article.featuredImage).width(1200).url()
-                : article.featuredImage}
+                : (typeof article.featuredImage === 'string' ? article.featuredImage : urlFor(article.featuredImage).url())}
               alt={article.title}
               className="w-full h-full object-cover opacity-70"
             />
@@ -254,8 +254,8 @@ const ArticlePage = () => {
                         if (markdownContent.startsWith('{') && markdownContent.endsWith('}')) {
                           const parsed = JSON.parse(markdownContent);
 
-                          // Check for the _type property that indicates a markdown object
-                          if (parsed._type === 'markdown' && parsed.markdown) {
+                          // Check for the type property that indicates a markdown object
+                          if ((parsed.type === 'markdown' || parsed._type === 'markdown') && parsed.markdown) {
                             console.log('Markdown Value:', parsed);
                             markdownContent = parsed.markdown;
                             isMarkdownObject = true;

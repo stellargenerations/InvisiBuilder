@@ -1,11 +1,12 @@
 /**
- * Simple utility to handle image URLs
+ * Simple utility to handle image URLs from different formats
+ * This serves as a replacement for image handling utilities
  */
 
 interface ImageSource {
-  _type?: string;
+  type?: string;
   asset?: {
-    _ref?: string;
+    reference?: string;
     url?: string;
   };
   url?: string;
