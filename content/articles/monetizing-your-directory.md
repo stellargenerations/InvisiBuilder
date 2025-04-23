@@ -1,6 +1,6 @@
 ---
-title: "Monitizing Your Website Directory: Silent Success for Introverts"
-slug: "monitizing-your-directory"
+title: "monetizing Your Website Directory: Silent Success for Introverts"
+slug: "monetizing-your-directory"
 excerpt: "Discover how introverts can leverage website directories to build automated income streams without the need for extroverted hustle. Learn four proven monetization methods and practical strategies for building a business that works on your terms."
 publishedDate: "2023-3-15"
 updatedDate: "2023-3-15"
