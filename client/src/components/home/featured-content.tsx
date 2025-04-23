@@ -91,7 +91,7 @@ const FeaturedContent = () => {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/content">
+          <Link href="/articles">
             <div className="inline-flex items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary-dark hover:bg-neutral-200 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light cursor-pointer">
               View All Content
               <svg
