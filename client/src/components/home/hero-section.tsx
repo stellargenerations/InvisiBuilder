@@ -2,17 +2,17 @@ import { Link } from "wouter";
 
 const HeroSection = () => {
   return (
-    <section className="hero-section py-16 md:py-24">
+    <section className="hero-section py-12 md:py-16">
       {/* Dark gradient overlay */}
       <div className="hero-background-gradient"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row items-center">
-          <div className="w-full md:w-1/2 space-y-6 mb-8 md:mb-0">
-            <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-white">
-              Success Doesn't Require<br/><span className="text-primary">The Spotlight</span>
+          <div className="w-full md:w-1/2 space-y-4 mb-6 md:mb-0">
+            <h1 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-white">
+              A Digital Empire<br/><span className="text-primary">Without a Spotlight</span>
             </h1>
-            <p className="text-lg md:text-xl text-neutral-100 max-w-xl">
+            <p className="text-base md:text-lg text-neutral-100 max-w-xl">
               Building your online business from behind the scenes. Strategies, tools, and insights for the solopreneur who values privacy.
             </p>
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
