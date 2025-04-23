@@ -102,7 +102,7 @@ const ContentPreview = () => {
                   
                   <div className="mt-6">
                     <Link href="/newsletter">
-                      <div className="bg-primary-dark hover:bg-primary transition-colors duration-200 text-white font-medium py-3 px-4 rounded-md w-full text-center cursor-pointer">
+                      <div className="bg-primary hover:bg-primary-dark transition-colors duration-200 text-white font-medium py-3 px-4 rounded-md w-full text-center cursor-pointer">
                         Join the Unseen Builders
                       </div>
                     </Link>

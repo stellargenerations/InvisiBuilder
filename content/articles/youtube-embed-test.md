@@ -7,7 +7,7 @@ updatedDate: "2023-11-20"
 author: "Your Name"
 topics: ["video"]
 tags: ["youtube", "embedding", "markdown", "content creation"]
-featured: true
+featured: false
 coverImage: "https://source.unsplash.com/random/1200x630?video,youtube"
 readTime: "5 min"
 ---
