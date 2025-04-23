@@ -14,9 +14,14 @@ const getTopicSlug = (topic: Category) => {
     return topic.slug;
   }
 
-  // Handle object type with current property
-  if (typeof topic.slug === 'object' && topic.slug?.current) {
-    return topic.slug.current;
+  // Handle object type with current property (legacy Sanity.io format)
+  // This is a fallback for any potential legacy data format
+  if (topic.slug && typeof topic.slug === 'object') {
+    // Using type assertion to handle the legacy format safely
+    const slugObj = topic.slug as any;
+    if (slugObj.current && typeof slugObj.current === 'string') {
+      return slugObj.current;
+    }
   }
 
   // Fallback to lowercase name if no slug
@@ -75,7 +80,7 @@ const TopicCard = ({ topic }: TopicCardProps) => {
   });
 
   return (
-    <Link href={`/articles?topic=${topicSlug}`}>
+    <Link href={`/articles?category=${topicSlug}`}>
       <div className="group cursor-pointer">
         <div className="bg-neutral-100 rounded-lg p-6 text-center shadow-sm hover:shadow-md transition duration-150 h-full flex flex-col hover:border-primary-light border-2 border-transparent">
           <div className="w-16 h-16 bg-primary-light text-white rounded-full flex items-center justify-center mx-auto mb-4">

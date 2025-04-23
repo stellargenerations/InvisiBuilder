@@ -32,7 +32,8 @@ const getTopicNameFromSlug = (topics: Category[] | undefined, slug: string | nul
 const ArticlesPage = () => {
   const [location, setLocation] = useLocation();
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
-  const topicParam = searchParams.get('topic') || searchParams.get('category'); // Support both for backward compatibility
+  // First check category (preferred), then fallback to topic for backward compatibility
+  const topicParam = searchParams.get('category') || searchParams.get('topic'); 
   const tagParam = searchParams.get('tag');
   const searchParam = searchParams.get('search');
 
@@ -108,7 +109,7 @@ const ArticlesPage = () => {
 
     // Update the URL to reflect the filter change
     if (newFilter) {
-      setLocation(`/articles?topic=${newFilter}`);
+      setLocation(`/articles?category=${newFilter}`);
     } else {
       setLocation('/articles');
     }
