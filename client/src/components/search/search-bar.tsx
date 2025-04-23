@@ -3,9 +3,10 @@ import { useLocation } from "wouter";
 
 interface SearchBarProps {
   mobile?: boolean;
+  className?: string;
 }
 
-const SearchBar = ({ mobile = false }: SearchBarProps) => {
+const SearchBar = ({ mobile = false, className = "" }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [, setLocation] = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -34,13 +35,13 @@ const SearchBar = ({ mobile = false }: SearchBarProps) => {
   }, []);
 
   return (
-    <div className={`relative ${mobile ? 'w-full' : ''}`}>
+    <div className={`relative ${mobile ? 'w-full' : ''} ${className}`}>
       <form onSubmit={handleSearch}>
         <input
           ref={inputRef}
           type="text"
           placeholder="Search..."
-          className="px-4 py-2 rounded-full bg-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-light transition duration-150 w-full"
+          className="px-3 py-1.5 rounded-full bg-neutral-200 text-xs focus:outline-none focus:ring-1 focus:ring-primary-light transition duration-150 w-full"
           aria-label="Search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
