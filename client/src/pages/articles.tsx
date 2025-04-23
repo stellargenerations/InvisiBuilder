@@ -46,7 +46,7 @@ const ArticlesPage = () => {
     queryKey: ['/api/articles', activeFilter, tagParam, searchQuery],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (activeFilter) params.append('category', activeFilter); // Using 'category' instead of 'topic' to match server API
+      if (activeFilter) params.append('topic', activeFilter); // Using 'topic' as the preferred parameter
       if (tagParam) params.append('tag', tagParam);
       if (searchQuery) params.append('search', searchQuery);
 
@@ -109,7 +109,7 @@ const ArticlesPage = () => {
 
     // Update the URL to reflect the filter change
     if (newFilter) {
-      setLocation(`/articles?category=${newFilter}`);
+      setLocation(`/articles?topic=${newFilter}`);
     } else {
       setLocation('/articles');
     }

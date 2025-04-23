@@ -70,7 +70,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all articles with optional filters
   app.get("/api/articles", async (req: Request, res: Response) => {
     try {
-      const { featured, category, tag, search, limit } = req.query;
+      const { featured, category, topic, tag, search, limit } = req.query;
       
       const options: {
         featured?: boolean;
@@ -84,8 +84,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         options.featured = featured === "true";
       }
       
-      if (category && typeof category === "string") {
-        options.category = category;
+      // Support both category and topic parameters, with topic taking precedence
+      if (topic && typeof topic === "string") {
+        options.category = topic; // Use topic value for category filtering
+      } else if (category && typeof category === "string") {
+        options.category = category; // Fallback to category parameter
       }
       
       if (tag && typeof tag === "string") {
