@@ -19,7 +19,7 @@ const HeroSection = () => {
               Building your online business from behind the scenes. Strategies, tools, and insights for the solopreneur who values privacy.
             </p>
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
-              <Link href="#latest-content">
+              <Link href="/articles">
                 <div className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-neutral-900 bg-primary hover:bg-primary-light transition duration-150 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
                   Explore Content
                 </div>

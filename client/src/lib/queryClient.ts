@@ -8,20 +8,46 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest(
-  url: string,
-  options?: {
+  urlOrMethod: string,
+  urlOrOptions?: string | {
     method?: string;
     body?: string;
     headers?: Record<string, string>;
   },
+  data?: any
 ): Promise<Response> {
+  // Handle both usage patterns:
+  // 1. apiRequest(url, options)
+  // 2. apiRequest(method, url, data)
+  
+  let url: string;
+  let options: {
+    method?: string;
+    body?: string;
+    headers?: Record<string, string>;
+  } = {};
+  
+  if (typeof urlOrOptions === 'string') {
+    // It's the apiRequest(method, url, data) pattern
+    const method = urlOrMethod;
+    url = urlOrOptions;
+    options = {
+      method,
+      ...(data && { body: JSON.stringify(data) })
+    };
+  } else {
+    // It's the apiRequest(url, options) pattern
+    url = urlOrMethod;
+    options = urlOrOptions || {};
+  }
+
   const res = await fetch(url, {
-    method: options?.method || 'GET',
+    method: options.method || 'GET',
     headers: {
-      ...(options?.body ? { "Content-Type": "application/json" } : {}),
-      ...options?.headers,
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...options.headers,
     },
-    body: options?.body,
+    body: options.body,
     credentials: "include",
   });
 
