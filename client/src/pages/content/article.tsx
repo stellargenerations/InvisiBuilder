@@ -112,12 +112,12 @@ const ArticlePage = () => {
         <meta name="description" content={article.excerpt} />
         <meta property="og:title" content={article.title} />
         <meta property="og:description" content={article.excerpt} />
-        <meta property="og:image" content={article.featuredImage} />
+        <meta property="og:image" content={article.coverImage || article.featuredImage} />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={article.title} />
         <meta name="twitter:description" content={article.excerpt} />
-        <meta name="twitter:image" content={article.featuredImage} />
+        <meta name="twitter:image" content={article.coverImage || article.featuredImage} />
       </Helmet>
 
       {/* Breadcrumb navigation */}
@@ -136,9 +136,9 @@ const ArticlePage = () => {
       <article className="bg-white">
         {/* Hero section with featured image */}
         <div className="w-full h-64 md:h-96 bg-neutral-800 relative">
-          {article.featuredImage && (
+          {(article.coverImage || article.featuredImage) && (
             <img
-              src={article.featuredImage}
+              src={article.coverImage || article.featuredImage}
               alt={article.title}
               className="w-full h-full object-cover opacity-100"
             />
@@ -334,7 +334,7 @@ const ArticlePage = () => {
                     <Link href={`/${relatedArticle.slug}`}>
                       <div className="bg-neutral-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-150">
                         <img
-                          src={relatedArticle.featuredImage}
+                          src={relatedArticle.coverImage || relatedArticle.featuredImage}
                           alt={relatedArticle.title}
                           className="w-full h-40 object-cover"
                         />

@@ -36,7 +36,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
     <article className="bg-neutral-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-150">
       <div className="relative">
         <img
-          src={article.featuredImage || article.coverImage || article.mainImage || '/placeholder-image.jpg'}
+          src={article.coverImage || article.featuredImage || article.mainImage || '/placeholder-image.jpg'}
           alt={article.title}
           className="w-full h-48 object-cover"
           loading="lazy"
