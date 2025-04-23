@@ -8,17 +8,17 @@ interface LogoProps {
 
 const Logo: FC<LogoProps> = ({ className = "", size = "md" }) => {
   const sizes = {
-    sm: "h-8",  // Original size
-    md: "h-10", // Original size
-    lg: "h-12", // Original size
+    sm: "h-7",  // Smaller size
+    md: "h-8",  // Medium size
+    lg: "h-10", // Large size
   };
 
   return (
     <div className={`flex items-center ${className}`}>
       <img 
-        src="/invisibuilder-logo.png" 
+        src="/images/builder-icon.png" 
         alt="Invisibuilder Logo" 
-        className={`${sizes[size]}`}
+        className={`${sizes[size]} object-contain`}
       />
     </div>
   );

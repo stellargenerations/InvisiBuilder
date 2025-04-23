@@ -27,6 +27,7 @@ const Header = () => {
             <Link href="/">
               <div className="flex items-center space-x-2 cursor-pointer">
                 <Logo className="h-7 w-auto" />
+                <span className="font-semibold text-neutral-800 text-sm md:text-base">Invisibuilder</span>
               </div>
             </Link>
           </div>
