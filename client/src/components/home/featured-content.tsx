@@ -35,7 +35,7 @@ const FeaturedContent = () => {
               Featured Content
             </h2>
             <p className="mt-4 text-lg text-neutral-800 max-w-3xl mx-auto">
-              Comprehensive guides and strategies for building profitable online ventures while staying behind the scenes.
+              Comprehensive guides and strategies for building profitable online ventures.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -68,7 +68,7 @@ const FeaturedContent = () => {
           </h2>
           <p className="mt-4 text-lg text-neutral-800 max-w-3xl mx-auto">
             Comprehensive guides and strategies for building profitable online
-            ventures while staying behind the scenes.
+            ventures.
           </p>
         </div>
 
