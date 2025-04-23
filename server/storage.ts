@@ -122,7 +122,7 @@ export class MemStorage implements IStorage {
       description: "Tools and techniques for creating engaging content without revealing your identity.",
       slug: "content-creation",
       icon: "video",
-      articleCount: 12
+      articleCount: 0
     });
 
     const monetizationCategory = this.createCategory({
@@ -501,6 +501,19 @@ export class MemStorage implements IStorage {
     const id = this.articleIdCounter++;
     const article: Article = { ...insertArticle, id };
     this.articles.set(id, article);
+    
+    // Update category article count if categoryId is provided
+    if (article.categoryId) {
+      const category = this.categories.get(article.categoryId);
+      if (category) {
+        const updatedCategory = { 
+          ...category, 
+          articleCount: (category.articleCount || 0) + 1 
+        };
+        this.categories.set(category.id, updatedCategory);
+      }
+    }
+    
     return article;
   }
 
@@ -508,12 +521,54 @@ export class MemStorage implements IStorage {
     const article = this.articles.get(id);
     if (!article) return undefined;
 
+    // If categoryId is changing, update counts for both old and new categories
+    if (updateData.categoryId !== undefined && updateData.categoryId !== article.categoryId) {
+      // Decrement count for old category if it exists
+      if (article.categoryId) {
+        const oldCategory = this.categories.get(article.categoryId);
+        if (oldCategory && oldCategory.articleCount && oldCategory.articleCount > 0) {
+          const updatedOldCategory = { 
+            ...oldCategory, 
+            articleCount: oldCategory.articleCount - 1 
+          };
+          this.categories.set(oldCategory.id, updatedOldCategory);
+        }
+      }
+      
+      // Increment count for new category if it exists
+      if (updateData.categoryId) {
+        const newCategory = this.categories.get(updateData.categoryId);
+        if (newCategory) {
+          const updatedNewCategory = { 
+            ...newCategory, 
+            articleCount: (newCategory.articleCount || 0) + 1 
+          };
+          this.categories.set(newCategory.id, updatedNewCategory);
+        }
+      }
+    }
+
     const updatedArticle = { ...article, ...updateData };
     this.articles.set(id, updatedArticle);
     return updatedArticle;
   }
 
   async deleteArticle(id: number): Promise<boolean> {
+    const article = this.articles.get(id);
+    if (!article) return false;
+    
+    // Update category article count if article had a category
+    if (article.categoryId) {
+      const category = this.categories.get(article.categoryId);
+      if (category && category.articleCount && category.articleCount > 0) {
+        const updatedCategory = { 
+          ...category, 
+          articleCount: category.articleCount - 1 
+        };
+        this.categories.set(category.id, updatedCategory);
+      }
+    }
+    
     return this.articles.delete(id);
   }
 

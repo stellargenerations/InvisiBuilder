@@ -10,7 +10,7 @@ const HeroSection = () => {
         <div className="flex flex-col md:flex-row items-center">
           <div className="w-full md:w-1/2 space-y-4 mb-6 md:mb-0">
             <h1 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-white">
-              A Digital Empire<br/>Without The <span className="text-primary spotlight-text">
+              Build a Digital Empire<br/>Without The <span className="text-primary spotlight-text">
                 Spotlight
                 <div className="spotlight-effect"></div>
               </span>
