@@ -16,18 +16,18 @@ const ContentCard = ({ article }: ContentCardProps) => {
     }).format(date);
   };
 
-  // Get category name handling both string and object types
-  const getCategoryName = () => {
+  // Get topic name handling both string and object types
+  const getTopicName = () => {
     if (!article.category) return null;
-    
-    // Our data now uses the string format directly 
+
+    // Our data now uses the string format directly
     return article.category;
   };
 
   // Get proper slug handling different formats
   const getSlug = () => {
     if (!article.slug) return '';
-    
+
     // Our data now uses the string format directly
     return article.slug;
   };
@@ -44,7 +44,7 @@ const ContentCard = ({ article }: ContentCardProps) => {
         {article.category && (
           <div className="absolute top-0 right-0 mt-4 mr-4">
             <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-primary-light text-white">
-              {getCategoryName()}
+              {getTopicName()}
             </span>
           </div>
         )}

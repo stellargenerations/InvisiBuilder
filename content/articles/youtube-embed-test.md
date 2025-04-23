@@ -5,7 +5,7 @@ excerpt: "Learn how to embed YouTube videos in your articles using simple Markdo
 publishedDate: "2023-11-20"
 updatedDate: "2023-11-20"
 author: "Your Name"
-category: "Tutorials"
+topics: ["video"]
 tags: ["youtube", "embedding", "markdown", "content creation"]
 featured: true
 coverImage: "https://source.unsplash.com/random/1200x630?video,youtube"

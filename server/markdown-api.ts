@@ -97,10 +97,30 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 
 export async function getArticlesByCategory(categorySlug: string): Promise<Article[]> {
   const allArticles = await getAllArticles();
-  return allArticles.filter(article =>
-    article.category === categorySlug ||
-    (article.categories && article.categories.includes(categorySlug))
-  );
+  const categorySlugLower = categorySlug.toLowerCase();
+
+  return allArticles.filter(article => {
+    // Check the category field (string)
+    if (article.category && article.category.toLowerCase() === categorySlugLower) {
+      return true;
+    }
+
+    // Check the categories array (legacy)
+    if (article.categories && Array.isArray(article.categories)) {
+      if (article.categories.some(cat => cat.toLowerCase() === categorySlugLower)) {
+        return true;
+      }
+    }
+
+    // Check the topics array
+    if (article.topics && Array.isArray(article.topics)) {
+      if (article.topics.some(topic => topic.toLowerCase() === categorySlugLower)) {
+        return true;
+      }
+    }
+
+    return false;
+  });
 }
 
 export async function getArticlesByTag(tag: string): Promise<Article[]> {
@@ -124,29 +144,145 @@ export async function searchArticles(query: string): Promise<Article[]> {
 // Category functions
 export async function getAllCategories(): Promise<Category[]> {
   try {
+    // First, get categories from files (if any)
     const categoryFiles = await glob('*.md', { cwd: categoriesDirectory });
 
-    if (!categoryFiles || categoryFiles.length === 0) {
+    let fileCategories: (Category | null)[] = [];
+
+    if (categoryFiles && categoryFiles.length > 0) {
+      fileCategories = await Promise.all(
+        categoryFiles.map(async (filename) => {
+          const slug = filename.replace(/\.md$/, '');
+          const category = await getCategoryBySlug(slug);
+          return category;
+        })
+      );
+    } else {
       console.log("No category files found in directory:", categoriesDirectory);
-      return [];
     }
 
-    const categories = await Promise.all(
-      categoryFiles.map(async (filename) => {
-        const slug = filename.replace(/\.md$/, '');
-        const category = await getCategoryBySlug(slug);
-        return category;
-      })
-    );
+    const fileCategoriesFiltered = fileCategories
+      .filter((category): category is Category => category !== null);
 
-    // Filter out null values and sort by name
-    return categories
-      .filter((category): category is Category => category !== null)
-      .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    // Then, extract unique topics from articles
+    const dynamicCategories = await getDynamicCategoriesFromArticles();
+
+    // Merge both sets, prioritizing file-based categories when there's a slug conflict
+    const fileCategorySlugs = new Set(fileCategoriesFiltered.map(cat => cat.slug));
+    const mergedCategories = [
+      ...fileCategoriesFiltered,
+      ...dynamicCategories.filter(cat => !fileCategorySlugs.has(cat.slug))
+    ];
+
+    // Sort by name
+    return mergedCategories.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   } catch (error) {
     console.error("Error getting all categories:", error);
     return [];
   }
+}
+
+/**
+ * Extracts unique topics from all articles and creates category objects for them
+ */
+export async function getDynamicCategoriesFromArticles(): Promise<Category[]> {
+  try {
+    // Get all articles
+    const articles = await getAllArticles();
+
+    // Extract all topics from articles
+    const topicsMap = new Map<string, { count: number, name: string }>();
+
+    articles.forEach(article => {
+      // Handle both category string and topics array
+      if (article.category) {
+        const topicName = article.category;
+        const slug = topicName.toLowerCase().replace(/\s+/g, '-');
+
+        if (topicsMap.has(slug)) {
+          const existing = topicsMap.get(slug)!;
+          existing.count += 1;
+        } else {
+          topicsMap.set(slug, { count: 1, name: topicName });
+        }
+      }
+
+      // Handle topics array if present
+      if (article.topics && Array.isArray(article.topics)) {
+        article.topics.forEach(topicName => {
+          const slug = topicName.toLowerCase().replace(/\s+/g, '-');
+
+          if (topicsMap.has(slug)) {
+            const existing = topicsMap.get(slug)!;
+            existing.count += 1;
+          } else {
+            topicsMap.set(slug, { count: 1, name: topicName });
+          }
+        });
+      }
+    });
+
+    // Convert to Category objects
+    const categories: Category[] = [];
+
+    for (const [slug, data] of topicsMap.entries()) {
+      categories.push({
+        slug,
+        name: data.name,
+        description: `Articles about ${data.name}`,
+        icon: getIconForTopic(data.name),
+        articleCount: data.count,
+        _id: `dynamic-topic-${slug}`
+      });
+    }
+
+    return categories;
+  } catch (error) {
+    console.error("Error getting dynamic categories from articles:", error);
+    return [];
+  }
+}
+
+/**
+ * Assigns an appropriate icon based on the topic name
+ */
+function getIconForTopic(topicName: string): string {
+  // Map common topics to appropriate icons
+  const iconMap: Record<string, string> = {
+    'marketing': 'bullhorn',
+    'content': 'file-alt',
+    'video': 'video',
+    'audio': 'headphones',
+    'business': 'briefcase',
+    'finance': 'dollar-sign',
+    'technology': 'laptop-code',
+    'design': 'palette',
+    'social media': 'share-alt',
+    'seo': 'search',
+    'analytics': 'chart-line',
+    'strategy': 'chess',
+    'tools': 'tools',
+    'privacy': 'shield-alt',
+    'security': 'lock',
+    'monetization': 'money-bill',
+    'automation': 'robot'
+  };
+
+  // Check for exact matches
+  const lowerTopic = topicName.toLowerCase();
+  if (iconMap[lowerTopic]) {
+    return iconMap[lowerTopic];
+  }
+
+  // Check for partial matches
+  for (const [key, icon] of Object.entries(iconMap)) {
+    if (lowerTopic.includes(key)) {
+      return icon;
+    }
+  }
+
+  // Default icon
+  return 'bookmark';
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {

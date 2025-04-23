@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import CategoryCard from "@/components/content/category-card";
+import TopicCard from "@/components/content/topic-card";
 
-const CategoriesSection = () => {
-  const { data: categories, isLoading, error } = useQuery<any>({
-    queryKey: ['/api/categories'],
+const TopicsSection = () => {
+  const { data: topics, isLoading, error } = useQuery<any>({
+    queryKey: ['/api/topics'],
   });
 
   if (isLoading) {
@@ -31,7 +31,7 @@ const CategoriesSection = () => {
     );
   }
 
-  const defaultCategories = [
+  const defaultTopics = [
     {
       id: 1,
       name: "Content Creation",
@@ -66,7 +66,7 @@ const CategoriesSection = () => {
     }
   ];
 
-  const displayCategories = categories && categories.length > 0 ? categories : defaultCategories;
+  const displayTopics = topics && topics.length > 0 ? topics : defaultTopics;
 
   return (
     <section className="py-16 bg-white">
@@ -77,10 +77,10 @@ const CategoriesSection = () => {
             Find strategies and guidance for every aspect of your anonymous online business.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {displayCategories.map(category => (
-            <CategoryCard key={category._id || category.id} category={category} />
+          {displayTopics.map(topic => (
+            <TopicCard key={topic._id || topic.id} topic={topic} />
           ))}
         </div>
       </div>
@@ -88,4 +88,4 @@ const CategoriesSection = () => {
   );
 };
 
-export default CategoriesSection;
+export default TopicsSection;

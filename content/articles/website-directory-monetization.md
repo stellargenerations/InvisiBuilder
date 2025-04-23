@@ -5,7 +5,7 @@ publishedDate: "2025-04-15T23:04:20.374Z"
 updatedDate: "2025-04-15T23:04:20.374Z"
 author: "John Smith"
 featured: true
-category: "business-category"
+topics: ["Business"]
 tags: ["monetization", "directories", "passive-income", "business-models"]
 coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2404&q=80"
 _id: "website-directory-article"

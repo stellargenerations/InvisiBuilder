@@ -6,7 +6,7 @@ excerpt: "Discover four proven methods to monetize your directory website and bu
 publishedDate: "2023-3-15"
 updatedDate: "2023-3-15"
 author: "Invisibuilder"
-category: "Business"
+topics: ["Business"]
 tags: ["how to monetize website", "paid directory", "paid listing", "monetizing websites", "make money on a website", "how to make money with a business directory website"]
 featured: true
 coverImage: https://img.youtube.com/vi/wLHdtFL_G28/maxresdefault.jpg

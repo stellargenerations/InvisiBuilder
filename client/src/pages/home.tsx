@@ -1,7 +1,7 @@
 import HeroSection from "@/components/home/hero-section";
 import FeaturedContent from "@/components/home/featured-content";
 import ContentPreview from "@/components/home/content-preview";
-import CategoriesSection from "@/components/home/categories-section";
+import TopicsSection from "@/components/home/topics-section";
 import NewsletterSection from "@/components/home/newsletter-section";
 import { Helmet } from "react-helmet";
 
@@ -22,7 +22,7 @@ const Home = () => {
       <HeroSection />
       <FeaturedContent />
       <ContentPreview />
-      <CategoriesSection />
+      <TopicsSection />
       <NewsletterSection />
     </>
   );

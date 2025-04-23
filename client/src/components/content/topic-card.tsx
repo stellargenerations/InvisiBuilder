@@ -1,28 +1,33 @@
 import { Link } from "wouter";
 import { Category } from "@shared/schema";
 
-interface CategoryCardProps {
-  category: Category;
+interface TopicCardProps {
+  topic: Category; // Using Category type for backward compatibility
 }
 
 // Helper function to get slug from different structures
-const getCategorySlug = (category: Category) => {
-  if (!category) return '';
+const getTopicSlug = (topic: Category) => {
+  if (!topic) return '';
 
   // Handle string type
-  if (typeof category.slug === 'string') {
-    return category.slug;
+  if (typeof topic.slug === 'string') {
+    return topic.slug;
   }
 
   // Handle object type with current property
-  if (typeof category.slug === 'object' && category.slug?.current) {
-    return category.slug.current;
+  if (typeof topic.slug === 'object' && topic.slug?.current) {
+    return topic.slug.current;
+  }
+
+  // Fallback to lowercase name if no slug
+  if (topic.name) {
+    return topic.name.toLowerCase().replace(/\s+/g, '-');
   }
 
   return '';
 };
 
-const getCategoryIcon = (iconName: string) => {
+const getTopicIcon = (iconName: string) => {
   switch (iconName) {
     case 'video':
       return (
@@ -57,19 +62,27 @@ const getCategoryIcon = (iconName: string) => {
   }
 };
 
-const CategoryCard = ({ category }: CategoryCardProps) => {
+const TopicCard = ({ topic }: TopicCardProps) => {
   // Handle articleCount - default to 0 if not available
-  const articleCount = category.articleCount || 0;
+  const articleCount = topic.articleCount || 0;
+
+  // Get the topic slug and log it for debugging
+  const topicSlug = getTopicSlug(topic);
+  console.log('TopicCard rendering with:', {
+    topicName: topic.name,
+    topicSlug,
+    originalSlug: topic.slug
+  });
 
   return (
-    <Link href={`/articles?category=${getCategorySlug(category)}`}>
+    <Link href={`/articles?topic=${topicSlug}`}>
       <div className="group cursor-pointer">
-        <div className="bg-neutral-100 rounded-lg p-6 text-center shadow-sm hover:shadow-md transition duration-150 h-full flex flex-col">
+        <div className="bg-neutral-100 rounded-lg p-6 text-center shadow-sm hover:shadow-md transition duration-150 h-full flex flex-col hover:border-primary-light border-2 border-transparent">
           <div className="w-16 h-16 bg-primary-light text-white rounded-full flex items-center justify-center mx-auto mb-4">
-            {getCategoryIcon(category.icon)}
+            {getTopicIcon(topic.icon)}
           </div>
-          <h3 className="font-heading font-semibold text-xl mb-3 text-neutral-900 group-hover:text-primary-dark transition duration-150">{category.name}</h3>
-          <p className="text-neutral-800 text-sm flex-grow">{category.description}</p>
+          <h3 className="font-heading font-semibold text-xl mb-3 text-neutral-900 group-hover:text-primary-dark transition duration-150">{topic.name}</h3>
+          <p className="text-neutral-800 text-sm flex-grow">{topic.description}</p>
           <div className="mt-4 text-primary-dark group-hover:text-primary transition duration-150">
             <span className="text-sm font-medium">{articleCount} Article{articleCount !== 1 ? 's' : ''}</span>
           </div>
@@ -79,4 +92,4 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
   );
 };
 
-export default CategoryCard;
+export default TopicCard;

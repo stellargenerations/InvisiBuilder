@@ -36,16 +36,16 @@ const ArticlePage = () => {
     },
   });
 
-  // Helper function to get category name from different data structures
-  const getCategoryName = () => {
+  // Helper function to get topic name from different data structures
+  const getTopicName = () => {
     if (!article?.category) return null;
 
     // Our data now uses simple string format
     return article.category;
   };
 
-  // Helper function to get category slug for links
-  const getCategorySlug = () => {
+  // Helper function to get topic slug for links
+  const getTopicSlug = () => {
     if (!article?.category) return '';
 
     // Convert string to slug format
@@ -147,9 +147,9 @@ const ArticlePage = () => {
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
             <div className="max-w-5xl mx-auto">
               {article.category && (
-                <Link href={`/articles?category=${getCategorySlug()}`}>
+                <Link href={`/articles?topic=${getTopicSlug()}`}>
                   <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-dark text-white mb-4 cursor-pointer">
-                    {getCategoryName()}
+                    {getTopicName()}
                   </div>
                 </Link>
               )}
