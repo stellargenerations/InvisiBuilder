@@ -135,15 +135,15 @@ const ArticlePage = () => {
 
       <article className="bg-white">
         {/* Hero section with featured image */}
-        <div className="w-full h-64 md:h-96 bg-neutral-900 relative">
+        <div className="w-full h-64 md:h-96 bg-neutral-800 relative">
           {article.featuredImage && (
             <img
               src={article.featuredImage}
               alt={article.title}
-              className="w-full h-full object-cover opacity-70"
+              className="w-full h-full object-cover opacity-100"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900 opacity-80"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-900 opacity-50"></div>
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
             <div className="max-w-5xl mx-auto">
               {article.category && (
