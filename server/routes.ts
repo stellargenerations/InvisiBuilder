@@ -20,6 +20,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all topics
   app.get("/api/topics", async (_req: Request, res: Response) => {
     try {
+      // Using getCategories for backward compatibility but we'll call them topics throughout the UI
       const topics = await storage.getCategories();
       res.json(topics);
     } catch (error) {
@@ -28,39 +29,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get all categories (aliases to topics for backward compatibility)
-  app.get("/api/categories", async (_req: Request, res: Response) => {
-    try {
-      const topics = await storage.getCategories();
-      res.json(topics);
-    } catch (error) {
-      console.error("Error fetching topics:", error);
-      res.status(500).json({ message: "Failed to fetch topics" });
-    }
-  });
+  // Removed categories endpoint
 
-  // Get category by slug
-  app.get("/api/categories/:slug", async (req: Request, res: Response) => {
-    try {
-      const category = await storage.getCategoryBySlug(req.params.slug);
-      if (!category) {
-        return res.status(404).json({ message: "Category not found" });
-      }
-      res.json(category);
-    } catch (error) {
-      console.error("Error fetching category:", error);
-      res.status(500).json({ message: "Failed to fetch category" });
-    }
-  });
+  // Removed category by slug endpoint
   
-  // Get topic by slug (aliases to categories for compatibility)
+  // Get topic by slug
   app.get("/api/topics/:slug", async (req: Request, res: Response) => {
     try {
-      const category = await storage.getCategoryBySlug(req.params.slug);
-      if (!category) {
+      // Using category naming in storage layer but we expose topics in the API
+      const topic = await storage.getCategoryBySlug(req.params.slug);
+      if (!topic) {
         return res.status(404).json({ message: "Topic not found" });
       }
-      res.json(category);
+      res.json(topic);
     } catch (error) {
       console.error("Error fetching topic:", error);
       res.status(500).json({ message: "Failed to fetch topic" });
@@ -239,8 +220,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ADMIN API ENDPOINTS
-  // Create category
-  app.post("/api/categories", async (req: Request, res: Response) => {
+  // Create topic
+  app.post("/api/topics", async (req: Request, res: Response) => {
     try {
       const validationResult = insertCategorySchema.safeParse(req.body);
       
@@ -249,21 +230,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: errorMessage });
       }
       
-      const category = await storage.createCategory(validationResult.data);
-      res.status(201).json(category);
+      const topic = await storage.createCategory(validationResult.data);
+      res.status(201).json(topic);
     } catch (error) {
-      console.error("Error creating category:", error);
-      res.status(500).json({ message: "Failed to create category" });
+      console.error("Error creating topic:", error);
+      res.status(500).json({ message: "Failed to create topic" });
     }
   });
 
-  // Update category
-  app.put("/api/categories/:id", async (req: Request, res: Response) => {
+  // Update topic
+  app.put("/api/topics/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id, 10);
       
       if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid category ID" });
+        return res.status(400).json({ message: "Invalid topic ID" });
       }
       
       const validationResult = insertCategorySchema.partial().safeParse(req.body);
@@ -273,38 +254,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: errorMessage });
       }
       
-      const updatedCategory = await storage.updateCategory(id, validationResult.data);
+      const updatedTopic = await storage.updateCategory(id, validationResult.data);
       
-      if (!updatedCategory) {
-        return res.status(404).json({ message: "Category not found" });
+      if (!updatedTopic) {
+        return res.status(404).json({ message: "Topic not found" });
       }
       
-      res.json(updatedCategory);
+      res.json(updatedTopic);
     } catch (error) {
-      console.error("Error updating category:", error);
-      res.status(500).json({ message: "Failed to update category" });
+      console.error("Error updating topic:", error);
+      res.status(500).json({ message: "Failed to update topic" });
     }
   });
 
-  // Delete category
-  app.delete("/api/categories/:id", async (req: Request, res: Response) => {
+  // Delete topic
+  app.delete("/api/topics/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id, 10);
       
       if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid category ID" });
+        return res.status(400).json({ message: "Invalid topic ID" });
       }
       
       const success = await storage.deleteCategory(id);
       
       if (!success) {
-        return res.status(404).json({ message: "Category not found or could not be deleted" });
+        return res.status(404).json({ message: "Topic not found or could not be deleted" });
       }
       
       res.status(204).end();
     } catch (error) {
-      console.error("Error deleting category:", error);
-      res.status(500).json({ message: "Failed to delete category" });
+      console.error("Error deleting topic:", error);
+      res.status(500).json({ message: "Failed to delete topic" });
     }
   });
 
