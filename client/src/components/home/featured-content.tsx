@@ -1,26 +1,30 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ContentCard from "@/components/content/content-card";
 import { Link } from "wouter";
 import { queryClient } from "@/lib/queryClient";
+import { Article } from "@shared/schema";
 
 const FeaturedContent = () => {
-  // Invalidate the cache when the component mounts
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["/api/articles?featured=true"] });
-  }, []);
-  
   // Using the Article type from our schema
   const {
     data: articles,
     isLoading,
     error,
-  } = useQuery<any[]>({
+    refetch
+  } = useQuery<Article[]>({
     queryKey: ["/api/articles?featured=true"],
-    refetchOnMount: true,
+    refetchOnMount: "always",
     refetchOnWindowFocus: true,
     staleTime: 0,
   });
+  
+  // Force a refetch when component mounts
+  useEffect(() => {
+    // Clear the cache and refetch
+    queryClient.invalidateQueries({ queryKey: ["/api/articles?featured=true"] });
+    refetch();
+  }, [refetch]);
 
   if (isLoading) {
     return (
