@@ -13,10 +13,13 @@ const FeaturedContent = () => {
     error,
     refetch
   } = useQuery<Article[]>({
+    // Make sure to send featured=true query parameter to only get featured articles
     queryKey: ["/api/articles?featured=true"],
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
     staleTime: 0,
+    // Filter articles client-side as well to ensure only featured ones appear
+    select: (data) => data?.filter(article => article.featured === true) || []
   });
   
   // Force a refetch when component mounts

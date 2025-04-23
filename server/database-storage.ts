@@ -73,6 +73,7 @@ export class DatabaseStorage implements IStorage {
   async getArticles(options: {
     featured?: boolean;
     category?: string;
+    topic?: string;
     tag?: string;
     search?: string;
     limit?: number;
@@ -87,8 +88,10 @@ export class DatabaseStorage implements IStorage {
         conditions.push(eq(articles.featured, options.featured));
       }
       
-      if (options.category) {
-        conditions.push(eq(articles.category, options.category));
+      // Handle both category and topic parameters (topic is the newer name)
+      const categoryValue = options.topic || options.category;
+      if (categoryValue) {
+        conditions.push(eq(articles.category, categoryValue));
       }
       
       if (options.tag && articles.tags) {
@@ -151,10 +154,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getArticlePreview(): Promise<Article | undefined> {
-    const [article] = await db.select().from(articles).where(eq(articles.featured, true)).limit(1);
+    // Explicitly use featured=true to get only genuinely featured articles
+    const [article] = await db
+      .select()
+      .from(articles)
+      .where(eq(articles.featured, true))
+      .limit(1);
     
     if (!article) {
-      return undefined;
+      // Fallback: if no featured article is found, just return the most recent one
+      const [recentArticle] = await db
+        .select()
+        .from(articles)
+        .orderBy(desc(articles.publishedDate))
+        .limit(1);
+        
+      if (!recentArticle) {
+        return undefined;
+      }
+      
+      return await this.enhanceArticle(recentArticle);
     }
     
     return await this.enhanceArticle(article);
