@@ -17,8 +17,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
-// Category model
-export const categories = pgTable("categories", {
+// Topic model (formerly Category)
+export const topics = pgTable("categories", {  // Keeping table name for database compatibility
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull(),
@@ -27,12 +27,22 @@ export const categories = pgTable("categories", {
   articleCount: integer("article_count").default(0),
 });
 
-export const insertCategorySchema = createInsertSchema(categories).omit({
+// For backward compatibility
+export const categories = topics;
+
+export const insertTopicSchema = createInsertSchema(topics).omit({
   id: true,
 });
 
-export type InsertCategory = z.infer<typeof insertCategorySchema>;
-export type Category = typeof categories.$inferSelect;
+// Keep category schema for backward compatibility
+export const insertCategorySchema = insertTopicSchema;
+
+export type InsertTopic = z.infer<typeof insertTopicSchema>;
+export type Topic = typeof topics.$inferSelect;
+
+// Keep these types for backward compatibility
+export type InsertCategory = InsertTopic;
+export type Category = Topic;
 
 // Media file model for various media types
 export const mediaFiles = pgTable("media_files", {

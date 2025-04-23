@@ -3,13 +3,14 @@ import { db } from './db';
 import {
   User, InsertUser,
   Category, InsertCategory,
+  Topic, InsertTopic,
   Article, InsertArticle,
   MediaFile, InsertMediaFile,
   Resource, InsertResource,
   ContentSection, InsertContentSection,
   Subscriber, InsertSubscriber,
   Contact, InsertContact,
-  users, categories, articles, mediaFiles, resources, contentSections, subscribers, contacts
+  users, categories, topics, articles, mediaFiles, resources, contentSections, subscribers, contacts
 } from '@shared/schema';
 import { eq, like, or, and, inArray, desc, SQL } from 'drizzle-orm';
 
@@ -30,50 +31,80 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  // Categories
-  async getCategories(): Promise<Category[]> {
+  // Topics (formerly Categories)
+  async getTopics(): Promise<Topic[]> {
     try {
-      return await db.select().from(categories);
+      return await db.select().from(topics);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("Error fetching topics:", error);
       return [];
     }
   }
 
+  // For backward compatibility
+  async getCategories(): Promise<Category[]> {
+    return this.getTopics();
+  }
+
+  async getTopicBySlug(slug: string): Promise<Topic | undefined> {
+    const [topic] = await db.select().from(topics).where(eq(topics.slug, slug));
+    return topic;
+  }
+
+  // For backward compatibility
   async getCategoryBySlug(slug: string): Promise<Category | undefined> {
-    const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
-    return category;
+    return this.getTopicBySlug(slug);
   }
 
+  async getTopicById(id: number): Promise<Topic | undefined> {
+    const [topic] = await db.select().from(topics).where(eq(topics.id, id));
+    return topic;
+  }
+
+  // For backward compatibility
   async getCategoryById(id: number): Promise<Category | undefined> {
-    const [category] = await db.select().from(categories).where(eq(categories.id, id));
-    return category;
+    return this.getTopicById(id);
   }
 
+  async createTopic(insertTopic: InsertTopic): Promise<Topic> {
+    const [topic] = await db.insert(topics).values(insertTopic).returning();
+    return topic;
+  }
+
+  // For backward compatibility
   async createCategory(insertCategory: InsertCategory): Promise<Category> {
-    const [category] = await db.insert(categories).values(insertCategory).returning();
-    return category;
+    return this.createTopic(insertCategory);
   }
 
-  async updateCategory(id: number, updateData: Partial<InsertCategory>): Promise<Category | undefined> {
-    const [category] = await db
-      .update(categories)
+  async updateTopic(id: number, updateData: Partial<InsertTopic>): Promise<Topic | undefined> {
+    const [topic] = await db
+      .update(topics)
       .set(updateData)
-      .where(eq(categories.id, id))
+      .where(eq(topics.id, id))
       .returning();
-    return category;
+    return topic;
   }
 
-  async deleteCategory(id: number): Promise<boolean> {
-    const result = await db.delete(categories).where(eq(categories.id, id));
+  // For backward compatibility
+  async updateCategory(id: number, updateData: Partial<InsertCategory>): Promise<Category | undefined> {
+    return this.updateTopic(id, updateData);
+  }
+
+  async deleteTopic(id: number): Promise<boolean> {
+    const result = await db.delete(topics).where(eq(topics.id, id));
     return true; // If no error was thrown, consider it successful
+  }
+
+  // For backward compatibility
+  async deleteCategory(id: number): Promise<boolean> {
+    return this.deleteTopic(id);
   }
 
   // Articles
   async getArticles(options: {
     featured?: boolean;
-    category?: string;
-    topic?: string;
+    category?: string;  // Keeping for backward compatibility
+    topic?: string;     // Preferred parameter name
     tag?: string;
     search?: string;
     limit?: number;
@@ -88,10 +119,10 @@ export class DatabaseStorage implements IStorage {
         conditions.push(eq(articles.featured, options.featured));
       }
       
-      // Handle both category and topic parameters (topic is the newer name)
-      const categoryValue = options.topic || options.category;
-      if (categoryValue) {
-        conditions.push(eq(articles.category, categoryValue));
+      // Prioritize topic parameter (preferred) but fall back to category for backward compatibility
+      const topicValue = options.topic || options.category;
+      if (topicValue) {
+        conditions.push(eq(articles.category, topicValue));
       }
       
       if (options.tag && articles.tags) {
