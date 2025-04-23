@@ -17,6 +17,7 @@ type SubscribeForm = z.infer<typeof subscribeSchema>;
 
 const ContentPreview = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const { toast } = useToast();
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm<SubscribeForm>({
@@ -40,6 +41,7 @@ const ContentPreview = () => {
       });
       
       reset();
+      setShowForm(false);
     } catch (error) {
       toast({
         title: "Subscription failed",
@@ -149,59 +151,88 @@ const ContentPreview = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-6">
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                      <div className="mb-3">
-                        <input 
-                          type="email" 
-                          placeholder="Enter your email" 
-                          className={`w-full px-4 py-2 text-sm text-neutral-800 placeholder-neutral-500 bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-light ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
-                          {...register('email')}
-                        />
-                        {errors.email && (
-                          <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
-                        )}
-                      </div>
-                      
+                  <div className="mt-6 relative">
+                    {!showForm ? (
                       <button 
-                        type="submit" 
+                        onClick={() => setShowForm(true)}
+                        type="button" 
                         className="bg-primary hover:bg-primary-dark transition-colors duration-200 text-white font-medium py-3 px-4 rounded-md w-full text-center cursor-pointer flex items-center justify-center"
-                        disabled={isSubmitting}
                       >
-                        {isSubmitting ? (
-                          <>
-                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Joining...
-                          </>
-                        ) : (
-                          <>
-                            Join the Unseen Builders
-                          </>
-                        )}
+                        Join the Unseen Builders
                       </button>
-                      
-                      <div className="mt-3">
-                        <label className="flex items-start cursor-pointer">
-                          <input 
-                            type="checkbox"
-                            className={`h-4 w-4 mt-0.5 text-primary focus:ring-primary border-neutral-300 rounded ${errors.consent ? 'border-red-500' : ''}`}
-                            {...register('consent')}
-                          />
-                          <span className="ml-2 text-xs text-neutral-600">
-                            I agree to receive emails with exclusive strategies and understand I can unsubscribe anytime.
-                          </span>
-                        </label>
-                        {errors.consent && (
-                          <p className="mt-1 text-xs text-red-500">{errors.consent.message}</p>
-                        )}
-                      </div>
-                    </form>
-                    <p className="text-xs text-center mt-3 text-neutral-600">
-                      No spam, no hype. Unsubscribe any time.
-                    </p>
+                    ) : (
+                      <>
+                        <button 
+                          onClick={() => setShowForm(false)}
+                          type="button" 
+                          className="bg-primary hover:bg-primary-dark transition-colors duration-200 text-white font-medium py-3 px-4 rounded-md w-full text-center cursor-pointer flex items-center justify-center"
+                        >
+                          Join the Unseen Builders
+                        </button>
+                        <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-white rounded-lg p-4 shadow-lg border border-neutral-200">
+                          <form onSubmit={handleSubmit(onSubmit)}>
+                            <div className="mb-3">
+                              <input 
+                                type="email" 
+                                placeholder="Enter your email" 
+                                className={`w-full px-4 py-2 text-sm text-neutral-800 placeholder-neutral-500 bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-light ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
+                                {...register('email')}
+                              />
+                              {errors.email && (
+                                <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+                              )}
+                            </div>
+                            
+                            <div className="flex items-start mb-3">
+                              <input 
+                                type="checkbox"
+                                className={`h-4 w-4 mt-0.5 text-primary focus:ring-primary border-neutral-300 rounded ${errors.consent ? 'border-red-500' : ''}`}
+                                {...register('consent')}
+                              />
+                              <span className="ml-2 text-xs text-neutral-600">
+                                I agree to receive emails with exclusive strategies and understand I can unsubscribe anytime.
+                              </span>
+                            </div>
+                            {errors.consent && (
+                              <p className="mb-3 -mt-2 text-xs text-red-500">{errors.consent.message}</p>
+                            )}
+                            
+                            <div className="flex space-x-2">
+                              <button 
+                                type="submit" 
+                                className="flex-1 bg-primary hover:bg-primary-dark text-white text-sm font-medium py-2 px-3 rounded-md transition duration-150 flex items-center justify-center"
+                                disabled={isSubmitting}
+                              >
+                                {isSubmitting ? (
+                                  <>
+                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Subscribing...
+                                  </>
+                                ) : "Subscribe"}
+                              </button>
+                              <button 
+                                type="button" 
+                                className="bg-neutral-200 hover:bg-neutral-300 text-neutral-800 text-sm font-medium py-2 px-3 rounded-md transition duration-150"
+                                onClick={() => setShowForm(false)}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </form>
+                          <p className="text-xs text-center mt-3 text-neutral-600">
+                            No spam, no hype. Unsubscribe any time.
+                          </p>
+                        </div>
+                      </>
+                    )}
+                    {!showForm && (
+                      <p className="text-xs text-center mt-3 text-neutral-600">
+                        Join our community of privacy-focused builders
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
