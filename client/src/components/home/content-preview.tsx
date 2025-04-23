@@ -1,6 +1,55 @@
+import { useState } from "react";
 import { Link } from "wouter";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+
+const subscribeSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  consent: z.boolean().refine(val => val === true, {
+    message: "You must agree to receive emails"
+  })
+});
+
+type SubscribeForm = z.infer<typeof subscribeSchema>;
 
 const ContentPreview = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+  
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<SubscribeForm>({
+    resolver: zodResolver(subscribeSchema),
+    defaultValues: {
+      email: "",
+      consent: false
+    }
+  });
+
+  const onSubmit = async (data: SubscribeForm) => {
+    setIsSubmitting(true);
+    
+    try {
+      await apiRequest("POST", "/api/newsletter/subscribe", data);
+      
+      toast({
+        title: "Subscription successful!",
+        description: "Welcome to the Unseen Builders community.",
+        variant: "default",
+      });
+      
+      reset();
+    } catch (error) {
+      toast({
+        title: "Subscription failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <section className="py-16 bg-gradient-to-br from-neutral-100 to-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,11 +150,55 @@ const ContentPreview = () => {
                   </div>
                   
                   <div className="mt-6">
-                    <Link href="/newsletter">
-                      <div className="bg-primary hover:bg-primary-dark transition-colors duration-200 text-white font-medium py-3 px-4 rounded-md w-full text-center cursor-pointer">
-                        Join the Unseen Builders
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <div className="mb-3">
+                        <input 
+                          type="email" 
+                          placeholder="Enter your email" 
+                          className={`w-full px-4 py-2 text-sm text-neutral-800 placeholder-neutral-500 bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-light ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
+                          {...register('email')}
+                        />
+                        {errors.email && (
+                          <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+                        )}
                       </div>
-                    </Link>
+                      
+                      <button 
+                        type="submit" 
+                        className="bg-primary hover:bg-primary-dark transition-colors duration-200 text-white font-medium py-3 px-4 rounded-md w-full text-center cursor-pointer flex items-center justify-center"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Joining...
+                          </>
+                        ) : (
+                          <>
+                            Join the Unseen Builders
+                          </>
+                        )}
+                      </button>
+                      
+                      <div className="mt-3">
+                        <label className="flex items-start cursor-pointer">
+                          <input 
+                            type="checkbox"
+                            className={`h-4 w-4 mt-0.5 text-primary focus:ring-primary border-neutral-300 rounded ${errors.consent ? 'border-red-500' : ''}`}
+                            {...register('consent')}
+                          />
+                          <span className="ml-2 text-xs text-neutral-600">
+                            I agree to receive emails with exclusive strategies and understand I can unsubscribe anytime.
+                          </span>
+                        </label>
+                        {errors.consent && (
+                          <p className="mt-1 text-xs text-red-500">{errors.consent.message}</p>
+                        )}
+                      </div>
+                    </form>
                     <p className="text-xs text-center mt-3 text-neutral-600">
                       No spam, no hype. Unsubscribe any time.
                     </p>
