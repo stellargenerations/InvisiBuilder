@@ -130,7 +130,7 @@ export class MemStorage implements IStorage {
       description: "Strategies for generating income while protecting your privacy and personal information.",
       slug: "monetization",
       icon: "chart-line",
-      articleCount: 18
+      articleCount: 0
     });
 
     const privacyToolsCategory = this.createCategory({
@@ -138,7 +138,7 @@ export class MemStorage implements IStorage {
       description: "Software and services to protect your identity while running your online business.",
       slug: "privacy-tools",
       icon: "shield-alt",
-      articleCount: 15
+      articleCount: 0
     });
 
     const automationCategory = this.createCategory({
@@ -146,7 +146,7 @@ export class MemStorage implements IStorage {
       description: "Systems and processes to automate your business operations and scale efficiently.",
       slug: "automation",
       icon: "robot",
-      articleCount: 9
+      articleCount: 0
     });
 
     // Create sample articles
@@ -353,6 +353,32 @@ export class MemStorage implements IStorage {
       type: "code",
       articleId: previewArticle.id
     });
+    
+    // Update category article counts after all articles are created
+    this.updateCategoryCounts();
+  }
+  
+  // Helper method to recalculate article counts for all categories
+  private updateCategoryCounts() {
+    // Create a map to store the count for each category
+    const categoryCounts = new Map<number, number>();
+    
+    // Count articles in each category
+    for (const article of this.articles.values()) {
+      if (article.categoryId) {
+        const currentCount = categoryCounts.get(article.categoryId) || 0;
+        categoryCounts.set(article.categoryId, currentCount + 1);
+      }
+    }
+    
+    // Update category counts
+    for (const [categoryId, count] of categoryCounts.entries()) {
+      const category = this.categories.get(categoryId);
+      if (category) {
+        const updatedCategory = { ...category, articleCount: count };
+        this.categories.set(categoryId, updatedCategory);
+      }
+    }
   }
 
   // User methods
