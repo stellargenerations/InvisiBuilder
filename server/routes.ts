@@ -17,22 +17,22 @@ import {
 export async function registerRoutes(app: Express): Promise<Server> {
   // API Routes - prefix all routes with /api
   
-  // Get all categories
-  app.get("/api/categories", async (_req: Request, res: Response) => {
+  // Get all topics
+  app.get("/api/topics", async (_req: Request, res: Response) => {
     try {
-      const categories = await storage.getCategories();
-      res.json(categories);
+      const topics = await storage.getCategories();
+      res.json(topics);
     } catch (error) {
-      console.error("Error fetching categories:", error);
-      res.status(500).json({ message: "Failed to fetch categories" });
+      console.error("Error fetching topics:", error);
+      res.status(500).json({ message: "Failed to fetch topics" });
     }
   });
   
-  // Get all topics (aliases to categories for compatibility)
-  app.get("/api/topics", async (_req: Request, res: Response) => {
+  // Get all categories (aliases to topics for backward compatibility)
+  app.get("/api/categories", async (_req: Request, res: Response) => {
     try {
-      const categories = await storage.getCategories();
-      res.json(categories);
+      const topics = await storage.getCategories();
+      res.json(topics);
     } catch (error) {
       console.error("Error fetching topics:", error);
       res.status(500).json({ message: "Failed to fetch topics" });
@@ -70,11 +70,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all articles with optional filters
   app.get("/api/articles", async (req: Request, res: Response) => {
     try {
-      const { featured, category, topic, tag, search, limit } = req.query;
+      const { featured, topic, tag, search, limit } = req.query;
       
       const options: {
         featured?: boolean;
-        category?: string;
+        topic?: string;
         tag?: string;
         search?: string;
         limit?: number;
@@ -84,11 +84,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         options.featured = featured === "true";
       }
       
-      // Support both category and topic parameters, with topic taking precedence
+      // Only use topic parameter
       if (topic && typeof topic === "string") {
-        options.category = topic; // Use topic value for category filtering
-      } else if (category && typeof category === "string") {
-        options.category = category; // Fallback to category parameter
+        options.topic = topic;
       }
       
       if (tag && typeof tag === "string") {

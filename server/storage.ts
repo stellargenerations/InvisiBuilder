@@ -27,7 +27,7 @@ export interface IStorage {
   // Articles
   getArticles(options?: {
     featured?: boolean;
-    category?: string;
+    topic?: string;
     tag?: string;
     search?: string;
     limit?: number;
@@ -443,7 +443,7 @@ export class MemStorage implements IStorage {
   // Article methods
   async getArticles(options: {
     featured?: boolean;
-    category?: string;
+    topic?: string;
     tag?: string;
     search?: string;
     limit?: number;
@@ -455,12 +455,12 @@ export class MemStorage implements IStorage {
       articles = articles.filter(article => article.featured === options.featured);
     }
 
-    if (options.category) {
-      const categorySlug = options.category.toLowerCase();
+    if (options.topic) {
+      const topicSlug = options.topic.toLowerCase();
       articles = articles.filter(article => {
-        // Check if the article belongs to this category
-        const cat = this.categories.get(article.categoryId || 0);
-        return cat?.slug === categorySlug || article.category?.toLowerCase() === options.category?.toLowerCase();
+        // Check if the article belongs to this topic
+        const topic = this.categories.get(article.categoryId || 0);
+        return topic?.slug === topicSlug || article.category?.toLowerCase() === options.topic?.toLowerCase();
       });
     }
 
