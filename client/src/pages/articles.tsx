@@ -299,8 +299,11 @@ const ArticlesPage = () => {
           <>
             {articles && articles.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {articles.map((article) => (
-                  <ContentCard key={article.id} article={article} />
+                {articles.map((article, index) => (
+                  <ContentCard 
+                    key={article.id || article.slug || index} 
+                    article={article} 
+                  />
                 ))}
               </div>
             ) : (
