@@ -169,14 +169,14 @@ const About = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/articles">
-                <a className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-dark hover:bg-primary transition duration-150 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <div className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-neutral-900 bg-primary hover:bg-primary-light transition duration-150 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer">
                   Explore Our Articles
-                </a>
+                </div>
               </Link>
               <Link href="#newsletter">
-                <a className="inline-flex justify-center items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary-dark bg-neutral-100 hover:bg-neutral-200 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light">
+                <div className="inline-flex justify-center items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary bg-neutral-900/50 hover:bg-neutral-900/70 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light cursor-pointer">
                   Join Our Newsletter
-                </a>
+                </div>
               </Link>
             </div>
           </div>
