@@ -27,6 +27,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch categories" });
     }
   });
+  
+  // Get all topics (aliases to categories for compatibility)
+  app.get("/api/topics", async (_req: Request, res: Response) => {
+    try {
+      const categories = await storage.getCategories();
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+      res.status(500).json({ message: "Failed to fetch topics" });
+    }
+  });
 
   // Get category by slug
   app.get("/api/categories/:slug", async (req: Request, res: Response) => {

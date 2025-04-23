@@ -45,7 +45,7 @@ const ArticlesPage = () => {
     queryKey: ['/api/articles', activeFilter, tagParam, searchQuery],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (activeFilter) params.append('topic', activeFilter);
+      if (activeFilter) params.append('category', activeFilter); // Using 'category' instead of 'topic' to match server API
       if (tagParam) params.append('tag', tagParam);
       if (searchQuery) params.append('search', searchQuery);
 
