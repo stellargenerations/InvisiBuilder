@@ -73,14 +73,17 @@ const TopicCard = ({ topic }: TopicCardProps) => {
 
   // Get the topic slug and log it for debugging
   const topicSlug = getTopicSlug(topic);
+  const linkUrl = `/articles?category=${topicSlug}`;
   console.log('TopicCard rendering with:', {
     topicName: topic.name,
     topicSlug,
+    linkUrl,
     originalSlug: topic.slug
   });
 
+  // Instead of using wouter's Link component, use a regular anchor tag to ensure the query parameter is preserved
   return (
-    <Link href={`/articles?category=${topicSlug}`}>
+    <a href={`/articles?category=${topicSlug}`} className="block">
       <div className="group cursor-pointer">
         <div className="bg-neutral-100 rounded-lg p-6 text-center shadow-sm hover:shadow-md transition duration-150 h-full flex flex-col hover:border-primary-light border-2 border-transparent">
           <div className="w-16 h-16 bg-primary-light text-white rounded-full flex items-center justify-center mx-auto mb-4">
@@ -93,7 +96,7 @@ const TopicCard = ({ topic }: TopicCardProps) => {
           </div>
         </div>
       </div>
-    </Link>
+    </a>
   );
 };
 
