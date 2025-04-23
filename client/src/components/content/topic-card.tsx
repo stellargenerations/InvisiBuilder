@@ -81,9 +81,16 @@ const TopicCard = ({ topic }: TopicCardProps) => {
     originalSlug: topic.slug
   });
 
-  // Use Link component with proper href
+  // Use regular anchor tag with proper href to ensure full page navigation
   return (
-    <Link href={`/articles?topic=${topicSlug}`}>
+    <a 
+      href={`/articles?topic=${topicSlug}`}
+      className="block"
+      onClick={(e) => {
+        e.preventDefault();
+        window.location.href = `/articles?topic=${topicSlug}`;
+      }}
+    >
       <div className="group cursor-pointer">
         <div className="bg-neutral-100 rounded-lg p-6 text-center shadow-sm hover:shadow-md transition duration-150 h-full flex flex-col hover:border-primary-light border-2 border-transparent">
           <div className="w-16 h-16 bg-primary-light text-white rounded-full flex items-center justify-center mx-auto mb-4">
@@ -96,7 +103,7 @@ const TopicCard = ({ topic }: TopicCardProps) => {
           </div>
         </div>
       </div>
-    </Link>
+    </a>
   );
 };
 

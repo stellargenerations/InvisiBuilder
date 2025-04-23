@@ -96,11 +96,16 @@ const ArticlesPage = () => {
   useEffect(() => {
     // Update the active filter when the URL parameter changes
     console.log('URL params changed:', { topicParam, searchParam, activeFilter });
-    setActiveFilter(topicParam || null);
+    
+    // Always parse URL params fresh in case they've changed
+    const currentParams = new URLSearchParams(window.location.search);
+    const currentTopicParam = currentParams.get('topic');
+    
+    setActiveFilter(currentTopicParam || topicParam || null);
 
     // Update search query when the URL parameter changes
     setSearchQuery(searchParam || '');
-  }, [topicParam, searchParam]);
+  }, [topicParam, searchParam, location]);
 
 
   const handleTopicFilter = (topicSlug: string | null) => {
