@@ -174,7 +174,7 @@ const ArticlePage = () => {
         </div>
 
         {/* Article content */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-12">
           <div className="prose prose-lg max-w-none">
             {/* Main content - now uses consistent markdown format */}
             {article.content && (
