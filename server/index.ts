@@ -24,11 +24,11 @@ async function main() {
     await setupVite(app, server);
   } else {
     // Serve static client assets in production
-    app.use(express.static(path.join(__dirname, '../client/dist')));
+    app.use(express.static(path.join(__dirname, '../dist/public')));
     
     // Serve index.html for all non-API routes in production
     app.get('*', (_req: Request, res: Response) => {
-      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+      res.sendFile(path.join(__dirname, '../dist/public/index.html'));
     });
   }
   
