@@ -12,10 +12,6 @@ featured: true
 coverImage: images/Invisibuilder Transparent (copy).png
 readTime: "15 min"
 
----
-
-# How to Monetize a Directory Website: 4 Proven Methods for Success
-
 *By Invisibuilder, inspired by Frey Chue's "How To Monetize Your Website Directory (4 Proven Methods)" ([Watch the original video](https://www.youtube.com/watch?v=wLHdtFL_G28))*
 
 ![Overview](/images/articles/how-to-monetize-directory-website/OverviewSVG.svg)
