@@ -6,6 +6,7 @@ import AudioPlayer from "@/components/content/audio-player";
 import YouTubeEmbed from "@/components/content/youtube-embed";
 import MarkdownWithYouTube from "@/components/content/markdown-with-youtube";
 import SimplePortableText from "@/components/content/simple-portable-text";
+import ArticleNewsletterCTA from "@/components/content/article-newsletter-cta";
 import Breadcrumbs from "@/components/ui/breadcrumb";
 import { Helmet } from "react-helmet";
 import { urlFor } from "@/lib/image-utils"; // Utility for image URL processing
@@ -285,6 +286,9 @@ const ArticlePage = () => {
             )}
           </div>
 
+          {/* Newsletter CTA */}
+          <ArticleNewsletterCTA />
+          
           {/* Tags and sharing */}
           <div className="mt-12 pt-6 border-t border-neutral-200">
             <div className="flex flex-wrap items-center justify-between">
