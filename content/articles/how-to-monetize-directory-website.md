@@ -23,9 +23,7 @@ readTime: "15 min"
 ---
 ## Introduction
 
-<svg width="50" height="50" viewBox="0 0 100 100">
-  <client/public/images/OverviewSVG.svg/>
-</svg>
+![Overview](/images/OverviewSVG.svg)
 
 Imagine earning a steady stream of income from a website that works for you—no cold calls, no networking events, no need to be the face of your brand. For introverts, the dream of financial independence often collides with the reality of a world that rewards extroverted hustle. But what if you could build a business that leverages your strengths—strategy, process, and quiet focus—while keeping you comfortably behind the scenes?
 
