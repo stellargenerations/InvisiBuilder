@@ -1,8 +1,13 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { registerRoutes } from './routes.markdown';
 import { setupVite } from './vite';
+
+// Polyfill for __dirname in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create Express server
 async function main() {
