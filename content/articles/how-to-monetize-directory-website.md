@@ -59,6 +59,7 @@ Frey Chue opens with a question that cuts to the core: "What do you want out of 
 | Lead Generation | Sell qualified leads to businesses in high-value niches. | Legal, home services, healthcare | Hard | Very Stable | Moderate |
 | SaaS/Service Funnels | Use your directory to drive traffic to your own SaaS or service business. | Tech-savvy, long-term builders | Hardest | Most Stable | High (initially) |
 
+---
 
 ### 1. Display Ads & Affiliate Marketing
 
