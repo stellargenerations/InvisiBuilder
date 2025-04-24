@@ -9,33 +9,23 @@ author: "Invisibuilder"
 topics: ["Business"]
 tags: ["how to monetize website", "paid directory", "paid listing", "monetizing websites", "make money on a website", "how to make money with a business directory website"]
 featured: true
-coverImage: /images/monetize-directory-overview.png
+coverImage: images/Invisibuilder Transparent (copy).png
 readTime: "15 min"
 
 ---
 
 # How to Monetize a Directory Website: 4 Proven Methods for Success
 
-![How to monetize a directory website overview](/images/monetize-directory-overview.png)
-
 *By Invisibuilder, inspired by Frey Chue's "How To Monetize Your Website Directory (4 Proven Methods)" ([Watch the original video](https://www.youtube.com/watch?v=wLHdtFL_G28))*
 
----
+![Overview](/images/articles/how-to-monetize-directory-website/OverviewSVG.svg)
+
 ## Introduction
-
-![Overview](/images/OverviewSVG.svg)
-
 Imagine earning a steady stream of income from a website that works for you—no cold calls, no networking events, no need to be the face of your brand. For introverts, the dream of financial independence often collides with the reality of a world that rewards extroverted hustle. But what if you could build a business that leverages your strengths—strategy, process, and quiet focus—while keeping you comfortably behind the scenes?
-
-![How to monetize a directory website overview](/images/monetize-directory-overview.png)
 
 That's the promise at the heart of Frey Chue's video, "How To Monetize Your Website Directory (4 Proven Methods)." In this comprehensive review, I'll break down the actionable insights, unique strategies, and real-world examples from the video, showing how directory websites can become the ultimate low-profile, high-leverage asset for introverts. Along the way, I'll share my own opinions (highlighted for easy editing) and practical takeaways, so you can decide if this path is right for you.
 
----
-
 https://www.youtube.com/watch?v=wLHdtFL_G28
-
----
 
 ## Why Directory Websites Are Perfect for Introverts
 
@@ -61,8 +51,9 @@ Frey Chue opens with a question that cuts to the core: "What do you want out of 
 
 ## The Four Proven Monetization Methods
 
-### Overview Table: Monetization Methods
+![Overview](/images/articles/how-to-monetize-directory-website/Methods.svg)
 
+### Overview Table: Monetization Methods
 | Method | Description | Best For | Difficulty | Stability | Human Interaction |
 |--------|-------------|----------|------------|-----------|-------------------|
 | Display Ads & Affiliate Marketing | Earn passive income from ad networks and affiliate links. | High-traffic, broad niches | Easy | Volatile | Minimal |
@@ -70,7 +61,6 @@ Frey Chue opens with a question that cuts to the core: "What do you want out of 
 | Lead Generation | Sell qualified leads to businesses in high-value niches. | Legal, home services, healthcare | Hard | Very Stable | Moderate |
 | SaaS/Service Funnels | Use your directory to drive traffic to your own SaaS or service business. | Tech-savvy, long-term builders | Hardest | Most Stable | High (initially) |
 
----
 
 ### 1. Display Ads & Affiliate Marketing
 
