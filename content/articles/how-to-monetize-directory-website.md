@@ -27,6 +27,8 @@ That's the promise at the heart of Frey Chue's video, "How To Monetize Your Webs
 
 https://www.youtube.com/watch?v=wLHdtFL_G28
 
+---
+
 ## Why Directory Websites Are Perfect for Introverts
 
 ### The Introvert's Edge: Systems Over Social Skills
@@ -53,7 +55,7 @@ Frey Chue opens with a question that cuts to the core: "What do you want out of 
 
 ![Overview](/images/articles/how-to-monetize-directory-website/Methods.svg)
 
-### Overview Table: Monetization Methods
+### Table: Monetization Methods
 | Method | Description | Best For | Difficulty | Stability | Human Interaction |
 |--------|-------------|----------|------------|-----------|-------------------|
 | Display Ads & Affiliate Marketing | Earn passive income from ad networks and affiliate links. | High-traffic, broad niches | Easy | Volatile | Minimal |
@@ -198,9 +200,11 @@ Frey Chue opens with a question that cuts to the core: "What do you want out of 
 4. **Traffic Leverage:** Repurpose Reddit feedback into SEO content without engaging in forums long-term.
 5. **Exit Strategy:** Once automated, sell your directory on marketplaces like Flippa for a lump-sum payout.
 
+![Overview](/images/articles/how-to-monetize-directory-website/5stepblueprint.svg)
+
 ---
 
-## Comparison Table: Monetization Methods vs. Directory Types
+## Table: Monetization Methods vs. Directory Types
 
 | Directory Type | Best Monetization | Example Niches | Pros | Cons |
 |----------------|-------------------|----------------|------|------|
