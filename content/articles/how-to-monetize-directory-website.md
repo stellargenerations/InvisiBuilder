@@ -1,5 +1,4 @@
 ---
-
 title: "How to Monetize a Directory Website: 4 Proven Methods for Success"
 slug: "how-to-monetize-directory-website"
 excerpt: "Discover four proven methods to monetize your directory website and build automated income streams. Learn practical strategies for creating paid listings, implementing display ads, generating leads, and building service funnels."
@@ -11,6 +10,7 @@ tags: ["how to monetize website", "paid directory", "paid listing", "monetizing 
 featured: true
 coverImage: images/Invisibuilder Transparent (copy).png
 readTime: "15 min"
+---
 
 *By Invisibuilder, inspired by Frey Chue's "How To Monetize Your Website Directory (4 Proven Methods)" ([Watch the original video](https://www.youtube.com/watch?v=wLHdtFL_G28))*
 
