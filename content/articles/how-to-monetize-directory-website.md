@@ -25,6 +25,8 @@ readTime: "15 min"
 
 Imagine earning a steady stream of income from a website that works for you—no cold calls, no networking events, no need to be the face of your brand. For introverts, the dream of financial independence often collides with the reality of a world that rewards extroverted hustle. But what if you could build a business that leverages your strengths—strategy, process, and quiet focus—while keeping you comfortably behind the scenes?
 
+![How to monetize a directory website overview](/images/monetize-directory-overview.png)
+
 That's the promise at the heart of Frey Chue's video, "How To Monetize Your Website Directory (4 Proven Methods)." In this comprehensive review, I'll break down the actionable insights, unique strategies, and real-world examples from the video, showing how directory websites can become the ultimate low-profile, high-leverage asset for introverts. Along the way, I'll share my own opinions (highlighted for easy editing) and practical takeaways, so you can decide if this path is right for you.
 
 ---
