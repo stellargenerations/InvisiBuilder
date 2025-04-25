@@ -41,7 +41,10 @@ Frey Chue opens with a question that cuts to the core: "What do you want out of 
 | **Time Freedom & Quality of Life** | Achieve control over your schedule and optimize for quality of life. | 1:48–2:18 |
 | **Baseline Revenue for Passion Projects** | Use directory income as a stable base to pursue more creative or meaningful work. | 2:35–2:44 |
 
-> "Personally, my why has always been tied to time freedom and not having to rely on a job... I wanted to optimize for quality of life." (1:48–2:18)
+![Overview](/images/articles/how-to-monetize-directory-website/WhyDirectoryTransparent.png)
+
+> "Personally, my why has always been tied to time freedom and not having to rely on a job... I wanted to optimize for quality of life." (1:48–2:18)"
+
 
 **Invisibuilder's perspective:** *This focus on "why" is a game-changer for introverts. Instead of chasing someone else's definition of success, you can design a business that fits your life, not the other way around.*
 
@@ -111,10 +114,11 @@ Frey Chue opens with a question that cuts to the core: "What do you want out of 
 - Example: Care.com uses a survey to match users with senior care providers, then sells those leads (12:35–12:54).
 
 #### Key Insights
-
 - High-value niches (legal, home services) can pay $35–$100+ per lead (13:32–14:08).
 - Even low-traffic sites can be highly profitable if the leads are valuable: "If you had a lawyer directory that was only getting 200 visitors a month... you don't need 80,000 monthly visitors." (14:40–15:08)
 - Requires more technical setup (forms, automation) and some sales skills to build relationships with buyers.
+
+![Overview](/images/articles/how-to-monetize-directory-website/ValuePerVisitorTransparent.png)
 
 **Invisibuilder's perspective:** *This is the most scalable and lucrative model for introverts who are comfortable with systems and automation. The key is to pick a niche where leads are in high demand and to automate as much of the process as possible.*
 

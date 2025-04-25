@@ -66,11 +66,11 @@ const ArticleNewsletterCTA = () => {
       <div className="flex flex-col md:flex-row items-center gap-6">
         <div className="flex-1">
           <h3 className="text-2xl font-heading font-bold text-primary mb-2">
-            Ready to Start Your Own Income Machine?
+            Ready to Start An Income Machine?
           </h3>
           <p className="text-white mb-0">
-            Ideas and inspirations are plenty but it's the how to that counts.
-            Take it from the people like you to see how it's done.
+            Ideas and inspirations matter but execution counts. Take it from
+            people like you, to see how it's done.
           </p>
           <p className="text-white/80 text-sm mt-1">
             Join our community of invisible builders today.
