@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import HeroAudioPlayer from "./hero-audio-player";
 
 const newsletterSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -149,6 +150,13 @@ const HeroSection = () => {
                 )}
               </div>
             </div>
+            
+            {/* Podcast Player */}
+            <HeroAudioPlayer 
+              src="/audio/invisibuilder-podcast.wav" 
+              title="Invisibuilder: Build Without The Spotlight" 
+              subtitle="Listen to our intro podcast"
+            />
           </div>
           <div className="w-full md:w-1/2 flex justify-center items-center">
             <div className="p-8 rounded-full">
