@@ -85,13 +85,96 @@ Invisibuilder is a content management platform for solopreneurs focusing on show
 - No external CMS dependencies required
 
 ## Background and Motivation
-*To be filled in when using the Planner role*
+Currently, Invisibuilder is a React-based website that renders entirely on the client-side. While this approach provides a smooth user experience once loaded, it has several SEO limitations:
+
+1. **Initial Load Performance**: Client-side rendering requires the browser to download, parse, and execute JavaScript before rendering the content, leading to slower initial page loads.
+
+2. **SEO Limitations**: Search engine crawlers, despite improvements, may not execute JavaScript effectively or may prioritize pre-rendered content, affecting the site's discoverability.
+
+3. **Content Accessibility**: Content that depends on JavaScript execution may not be immediately available to users, especially those with slower connections or devices.
+
+4. **Meta Tags Management**: Dynamic meta tags for social sharing and SEO are more challenging to implement reliably with client-side rendering.
+
+Implementing server-side rendering (SSR) would provide several benefits:
+
+1. **Improved SEO**: Search engines can immediately index the fully-rendered HTML content.
+2. **Faster First Contentful Paint**: Users see content more quickly as the server sends pre-rendered HTML.
+3. **Better Social Media Sharing**: Meta tags are pre-rendered, ensuring proper display when content is shared.
+4. **Improved Accessibility**: Content is available even if JavaScript fails or is disabled.
 
 ## Key Challenges and Analysis
-*To be filled in when using the Planner role*
+
+### Technical Challenges
+
+1. **Current Architecture Assessment**:
+   - The project uses a Vite-based development environment with Express backend.
+   - React with TypeScript forms the frontend with Wouter for routing.
+   - Content is managed through markdown files parsed with gray-matter and remark.
+
+2. **SSR Implementation Options**:
+   - **Full Framework Migration**: Switching to a framework like Next.js or Remix that provides SSR out of the box.
+   - **Custom SSR Implementation**: Implementing SSR within the current Express + Vite setup.
+   - **Hybrid Approach**: Adding SSR capabilities to critical SEO pages while keeping other pages client-rendered.
+
+3. **Data Fetching Challenges**:
+   - Current data fetching happens client-side using TanStack Query.
+   - Need to adapt data fetching to work in both server and client contexts.
+   - Must ensure hydration doesn't cause mismatches between server and client renders.
+
+4. **Routing Considerations**:
+   - Current routing uses Wouter which is client-side.
+   - Need to align server-side and client-side routing for a seamless experience.
+
+5. **Build Process Adaptation**:
+   - Current build process separates client and server builds.
+   - SSR requires coordination between these processes.
+
+### Strategic Analysis
+
+1. **Lowest-Disruption Path**:
+   - Given the project's established architecture, implementing a custom SSR solution within the existing Express backend makes the most sense initially.
+   - This avoids a complete rewrite while still gaining SEO benefits.
+
+2. **Performance Considerations**:
+   - Server-side rendering adds computational load to the server.
+   - Need to implement caching strategies for rendered pages to minimize this impact.
+
+3. **Content Strategy Impact**:
+   - Markdown-based content approach fits well with SSR as content can be pre-processed.
+   - Static generation for content pages could further improve performance.
 
 ## High-Level Task Breakdown
-*To be filled in when using the Planner role*
+
+### Phase 1: Preparation and Analysis
+1. [ ] Analyze current routing patterns and identify SEO-critical pages that need SSR first.
+2. [ ] Audit current data fetching patterns and identify any client-only code that needs adaptation.
+3. [ ] Create a test environment for SSR development without affecting production.
+4. [ ] Research and select appropriate libraries to assist with React SSR (react-dom/server, etc.).
+
+### Phase 2: Server-Side Rendering Implementation
+5. [ ] Implement basic Express middleware for rendering React components on the server.
+6. [ ] Create a shared routing configuration that works for both server and client.
+7. [ ] Modify the build process to generate server-compatible components.
+8. [ ] Implement data prefetching for server renders to populate initial state.
+9. [ ] Develop hydration logic to transfer server state to the client.
+
+### Phase 3: Content and SEO Enhancement
+10. [ ] Implement server-side meta tag generation based on content.
+11. [ ] Create a caching strategy for rendered pages to improve performance.
+12. [ ] Add structured data (JSON-LD) to improve SEO for content pages.
+13. [ ] Implement dynamic sitemap generation from content sources.
+
+### Phase 4: Testing and Optimization
+14. [ ] Create tests to verify server-rendered content matches expectations.
+15. [ ] Implement performance monitoring for server-rendered pages.
+16. [ ] Optimize bundle size and code splitting for improved SSR performance.
+17. [ ] Test and fix any hydration mismatches between server and client renders.
+
+### Phase 5: Rollout and Iteration
+18. [ ] Deploy SSR implementation to staging environment for final testing.
+19. [ ] Progressively roll out SSR to production, starting with key content pages.
+20. [ ] Monitor SEO metrics to evaluate the impact of SSR implementation.
+21. [ ] Gather performance data and iterate on the implementation as needed.
 
 ## Execution Log
 *To be filled in when using the Executor role*
