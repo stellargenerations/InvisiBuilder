@@ -8,7 +8,7 @@ featured: true
 topics: ["Marketing", "Business", "Video"]
 tags: ["seo", "ai", "directories", "server-side-rendering", "automation"]
 coverImage: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-_id: "silent-success-directory-sites"
+_id: "seo-mistake-in-no-code-directories"
 readTime: 10
 ---
 
