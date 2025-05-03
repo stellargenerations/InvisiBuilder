@@ -1,9 +1,9 @@
 ---
-title: "Silent Success: How Introverts Can Build Profitable Directory Sites with AI, Automation, and SSR"
-excerpt: "Learn how introverted entrepreneurs can leverage AI tools to fix critical SEO flaws in no-code platforms, migrate to server-side rendering, and build sustainable, low-profile digital assets."
+title: "Fixing the Fatal SEO Mistake in No-Code Directories: Why Server-Side Rendering Matters"
+excerpt: "Discover how a 7,000-listing directory website built with AI tools failed to rank on Google due to client-side rendering, and learn the step-by-step process to fix this common SEO mistake with server-side rendering."
 publishedDate: "2025-05-03T12:30:00.000Z"
 updatedDate: "2025-05-03T12:30:00.000Z"
-author: "Alex Chen"
+author: "Invisibuilder Team"
 featured: true
 topics: ["Marketing", "Business", "Video"]
 tags: ["seo", "ai", "directories", "server-side-rendering", "automation"]
@@ -12,9 +12,9 @@ _id: "silent-success-directory-sites"
 readTime: 10
 ---
 
-# Silent Success: How Introverts Can Build Profitable Directory Sites with AI, Automation, and SEO  
+# Fixing the Fatal SEO Mistake in No-Code Directories: Why Server-Side Rendering Matters
 
-**By Alex Chen | Inspired by Jordan Urbs' Video: [I Built a 7000-Listing Directory With AI But Made This Big Mistake!](https://www.youtube.com/watch?v=WHcj4xKqll0)**  
+**By Invisibuilder Team | Inspired by Jordan Urbs' Video: [I Built a 7000-Listing Directory With AI But Made This Big Mistake!](https://www.youtube.com/watch?v=WHcj4xKqll0)**  
 
 ---
 
