@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import YouTubeEmbed from './youtube-embed';
-import { isYouTubeUrl, extractYouTubeVideoId } from '@/lib/youtube-utils';
+import { isYouTubeUrl, extractYouTubeVideoId, shouldEmbedYouTubeLink } from '@/lib/youtube-utils';
 
 interface MarkdownWithYouTubeProps {
   content: string;
@@ -46,16 +46,10 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
             ),
             // Custom component for links
             a: ({ node, href, children, ...props }) => {
-              // Only convert YouTube links to embeds if the link text is the same as the URL
-              // This prevents text links from becoming embeds
-              // Additional check: don't convert links in headings or "Call to Action" section
+              // Use our utility function to decide if this link should be embedded
               const textContent = String(children);
-              const isInHeadingOrCallToAction = 
-                textContent.includes("Call to Action") || 
-                textContent.includes("Inspired by") ||
-                textContent.includes("fixing SEO mistakes");
               
-              if (href && isYouTubeUrl(href) && textContent === href && !isInHeadingOrCallToAction) {
+              if (href && shouldEmbedYouTubeLink(href, textContent)) {
                 const videoId = extractYouTubeVideoId(href);
                 if (videoId) {
                   return <YouTubeEmbed videoId={videoId} title="YouTube video" />;
@@ -82,7 +76,17 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
     const trimmedLine = line.trim();
 
     // Check if this line is just a YouTube URL
-    if (trimmedLine && isYouTubeUrl(trimmedLine)) {
+    // Also check surrounding context for specific patterns
+    const prevLine = i > 0 ? lines[i-1].trim() : '';
+    const nextLine = i < lines.length - 1 ? lines[i+1].trim() : '';
+    
+    // Don't embed if it's in a special context like headers or "Call to Action" section
+    const isInSpecialContext = 
+      prevLine.includes("Call to Action") || 
+      prevLine.includes("Inspired by") || 
+      nextLine.includes("Call to Action");
+    
+    if (trimmedLine && isYouTubeUrl(trimmedLine) && !isInSpecialContext) {
       const videoId = extractYouTubeVideoId(trimmedLine);
       if (videoId) {
         processedContent.push(
@@ -124,16 +128,10 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
         components={{
           // Custom component for links
           a: ({ node, href, children, ...props }) => {
-            // Only convert YouTube links to embeds if the link text is the same as the URL
-            // This prevents text links from becoming embeds
-            // Additional check: don't convert links in headings or "Call to Action" section
+            // Use our utility function to decide if this link should be embedded
             const textContent = String(children);
-            const isInHeadingOrCallToAction = 
-              textContent.includes("Call to Action") || 
-              textContent.includes("Inspired by") ||
-              textContent.includes("fixing SEO mistakes");
             
-            if (href && isYouTubeUrl(href) && textContent === href && !isInHeadingOrCallToAction) {
+            if (href && shouldEmbedYouTubeLink(href, textContent)) {
               const videoId = extractYouTubeVideoId(href);
               if (videoId) {
                 return <YouTubeEmbed videoId={videoId} title="YouTube video" />;

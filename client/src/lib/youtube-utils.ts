@@ -44,3 +44,35 @@ export function isYouTubeUrl(url: string): boolean {
   console.log('Is YouTube URL:', result);
   return result;
 }
+
+/**
+ * Determines if a YouTube link should be embedded or shown as a regular link
+ * This helps prevent unwanted embeds in certain contexts like headings
+ */
+export function shouldEmbedYouTubeLink(href: string, linkText: string): boolean {
+  if (!isYouTubeUrl(href)) return false;
+  
+  // Only embed standalone YouTube URLs (where the link text is the same as the URL)
+  if (linkText !== href) return false;
+  
+  // Don't embed if the URL appears in specific text patterns
+  const containingText = linkText || '';
+  const excludedPatterns = [
+    "Watch the", 
+    "Watch the original", 
+    "original video",
+    "fixing SEO mistakes",
+    "full video",
+    "Inspired by",
+    "Call to Action"
+  ];
+  
+  for (const pattern of excludedPatterns) {
+    if (containingText.includes(pattern)) {
+      console.log('Not embedding YouTube link with pattern:', pattern);
+      return false;
+    }
+  }
+  
+  return true;
+}
