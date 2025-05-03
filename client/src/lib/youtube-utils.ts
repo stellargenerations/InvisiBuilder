@@ -49,14 +49,19 @@ export function isYouTubeUrl(url: string): boolean {
  * Determines if a YouTube link should be embedded or shown as a regular link
  * This helps prevent unwanted embeds in certain contexts like headings
  */
-export function shouldEmbedYouTubeLink(href: string, linkText: string): boolean {
+export function shouldEmbedYouTubeLink(href: string, linkText: string, parentText?: string): boolean {
   if (!isYouTubeUrl(href)) return false;
   
   // Only embed standalone YouTube URLs (where the link text is the same as the URL)
   if (linkText !== href) return false;
   
-  // Don't embed if the URL appears in specific text patterns
+  // Check if this link is in a header, byline, introduction, or other special section
+  // We use both the link text itself and the surrounding content (parentText) if available
   const containingText = linkText || '';
+  const surroundingText = parentText || '';
+  const combinedText = containingText + ' ' + surroundingText;
+  
+  // Extended patterns to detect various contexts where embedding should be prevented
   const excludedPatterns = [
     "Watch the", 
     "Watch the original", 
@@ -64,14 +69,25 @@ export function shouldEmbedYouTubeLink(href: string, linkText: string): boolean 
     "fixing SEO mistakes",
     "full video",
     "Inspired by",
-    "Call to Action"
+    "Call to Action",
+    "By Invisibuilder",
+    "Team |",
+    "I Built a 7000",
+    "Jordan Urbs"
   ];
   
   for (const pattern of excludedPatterns) {
-    if (containingText.includes(pattern)) {
+    if (combinedText.includes(pattern)) {
       console.log('Not embedding YouTube link with pattern:', pattern);
       return false;
     }
+  }
+  
+  // If the link is at the very top of the article, don't embed it
+  // This heuristic helps catch bylines and headers
+  if (surroundingText.indexOf(containingText) < 200) {
+    console.log('Not embedding YouTube link near top of article');
+    return false;
   }
   
   return true;

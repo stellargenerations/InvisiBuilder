@@ -48,8 +48,10 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
             a: ({ node, href, children, ...props }) => {
               // Use our utility function to decide if this link should be embedded
               const textContent = String(children);
+              // Get parent context to help determine if this link should be embedded
+              const parentContext = content.substring(0, 500); // First 500 chars for context
               
-              if (href && shouldEmbedYouTubeLink(href, textContent)) {
+              if (href && shouldEmbedYouTubeLink(href, textContent, parentContext)) {
                 const videoId = extractYouTubeVideoId(href);
                 if (videoId) {
                   return <YouTubeEmbed videoId={videoId} title="YouTube video" />;
@@ -130,8 +132,10 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
           a: ({ node, href, children, ...props }) => {
             // Use our utility function to decide if this link should be embedded
             const textContent = String(children);
+            // Get parent context to help determine if this link should be embedded
+            const parentContext = markdownBlock.substring(0, 500); // First 500 chars for context
             
-            if (href && shouldEmbedYouTubeLink(href, textContent)) {
+            if (href && shouldEmbedYouTubeLink(href, textContent, parentContext)) {
               const videoId = extractYouTubeVideoId(href);
               if (videoId) {
                 return <YouTubeEmbed videoId={videoId} title="YouTube video" />;
