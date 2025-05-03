@@ -52,14 +52,25 @@ export function isYouTubeUrl(url: string): boolean {
 export function shouldEmbedYouTubeLink(href: string, linkText: string, parentText?: string): boolean {
   if (!isYouTubeUrl(href)) return false;
   
-  // Only embed standalone YouTube URLs (where the link text is the same as the URL)
-  if (linkText !== href) return false;
+  // First approach: For typical links where the text is NOT the URL, we never embed
+  // This makes normal links like [click here](youtube.com) always display as text links
+  if (linkText !== href) {
+    console.log('Not embedding - link text differs from URL');
+    return false;
+  }
   
-  // Check if this link is in a header, byline, introduction, or other special section
+  // Second approach: Check for specific sections/contexts where embedding should be prevented
   // We use both the link text itself and the surrounding content (parentText) if available
   const containingText = linkText || '';
   const surroundingText = parentText || '';
   const combinedText = containingText + ' ' + surroundingText;
+  
+  // Explicit check for article byline
+  if (surroundingText.includes("By Invisibuilder") || 
+      surroundingText.includes("Inspired by")) {
+    console.log('Not embedding - detected in byline/author section');
+    return false;
+  }
   
   // Extended patterns to detect various contexts where embedding should be prevented
   const excludedPatterns = [
@@ -71,9 +82,11 @@ export function shouldEmbedYouTubeLink(href: string, linkText: string, parentTex
     "Inspired by",
     "Call to Action",
     "By Invisibuilder",
-    "Team |",
+    "Team",
     "I Built a 7000",
-    "Jordan Urbs"
+    "Jordan Urbs",
+    "Video:",
+    "Directory With AI"
   ];
   
   for (const pattern of excludedPatterns) {
@@ -83,12 +96,16 @@ export function shouldEmbedYouTubeLink(href: string, linkText: string, parentTex
     }
   }
   
-  // If the link is at the very top of the article, don't embed it
-  // This heuristic helps catch bylines and headers
-  if (surroundingText.indexOf(containingText) < 200) {
-    console.log('Not embedding YouTube link near top of article');
-    return false;
+  // If the link appears in the first 500 characters of the content, 
+  // don't embed it - this catches headers, bylines, etc.
+  if (parentText && parentText.length > 0) {
+    const linkPosition = parentText.indexOf(containingText);
+    if (linkPosition >= 0 && linkPosition < 500) {
+      console.log('Not embedding YouTube link near top of article');
+      return false;
+    }
   }
   
+  // If no exclusion rules triggered, allow embedding
   return true;
 }

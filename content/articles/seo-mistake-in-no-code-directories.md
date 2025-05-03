@@ -12,7 +12,7 @@ _id: "seo-mistake-in-no-code-directories"
 readTime: 10
 ---
 
-**By Invisibuilder Team | Inspired by Jordan Urbs' Video: [I Built a 7000-Listing Directory With AI But Made This Big Mistake!](https://www.youtube.com/watch?v=WHcj4xKqll0)**
+**By Invisibuilder Team | Inspired by Jordan Urbs' Video:** [I Built a 7000-Listing Directory With AI But Made This Big Mistake!](https://www.youtube.com/watch?v=WHcj4xKqll0)
 
 ---
 

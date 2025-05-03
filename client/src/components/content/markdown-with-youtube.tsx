@@ -48,8 +48,11 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
             a: ({ node, href, children, ...props }) => {
               // Use our utility function to decide if this link should be embedded
               const textContent = String(children);
-              // Get parent context to help determine if this link should be embedded
-              const parentContext = content.substring(0, 500); // First 500 chars for context
+              
+              // For the table version, we need a different approach to get context
+              // Pass the full content as context, focusing on the beginning of the article
+              const fullContent = content || '';
+              const parentContext = fullContent.substring(0, 500); // First 500 chars for context
               
               if (href && shouldEmbedYouTubeLink(href, textContent, parentContext)) {
                 const videoId = extractYouTubeVideoId(href);
