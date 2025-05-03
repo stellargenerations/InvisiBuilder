@@ -48,7 +48,14 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
             a: ({ node, href, children, ...props }) => {
               // Only convert YouTube links to embeds if the link text is the same as the URL
               // This prevents text links from becoming embeds
-              if (href && isYouTubeUrl(href) && String(children) === href) {
+              // Additional check: don't convert links in headings or "Call to Action" section
+              const textContent = String(children);
+              const isInHeadingOrCallToAction = 
+                textContent.includes("Call to Action") || 
+                textContent.includes("Inspired by") ||
+                textContent.includes("fixing SEO mistakes");
+              
+              if (href && isYouTubeUrl(href) && textContent === href && !isInHeadingOrCallToAction) {
                 const videoId = extractYouTubeVideoId(href);
                 if (videoId) {
                   return <YouTubeEmbed videoId={videoId} title="YouTube video" />;
@@ -119,7 +126,14 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
           a: ({ node, href, children, ...props }) => {
             // Only convert YouTube links to embeds if the link text is the same as the URL
             // This prevents text links from becoming embeds
-            if (href && isYouTubeUrl(href) && String(children) === href) {
+            // Additional check: don't convert links in headings or "Call to Action" section
+            const textContent = String(children);
+            const isInHeadingOrCallToAction = 
+              textContent.includes("Call to Action") || 
+              textContent.includes("Inspired by") ||
+              textContent.includes("fixing SEO mistakes");
+            
+            if (href && isYouTubeUrl(href) && textContent === href && !isInHeadingOrCallToAction) {
               const videoId = extractYouTubeVideoId(href);
               if (videoId) {
                 return <YouTubeEmbed videoId={videoId} title="YouTube video" />;
