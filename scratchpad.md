@@ -148,8 +148,8 @@ Implementing server-side rendering (SSR) would provide several benefits:
 ### Phase 1: Preparation and Analysis
 1. [x] Analyze current routing patterns and identify SEO-critical pages that need SSR first.
 2. [x] Audit current data fetching patterns and identify any client-only code that needs adaptation.
-3. [ ] Create a test environment for SSR development without affecting production.
-4. [ ] Research and select appropriate libraries to assist with React SSR (react-dom/server, etc.).
+3. [x] Create a test environment for SSR development without affecting production.
+4. [x] Research and select appropriate libraries to assist with React SSR (react-dom/server, etc.).
 
 ### Phase 2: Server-Side Rendering Implementation
 5. [ ] Implement basic Express middleware for rendering React components on the server.
@@ -474,3 +474,123 @@ To create a safe environment for implementing SSR without disrupting the current
    - Process documentation for testing and verifying SSR functionality
 
 This test environment structure allows us to develop and test SSR implementation incrementally without disrupting the current functionality, with clear separation between CSR and SSR code paths during the development phase.
+
+**Task 4: Research and select appropriate libraries to assist with React SSR.**
+
+After researching available libraries and approaches for implementing SSR with our current tech stack, here are the recommended libraries and technologies:
+
+1. **Core React SSR Libraries:**
+
+   a. **react-dom/server** - Essential for server-side rendering
+   - Functions to use: `renderToString()` or `renderToNodeStream()` for better performance with large pages
+   - For hydration: Will use `hydrateRoot()` from React 18+ on the client
+   - Compatible with our React version and existing component structure
+
+   b. **@tanstack/react-query** (already in the project)
+   - Has built-in SSR support that we'll leverage
+   - Key functions to use: `dehydrate()` and `hydrate()` for state transfer
+   - `QueryClient.prefetchQuery()` for server-side data fetching
+
+   c. **react-helmet-async** (upgrade from current react-helmet)
+   - Server-side compatible version of React Helmet
+   - Provides `renderStatic()` method for extracting head tags on the server
+   - Better TypeScript support and maintains same API as react-helmet
+
+2. **Routing and Path Matching:**
+
+   a. **path-to-regexp** or **path-parser**
+   - For server-side path matching to extract route parameters
+   - Will help bridge the gap between Express routes and Wouter client routes
+   - Needed to extract dynamic parameters for data prefetching
+
+   b. **Current routing solution considerations**
+   - Wouter is lightweight but has limited SSR support
+   - We'll keep it for client-side but implement a parallel server routing system
+   - Use Express routing patterns that align with Wouter patterns
+
+3. **State Management and Serialization:**
+
+   a. **serialize-javascript**
+   - For safely serializing JavaScript to be included in HTML
+   - Prevents XSS vulnerabilities when transferring state
+   - Handles complex data structures and edge cases
+
+4. **Development and Build Tools:**
+
+   a. **cross-env**
+   - For setting environment variables cross-platform
+   - Will be used to toggle SSR mode
+   - Works with our existing npm scripts
+
+   b. **Vite SSR Extensions** (vite-ssr or custom implementation)
+   - Vite has basic SSR support we can extend
+   - Provides HMR for SSR development
+   - Requires custom implementation to work with our specific setup
+
+5. **HTML Processing:**
+
+   a. **html-minifier-terser**
+   - Optional but recommended for production
+   - Minifies HTML output from SSR
+   - Reduces response size
+
+6. **Performance and Caching:**
+
+   a. **node-cache** or **lru-cache**
+   - For caching rendered pages
+   - Configurable TTL for different types of content
+   - Memory-efficient implementation
+
+   b. **compression**
+   - Express middleware for compressing responses
+   - Particularly important for SSR which can produce larger HTML
+
+7. **Testing Tools:**
+
+   a. **supertest**
+   - For testing SSR Express endpoints
+   - Simulates HTTP requests without starting a server
+
+   b. **jsdom**
+   - For unit testing SSR output
+   - Can parse and inspect the rendered HTML
+
+8. **Debugging and Monitoring:**
+
+   a. **debug**
+   - For detailed logging during development
+   - Can be conditionally enabled/disabled
+   - Helps trace SSR-specific issues
+
+   b. **why-did-you-render** (development only)
+   - Helps identify hydration mismatches
+   - Catches rendering performance issues
+
+## Implementation Approach and Dependencies
+
+For our implementation, we'll start with these core dependencies:
+
+```json
+{
+  "dependencies": {
+    "react-helmet-async": "^1.3.0",
+    "serialize-javascript": "^6.0.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "path-to-regexp": "^6.2.1",
+    "supertest": "^6.3.3",
+    "debug": "^4.3.4"
+  }
+}
+```
+
+These libraries have been selected based on:
+
+1. **Compatibility:** Works with our existing React, Express, and Vite setup
+2. **Performance:** Optimized for SSR workloads
+3. **Community Support:** Well-maintained with regular updates
+4. **Bundle Size:** Minimal impact on client bundle size
+5. **Ease of Implementation:** Can be incrementally adopted
+
+We'll primarily leverage built-in React and Node.js capabilities for SSR with these supporting libraries to solve specific challenges.
