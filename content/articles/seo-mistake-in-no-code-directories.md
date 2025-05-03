@@ -12,21 +12,20 @@ _id: "seo-mistake-in-no-code-directories"
 readTime: 10
 ---
 
-# Fixing the Fatal SEO Mistake in No-Code Directories: Why Server-Side Rendering Matters
-
-**By Invisibuilder Team | Inspired by Jordan Urbs' Video: [I Built a 7000-Listing Directory With AI But Made This Big Mistake!](https://www.youtube.com/watch?v=WHcj4xKqll0)**  
+**By Invisibuilder Team | Inspired by Jordan Urbs' Video: "I Built a 7000-Listing Directory With AI But Made This Big Mistake!"**
 
 ---
 
 ## Introduction  
 
-**Hook:** Imagine building a 7,000-listing directory website with AI tools, only to discover weeks later that Google barely sees your content. This is the reality for many introverted entrepreneurs who prioritize sleek design over technical SEO.  
+Imagine building a 7,000-listing directory website with AI tools, only to discover weeks later that Google barely sees your content. This is the reality for many introverted entrepreneurs who prioritize sleek design over technical SEO.  
 
 **Thesis:** Jordan Urbs' journey—documented in his video—reveals how non-coders can use AI tools like Cursor to fix critical SEO flaws in no-code platforms, migrate to server-side rendering (SSR), and build sustainable, low-profile digital assets.  
 
 **Why This Matters:**  
 - **Introverts thrive in automation:** SSR migrations and SEO optimization can be automated with AI, minimizing human interaction.  
 - **Sustainable growth:** Fixing technical SEO early avoids costly rebuilds later.  
+
 
 https://www.youtube.com/watch?v=WHcj4xKqll0
 
@@ -140,7 +139,7 @@ https://www.youtube.com/watch?v=WHcj4xKqll0
 **Final Thought:** *In the age of AI, introverts have a unique advantage: they can automate tedious tasks, focus on strategic decisions, and build profitable projects quietly.*  
 
 **Call to Action:**  
-1. Watch Jordan's full video: [I Built a 7000-Listing Directory With AI But Made This Big Mistake!](https://www.youtube.com/watch?v=WHcj4xKqll0)  
+1. Watch Jordan's full video: "I Built a 7000-Listing Directory With AI But Made This Big Mistake!"
 2. Audit your site's rendering today.  
 
 ---
