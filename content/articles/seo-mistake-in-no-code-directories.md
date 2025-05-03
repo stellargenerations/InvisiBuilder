@@ -12,7 +12,9 @@ _id: "seo-mistake-in-no-code-directories"
 readTime: 10
 ---
 
-**By Invisibuilder Team | Inspired by Jordan Urbs' Video:** [I Built a 7000-Listing Directory With AI But Made This Big Mistake!](https://www.youtube.com/watch?v=WHcj4xKqll0)
+*By Invisibuilder Team | Inspired by Jordan Urbs' Video: "I Built a 7000-Listing Directory With AI But Made This Big Mistake!"*
+
+**Original Video Link:** https://youtu.be/WHcj4xKqll0
 
 ---
 
@@ -27,6 +29,7 @@ Imagine building a 7,000-listing directory website with AI tools, only to discov
 - **Sustainable growth:** Fixing technical SEO early avoids costly rebuilds later.  
 
 
+**Video Demonstration:**
 https://www.youtube.com/watch?v=WHcj4xKqll0
 
 ## Section 1: The Allure and Pitfalls of No-Code AI Directory Builders  
@@ -139,7 +142,7 @@ https://www.youtube.com/watch?v=WHcj4xKqll0
 **Final Thought:** *In the age of AI, introverts have a unique advantage: they can automate tedious tasks, focus on strategic decisions, and build profitable projects quietly.*  
 
 **Call to Action:**  
-1. Watch Jordan's full video about [fixing SEO mistakes in directories](https://www.youtube.com/watch?v=WHcj4xKqll0)
+1. Watch Jordan's full video "Fixing SEO Mistakes in Directories" - Link: https://youtu.be/WHcj4xKqll0
 2. Audit your site's rendering today.  
 
 ---
