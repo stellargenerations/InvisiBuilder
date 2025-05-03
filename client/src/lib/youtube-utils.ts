@@ -49,17 +49,24 @@ export function isYouTubeUrl(url: string): boolean {
  * Determines if a YouTube link should be embedded or shown as a regular link
  * This helps prevent unwanted embeds in certain contexts like headings
  */
-export function shouldEmbedYouTubeLink(href: string, linkText: string, parentText?: string): boolean {
+export function shouldEmbedYouTubeLink(href: string, linkText: string, parentText?: string, isFirstLink?: boolean): boolean {
   if (!isYouTubeUrl(href)) return false;
   
-  // First approach: For typical links where the text is NOT the URL, we never embed
+  // ALWAYS handle the first YouTube link in the article as plain text, not embedded
+  // This is a special case for the byline in the article header
+  if (isFirstLink === true) {
+    console.log('Not embedding - this is the first YouTube link in the article');
+    return false;
+  }
+  
+  // For typical links where the text is NOT the URL, we never embed
   // This makes normal links like [click here](youtube.com) always display as text links
   if (linkText !== href) {
     console.log('Not embedding - link text differs from URL');
     return false;
   }
   
-  // Second approach: Check for specific sections/contexts where embedding should be prevented
+  // Check for specific sections/contexts where embedding should be prevented
   // We use both the link text itself and the surrounding content (parentText) if available
   const containingText = linkText || '';
   const surroundingText = parentText || '';
@@ -67,7 +74,8 @@ export function shouldEmbedYouTubeLink(href: string, linkText: string, parentTex
   
   // Explicit check for article byline
   if (surroundingText.includes("By Invisibuilder") || 
-      surroundingText.includes("Inspired by")) {
+      surroundingText.includes("Inspired by") ||
+      surroundingText.includes("Team | ")) {
     console.log('Not embedding - detected in byline/author section');
     return false;
   }

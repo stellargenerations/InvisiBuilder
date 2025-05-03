@@ -10,6 +10,18 @@ interface MarkdownWithYouTubeProps {
 }
 
 const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) => {
+  // Create a counter for YouTube links to track which ones we've encountered
+  let youtubeLinksCounter = 0;
+  
+  // Helper function to check if a link is the first YouTube link in the article
+  const isFirstYouTubeLink = (href: string): boolean => {
+    if (isYouTubeUrl(href)) {
+      youtubeLinksCounter++;
+      return youtubeLinksCounter === 1;
+    }
+    return false;
+  };
+  
   // First, detect if the content contains tables
   const hasTable = content.includes('|') &&
                   content.includes('---') &&
@@ -17,6 +29,8 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
 
   // If the content has tables, we need to process it as a whole
   if (hasTable) {
+    // Reset counter for this render path
+    youtubeLinksCounter = 0;
     return (
       <div className="markdown-content">
         <ReactMarkdown
@@ -49,12 +63,15 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
               // Use our utility function to decide if this link should be embedded
               const textContent = String(children);
               
+              // Check if this is the first YouTube link we've encountered
+              const isFirstLink = href ? isFirstYouTubeLink(href) : false;
+              
               // For the table version, we need a different approach to get context
               // Pass the full content as context, focusing on the beginning of the article
               const fullContent = content || '';
               const parentContext = fullContent.substring(0, 500); // First 500 chars for context
               
-              if (href && shouldEmbedYouTubeLink(href, textContent, parentContext)) {
+              if (href && shouldEmbedYouTubeLink(href, textContent, parentContext, isFirstLink)) {
                 const videoId = extractYouTubeVideoId(href);
                 if (videoId) {
                   return <YouTubeEmbed videoId={videoId} title="YouTube video" />;
@@ -91,7 +108,11 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
       prevLine.includes("Inspired by") || 
       nextLine.includes("Call to Action");
     
-    if (trimmedLine && isYouTubeUrl(trimmedLine) && !isInSpecialContext) {
+    // Check if this is the first YouTube link in the document - increment counter if it is a YouTube URL
+    // This ensures we treat the first YouTube link specially (don't embed it)
+    const isFirstLink = trimmedLine ? isFirstYouTubeLink(trimmedLine) : false;
+    
+    if (trimmedLine && isYouTubeUrl(trimmedLine) && !isInSpecialContext && !isFirstLink) {
       const videoId = extractYouTubeVideoId(trimmedLine);
       if (videoId) {
         processedContent.push(
@@ -135,10 +156,14 @@ const MarkdownWithYouTube: React.FC<MarkdownWithYouTubeProps> = ({ content }) =>
           a: ({ node, href, children, ...props }) => {
             // Use our utility function to decide if this link should be embedded
             const textContent = String(children);
+            
+            // Check if this is the first YouTube link we've encountered
+            const isFirstLink = href ? isFirstYouTubeLink(href) : false;
+            
             // Get parent context to help determine if this link should be embedded
             const parentContext = markdownBlock.substring(0, 500); // First 500 chars for context
             
-            if (href && shouldEmbedYouTubeLink(href, textContent, parentContext)) {
+            if (href && shouldEmbedYouTubeLink(href, textContent, parentContext, isFirstLink)) {
               const videoId = extractYouTubeVideoId(href);
               if (videoId) {
                 return <YouTubeEmbed videoId={videoId} title="YouTube video" />;
