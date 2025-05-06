@@ -62,13 +62,13 @@ const HeroSection = () => {
         <div className="flex flex-col md:flex-row items-center">
           <div className="w-full md:w-1/2 space-y-4 mb-6 md:mb-0">
             <h1 className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-white">
-              Build a Digital Empire<br/>Without The <span className="text-primary spotlight-text">
+              <span className="text-primary">Faceless Digital Marketing</span><br/>Build Success Without The <span className="text-primary spotlight-text">
                 Spotlight
                 <div className="spotlight-effect"></div>
               </span>
             </h1>
             <p className="text-base md:text-lg text-neutral-100 max-w-xl">
-              Building your online business from behind the scenes. Strategies, tools, and insights for the solopreneur who values privacy.
+              The complete resource for faceless digital marketing. Strategies, tools, and insights for building profitable online businesses while staying behind the scenes.
             </p>
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
               <Link href="/articles">

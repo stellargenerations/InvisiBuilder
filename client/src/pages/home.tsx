@@ -9,15 +9,16 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>Invisibuilder - Build Success Behind the Scenes</title>
-        <meta name="description" content="Resources for solopreneurs who prefer to work behind the scenes. Learn strategies for online success while maintaining anonymity." />
-        <meta property="og:title" content="Invisibuilder - Build Success Behind the Scenes" />
-        <meta property="og:description" content="Resources for solopreneurs who prefer to work behind the scenes. Learn strategies for online success while maintaining anonymity." />
+        <title>Invisibuilder - The #1 Faceless Digital Marketing Resource</title>
+        <meta name="description" content="Master faceless digital marketing with Invisibuilder. Resources, strategies, and tools for building successful online businesses without being in the spotlight." />
+        <meta property="og:title" content="Invisibuilder - The #1 Faceless Digital Marketing Resource" />
+        <meta property="og:description" content="Master faceless digital marketing with Invisibuilder. Resources, strategies, and tools for building successful online businesses without being in the spotlight." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://invisibuilder.com" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Invisibuilder - Build Success Behind the Scenes" />
-        <meta name="twitter:description" content="Resources for solopreneurs who prefer to work behind the scenes. Learn strategies for online success while maintaining anonymity." />
+        <meta name="twitter:title" content="Invisibuilder - The #1 Faceless Digital Marketing Resource" />
+        <meta name="twitter:description" content="Master faceless digital marketing with Invisibuilder. Resources, strategies, and tools for building successful online businesses without being in the spotlight." />
+        <meta name="keywords" content="faceless digital marketing, anonymous marketing, introvert marketing, behind the scenes business, faceless content creation, private branding" />
       </Helmet>
       <HeroSection />
       <FeaturedContent />
