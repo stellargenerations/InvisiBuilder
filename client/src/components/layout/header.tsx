@@ -16,6 +16,7 @@ const Header = () => {
     { name: "Home", path: "/" },
     { name: "Faceless Marketing", path: "/faceless-digital-marketing" },
     { name: "Articles", path: "/articles" },
+    { name: "Content Clusters", path: "/clusters" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];

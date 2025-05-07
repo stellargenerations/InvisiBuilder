@@ -29,6 +29,8 @@ export interface IStorage {
     featured?: boolean;
     topic?: string;
     tag?: string;
+    cluster?: string;
+    isPillar?: boolean;
     search?: string;
     limit?: number;
   }): Promise<Article[]>;
