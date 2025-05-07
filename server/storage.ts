@@ -280,25 +280,25 @@ export class MemStorage implements IStorage {
 
     // Create special preview article
     const previewArticle = this.createArticle({
-      title: "Website Directory Monetization",
-      slug: "website-directory-monetization",
-      excerpt: "Learn how to build and monetize website directories for passive income with this comprehensive guide featuring 6 viable business models.",
+      title: "Faceless Digital Marketing",
+      slug: "faceless-digital-marketing",
+      excerpt: "Discover how to build a thriving digital business without being in the spotlight. This comprehensive guide covers key strategies for faceless digital marketing.",
       content: "",
-      featuredImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2404&q=80",
-      publishedDate: new Date("2025-04-15"),
-      updatedDate: new Date("2025-04-15"),
+      featuredImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2400&q=80",
+      publishedDate: new Date("2025-06-01"),
+      updatedDate: new Date("2025-06-01"),
       categoryId: monetizationCategory.id,
-      category: "business-category",
-      readTime: "5 min",
-      tags: ["monetization", "directories", "passive-income", "business-models"],
+      category: "faceless-marketing",
+      readTime: "8 min",
+      tags: ["faceless-marketing", "digital-business", "passive-income", "automation"],
       featured: true,
       status: "published"
     });
 
     // Create content sections for preview article
     this.createContentSection({
-      title: "Introduction to Directory Monetization",
-      content: "<p>Creating directory websites can be an excellent way to generate passive income online. This comprehensive guide explores various monetization strategies for directory websites, from paid listings to affiliate marketing and beyond.</p><p>Below is a video guide that explains the fundamental concepts of website directory monetization:</p><div class=\"youtube-embed\"><iframe width=\"100%\" height=\"400\" src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" title=\"Website Directory Monetization\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe></div><p>Let's explore the different ways you can generate revenue from your directory website.</p>",
+      title: "Introduction to Faceless Digital Marketing",
+      content: "<p>Building a successful online business without revealing your identity is not only possible but increasingly popular. This comprehensive guide explores proven strategies for faceless digital marketing that can generate significant income while maintaining your privacy.</p><p>Below is a video guide that introduces the key concepts of faceless digital marketing:</p><div class=\"youtube-embed\"><iframe width=\"100%\" height=\"400\" src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" title=\"Faceless Digital Marketing Fundamentals\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe></div><p>Let's explore how you can build a thriving digital business without being in the spotlight.</p>",
       order: 1,
       articleId: previewArticle.id
     });
@@ -319,12 +319,12 @@ export class MemStorage implements IStorage {
 
     // Create media for preview article
     this.createMediaFile({
-      title: "Website Directory Monetization",
+      title: "Faceless Digital Marketing Fundamentals",
       url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       type: "video",
-      description: "Learn how to monetize a website directory with multiple revenue streams including premium listings, affiliate programs, and advertisements.",
-      thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&h=450&q=80",
-      duration: "10:26",
+      description: "Learn the core principles of building a successful digital business without revealing your identity, including automation strategies and content creation.",
+      thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&h=450&q=80",
+      duration: "12:18",
       articleId: previewArticle.id
     });
 
