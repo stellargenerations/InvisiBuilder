@@ -29,8 +29,6 @@ export interface IStorage {
     featured?: boolean;
     topic?: string;
     tag?: string;
-    cluster?: string;
-    isPillar?: boolean;
     search?: string;
     limit?: number;
   }): Promise<Article[]>;
@@ -165,10 +163,7 @@ export class MemStorage implements IStorage {
       readTime: "12 min",
       tags: ["youtube", "faceless-content", "monetization"],
       featured: true,
-      status: "published",
-      cluster: "Faceless Digital Marketing",
-      isPillar: false,
-      clusterOrder: 2
+      status: "published"
     });
 
     // Create content sections for article 1
@@ -244,10 +239,7 @@ export class MemStorage implements IStorage {
       readTime: "8 min",
       tags: ["payments", "privacy", "digital-products"],
       featured: true,
-      status: "published",
-      cluster: "Faceless Digital Marketing",
-      isPillar: false,
-      clusterOrder: 3
+      status: "published"
     });
 
     // Create content for article 2
@@ -283,13 +275,10 @@ export class MemStorage implements IStorage {
       readTime: "15 min",
       tags: ["automation", "passive-income", "productivity"],
       featured: true,
-      status: "published",
-      cluster: "Faceless Digital Marketing",
-      isPillar: false,
-      clusterOrder: 4
+      status: "published"
     });
 
-    // Create special preview article (Pillar Article for Faceless Digital Marketing)
+    // Create special preview article
     const previewArticle = this.createArticle({
       title: "Faceless Digital Marketing",
       slug: "faceless-digital-marketing",
@@ -303,10 +292,7 @@ export class MemStorage implements IStorage {
       readTime: "8 min",
       tags: ["faceless-marketing", "digital-business", "passive-income", "automation"],
       featured: true,
-      status: "published",
-      cluster: "Faceless Digital Marketing",
-      isPillar: true,
-      clusterOrder: 1
+      status: "published"
     });
 
     // Create content sections for preview article
@@ -459,8 +445,6 @@ export class MemStorage implements IStorage {
     featured?: boolean;
     topic?: string;
     tag?: string;
-    cluster?: string;
-    isPillar?: boolean;
     search?: string;
     limit?: number;
   } = {}): Promise<Article[]> {
@@ -487,25 +471,6 @@ export class MemStorage implements IStorage {
       );
     }
 
-    // Filter by cluster if provided
-    if (options.cluster) {
-      articles = articles.filter(article => 
-        article.cluster === options.cluster
-      );
-      
-      // Sort by cluster order when in cluster view
-      articles.sort((a, b) => 
-        (a.clusterOrder || 999) - (b.clusterOrder || 999)
-      );
-    }
-    
-    // Filter by pillar status if requested
-    if (options.isPillar !== undefined) {
-      articles = articles.filter(article => 
-        article.isPillar === options.isPillar
-      );
-    }
-
     if (options.search) {
       const search = options.search.toLowerCase();
       articles = articles.filter(article => 
@@ -516,12 +481,10 @@ export class MemStorage implements IStorage {
       );
     }
 
-    // Sort by published date, newest first (if not in cluster view)
-    if (!options.cluster) {
-      articles.sort((a, b) => 
-        new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
-      );
-    }
+    // Sort by published date, newest first
+    articles.sort((a, b) => 
+      new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
+    );
 
     // Apply limit
     if (options.limit) {
@@ -655,40 +618,17 @@ export class MemStorage implements IStorage {
     const articleResources = Array.from(this.resources.values())
       .filter(resource => resource.articleId === article.id);
 
-    // Get related articles - prioritize same cluster if available
-    let relatedArticles: Article[] = [];
-    
-    // First check if this article is in a cluster and get related articles from the same cluster
-    if (article.cluster) {
-      const clusterArticles = Array.from(this.articles.values())
-        .filter(a => a.id !== article.id && a.cluster === article.cluster)
-        .sort((a, b) => (a.clusterOrder || 999) - (b.clusterOrder || 999));
-      
-      if (clusterArticles.length > 0) {
-        relatedArticles = clusterArticles.slice(0, 3);
-      }
-    }
-    
-    // If no cluster-related articles or not enough, add other articles from the same category
-    if (relatedArticles.length < 3) {
-      const categoryArticles = Array.from(this.articles.values())
-        .filter(a => a.id !== article.id && 
-                a.categoryId === article.categoryId && 
-                (!article.cluster || a.cluster !== article.cluster)) // Don't duplicate cluster articles
-        .slice(0, 3 - relatedArticles.length);
-      
-      relatedArticles = [...relatedArticles, ...categoryArticles];
-    }
+    // Get related articles (simple implementation - just get other articles)
+    const relatedArticles = Array.from(this.articles.values())
+      .filter(a => a.id !== article.id && a.categoryId === article.categoryId)
+      .slice(0, 3);
     
     const enhancedRelatedArticles = relatedArticles.map(a => ({
       id: a.id,
       title: a.title,
       excerpt: a.excerpt,
       featuredImage: a.featuredImage,
-      slug: a.slug,
-      cluster: a.cluster,
-      clusterOrder: a.clusterOrder,
-      isPillar: a.isPillar
+      slug: a.slug
     }));
 
     return {

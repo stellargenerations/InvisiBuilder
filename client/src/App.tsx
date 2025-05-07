@@ -10,7 +10,6 @@ import About from "@/pages/about";
 import PrivacyPolicy from "@/pages/privacy-policy";
 import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
-import Clusters from "@/pages/clusters";
 
 function App() {
   // Using wouter to get location
@@ -24,7 +23,6 @@ function App() {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/articles" component={Articles} />
-          <Route path="/clusters" component={Clusters} />
           <Route path="/contact" component={Contact} />
           <Route path="/about" component={About} />
           <Route path="/privacy" component={PrivacyPolicy} />
