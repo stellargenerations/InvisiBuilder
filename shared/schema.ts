@@ -117,6 +117,10 @@ export const articles = pgTable("articles", {
   featured: boolean("featured").default(false),
   status: text("status").default("published"), // draft, published
   createdAt: timestamp("created_at").defaultNow(),
+  // Cluster-related fields
+  cluster: text("cluster"),  // Cluster name (e.g., "Getting Started", "Content Strategies")
+  clusterOrder: integer("cluster_order"), // Order within cluster
+  isPillar: boolean("is_pillar").default(false), // Whether this is a pillar/main article in the cluster
 });
 
 export const insertArticleSchema = createInsertSchema(articles).omit({
@@ -132,6 +136,10 @@ export const insertArticleSchema = createInsertSchema(articles).omit({
   categoryId: z.number().optional().nullable(),
   category: z.string().optional().nullable(),
   readTime: z.string().optional().default("5 min"),
+  // Cluster fields
+  cluster: z.string().optional().nullable(),
+  clusterOrder: z.number().optional().nullable(),
+  isPillar: z.boolean().optional().default(false),
 });
 
 export type InsertArticle = z.infer<typeof insertArticleSchema>;

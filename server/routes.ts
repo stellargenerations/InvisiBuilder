@@ -51,7 +51,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all articles with optional filters
   app.get("/api/articles", async (req: Request, res: Response) => {
     try {
-      const { featured, topic, tag, search, limit } = req.query;
+      const { featured, topic, tag, search, limit, cluster, isPillar } = req.query;
       
       const options: {
         featured?: boolean;
@@ -59,6 +59,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tag?: string;
         search?: string;
         limit?: number;
+        cluster?: string;
+        isPillar?: boolean;
       } = {};
       
       if (featured !== undefined) {
@@ -80,6 +82,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (limit && typeof limit === "string") {
         options.limit = parseInt(limit, 10);
+      }
+      
+      // Add cluster filtering
+      if (cluster && typeof cluster === "string") {
+        options.cluster = cluster;
+      }
+      
+      // Add pillar content filtering
+      if (isPillar !== undefined) {
+        options.isPillar = isPillar === "true";
       }
       
       const articles = await storage.getArticles(options);
@@ -218,6 +230,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to search articles" });
     }
   });
+  
+  // Get clusters
+  app.get("/api/clusters", async (req: Request, res: Response) => {
+    try {
+      // Get all articles
+      const allArticles = await storage.getArticles();
+      
+      // Extract unique cluster names
+      const clusterSet = new Set<string>();
+      allArticles.forEach(article => {
+        if (article.cluster) {
+          clusterSet.add(article.cluster);
+        }
+      });
+      
+      // Get pillar article for each cluster
+      const clusters = Array.from(clusterSet).map(clusterName => {
+        const pillarArticle = allArticles.find(article => 
+          article.cluster === clusterName && article.isPillar
+        );
+        
+        return {
+          name: clusterName,
+          pillarArticle: pillarArticle ? {
+            id: pillarArticle.id,
+            title: pillarArticle.title,
+            slug: pillarArticle.slug,
+            excerpt: pillarArticle.excerpt,
+            featuredImage: pillarArticle.featuredImage
+          } : null
+        };
+      });
+      
+      res.json(clusters);
+    } catch (error) {
+      console.error("Error fetching clusters:", error);
+      res.status(500).json({ message: "Failed to fetch clusters" });
+    }
+  });
 
   // ADMIN API ENDPOINTS
   // Create topic
@@ -300,6 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: "published",
         readTime: "5 min",
         tags: [],
+        isPillar: false,  // Default to non-pillar articles
         ...req.body
       };
       

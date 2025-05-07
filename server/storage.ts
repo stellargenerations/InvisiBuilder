@@ -445,6 +445,8 @@ export class MemStorage implements IStorage {
     featured?: boolean;
     topic?: string;
     tag?: string;
+    cluster?: string;
+    isPillar?: boolean;
     search?: string;
     limit?: number;
   } = {}): Promise<Article[]> {
@@ -471,6 +473,25 @@ export class MemStorage implements IStorage {
       );
     }
 
+    // Filter by cluster if provided
+    if (options.cluster) {
+      articles = articles.filter(article => 
+        article.cluster === options.cluster
+      );
+      
+      // Sort by cluster order when in cluster view
+      articles.sort((a, b) => 
+        (a.clusterOrder || 999) - (b.clusterOrder || 999)
+      );
+    }
+    
+    // Filter by pillar status if requested
+    if (options.isPillar !== undefined) {
+      articles = articles.filter(article => 
+        article.isPillar === options.isPillar
+      );
+    }
+
     if (options.search) {
       const search = options.search.toLowerCase();
       articles = articles.filter(article => 
@@ -481,10 +502,12 @@ export class MemStorage implements IStorage {
       );
     }
 
-    // Sort by published date, newest first
-    articles.sort((a, b) => 
-      new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
-    );
+    // Sort by published date, newest first (if not in cluster view)
+    if (!options.cluster) {
+      articles.sort((a, b) => 
+        new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
+      );
+    }
 
     // Apply limit
     if (options.limit) {
@@ -618,17 +641,40 @@ export class MemStorage implements IStorage {
     const articleResources = Array.from(this.resources.values())
       .filter(resource => resource.articleId === article.id);
 
-    // Get related articles (simple implementation - just get other articles)
-    const relatedArticles = Array.from(this.articles.values())
-      .filter(a => a.id !== article.id && a.categoryId === article.categoryId)
-      .slice(0, 3);
+    // Get related articles - prioritize same cluster if available
+    let relatedArticles: Article[] = [];
+    
+    // First check if this article is in a cluster and get related articles from the same cluster
+    if (article.cluster) {
+      const clusterArticles = Array.from(this.articles.values())
+        .filter(a => a.id !== article.id && a.cluster === article.cluster)
+        .sort((a, b) => (a.clusterOrder || 999) - (b.clusterOrder || 999));
+      
+      if (clusterArticles.length > 0) {
+        relatedArticles = clusterArticles.slice(0, 3);
+      }
+    }
+    
+    // If no cluster-related articles or not enough, add other articles from the same category
+    if (relatedArticles.length < 3) {
+      const categoryArticles = Array.from(this.articles.values())
+        .filter(a => a.id !== article.id && 
+                a.categoryId === article.categoryId && 
+                (!article.cluster || a.cluster !== article.cluster)) // Don't duplicate cluster articles
+        .slice(0, 3 - relatedArticles.length);
+      
+      relatedArticles = [...relatedArticles, ...categoryArticles];
+    }
     
     const enhancedRelatedArticles = relatedArticles.map(a => ({
       id: a.id,
       title: a.title,
       excerpt: a.excerpt,
       featuredImage: a.featuredImage,
-      slug: a.slug
+      slug: a.slug,
+      cluster: a.cluster,
+      clusterOrder: a.clusterOrder,
+      isPillar: a.isPillar
     }));
 
     return {
