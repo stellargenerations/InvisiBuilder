@@ -165,7 +165,10 @@ export class MemStorage implements IStorage {
       readTime: "12 min",
       tags: ["youtube", "faceless-content", "monetization"],
       featured: true,
-      status: "published"
+      status: "published",
+      cluster: "Faceless Digital Marketing",
+      isPillar: false,
+      clusterOrder: 2
     });
 
     // Create content sections for article 1
@@ -241,7 +244,10 @@ export class MemStorage implements IStorage {
       readTime: "8 min",
       tags: ["payments", "privacy", "digital-products"],
       featured: true,
-      status: "published"
+      status: "published",
+      cluster: "Faceless Digital Marketing",
+      isPillar: false,
+      clusterOrder: 3
     });
 
     // Create content for article 2
@@ -277,10 +283,13 @@ export class MemStorage implements IStorage {
       readTime: "15 min",
       tags: ["automation", "passive-income", "productivity"],
       featured: true,
-      status: "published"
+      status: "published",
+      cluster: "Faceless Digital Marketing",
+      isPillar: false,
+      clusterOrder: 4
     });
 
-    // Create special preview article
+    // Create special preview article (Pillar Article for Faceless Digital Marketing)
     const previewArticle = this.createArticle({
       title: "Faceless Digital Marketing",
       slug: "faceless-digital-marketing",
@@ -294,7 +303,10 @@ export class MemStorage implements IStorage {
       readTime: "8 min",
       tags: ["faceless-marketing", "digital-business", "passive-income", "automation"],
       featured: true,
-      status: "published"
+      status: "published",
+      cluster: "Faceless Digital Marketing",
+      isPillar: true,
+      clusterOrder: 1
     });
 
     // Create content sections for preview article
