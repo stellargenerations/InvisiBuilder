@@ -516,8 +516,8 @@ export class MemStorage implements IStorage {
   }
 
   async getArticlePreview(): Promise<Article | undefined> {
-    // Get article with "website-directory-monetization" slug which is our preview article
-    const previewArticle = Array.from(this.articles.values()).find(a => a.slug === "website-directory-monetization");
+    // Get article with "faceless-digital-marketing" slug which is our preview article
+    const previewArticle = Array.from(this.articles.values()).find(a => a.slug === "faceless-digital-marketing");
     if (!previewArticle) return undefined;
     
     return this.enhanceArticle(previewArticle);
